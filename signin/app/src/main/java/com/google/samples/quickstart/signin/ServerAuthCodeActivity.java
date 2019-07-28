@@ -70,7 +70,9 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
         // code exchange.
         String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+                .requestScopes(new Scope("https://www.googleapis.com/auth/gmail.readonly")
+                , new Scope("https://www.googleapis.com/auth/gmail.labels")
+                , new Scope("https://www.googleapis.com/auth/gmail.modify"))
                 .requestServerAuthCode(serverClientId)
                 .requestEmail()
                 .build();
@@ -143,7 +145,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
                     public void onResponse(Response response) throws IOException {
                         try {
                             JSONObject jsonObject = new JSONObject(response.body().string());
-                            final String message = jsonObject.toString(5);
+                            final String message = jsonObject.toString();
                             Log.i("Omerr", message);
                         } catch (JSONException e) {
                             e.printStackTrace();
