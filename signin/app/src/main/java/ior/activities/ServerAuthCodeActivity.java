@@ -1,5 +1,6 @@
-package com.google.samples.quickstart.signin;
+package ior.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,11 +15,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.samples.quickstart.signin.R;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -29,7 +30,20 @@ import com.squareup.okhttp.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import utils.IorUtils;
+import utils.ParameterStringBuilder;
 
 /**
  * Demonstrates retrieving an offline access one-time code for the current Google user, which
@@ -41,13 +55,16 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
     public static final String TAG = "ServerAuthCodeActivity";
     private static final int RC_GET_AUTH_CODE = 9003;
 
-    private GoogleSignInClient mGoogleSignInClient;
+    //private GoogleSignInClient mGoogleSignInClient;
     private TextView mAuthCodeTextView;
+    private String email = null;
+    private String access_token = null;
+    private String refresh_token = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_google);
 
         // Views
         mAuthCodeTextView = findViewById(R.id.detail);
@@ -68,17 +85,17 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
         // an access token. By asking for profile access (through
         // DEFAULT_SIGN_IN) you will also get an ID Token as a result of the
         // code exchange.
-        String serverClientId = getString(R.string.server_client_id);
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes(new Scope("https://www.googleapis.com/auth/gmail.readonly")
-                , new Scope("https://www.googleapis.com/auth/gmail.labels")
-                , new Scope("https://www.googleapis.com/auth/gmail.modify"))
-                .requestServerAuthCode(serverClientId)
-                .requestEmail()
-                .build();
-        // [END configure_signin]
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+//        String serverClientId = getString(R.string.server_client_id);
+//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestScopes(new Scope("https://www.googleapis.com/auth/gmail.readonly")
+//                , new Scope("https://www.googleapis.com/auth/gmail.labels")
+//                , new Scope("https://www.googleapis.com/auth/gmail.modify"))
+//                .requestServerAuthCode(serverClientId)
+//                .requestEmail()
+//                .build();
+//        // [END configure_signin]
+//
+//        IorUtils.mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
     private void getAuthCode() {
@@ -86,12 +103,12 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
         // token.  Otherwise, only get an access token if a refresh token has been previously
         // retrieved.  Getting a new access token for an existing grant does not require
         // user consent.
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        Intent signInIntent = IorUtils.mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_GET_AUTH_CODE);
     }
 
     private void signOut() {
-        mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
+        IorUtils.mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 updateUI(null);
@@ -99,8 +116,8 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
         });
     }
 
-    private void revokeAccess() {
-        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
+    public void revokeAccess() {
+        IorUtils.mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -120,6 +137,8 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 String authCode = account.getServerAuthCode();
+
+                this.email = account.getEmail();
 
                 // Show signed-un UI
                 updateUI(account);
@@ -145,6 +164,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
                     public void onResponse(Response response) throws IOException {
                         try {
                             JSONObject jsonObject = new JSONObject(response.body().string());
+                            registerUser(jsonObject);
                             final String message = jsonObject.toString();
                             Log.i("Omerr", message);
                         } catch (JSONException e) {
@@ -159,6 +179,60 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
             }
             // [END get_auth_code]
         }
+    }
+
+    private void registerUser(JSONObject jsonObject) {
+
+        try {
+            String accessToken = jsonObject.getString("access_token");
+            //String refreshToken = jsonObject.getString("refresh_token");
+
+
+            URL url = new URL("http://10.0.2.2:8080/test/registerUser");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("email", email);
+            parameters.put("access_token", accessToken);
+            //parameters.put("refresh_token", refreshToken);
+
+            con.setDoOutput(true);
+            DataOutputStream out = new DataOutputStream(con.getOutputStream());
+            out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+            out.flush();
+            out.close();
+
+
+            int responseCode = con.getResponseCode();
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+        }
+        catch (JSONException e) {
+
+                int xxx = 4;
+        }
+        catch (IOException e2) {
+
+            int fvsdfsd = 5;
+        }
+
+
+        IorUtils.writeToFile(email, this);
+        Intent intent = new Intent(this, HomeScreenActivity.class);
+        intent.putExtra("email", email);
+        startActivity(intent);
+
+        // ponim lasharat im email, acces, refresh.
+
+
     }
 
     private void updateUI(@Nullable GoogleSignInAccount account) {
