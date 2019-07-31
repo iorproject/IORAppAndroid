@@ -2,6 +2,7 @@ package ior.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,7 +43,9 @@ public class MainActivity extends AppCompatActivity {
         IorUtils.mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
-        String email = IorUtils.readFromFile(this);
+        SharedPreferences sharedPref = getSharedPreferences("ior.activities" ,Context.MODE_PRIVATE);
+        String email = sharedPref.getString("email", "");
+        //String email = IorUtils.readFromFile(this);
         if (email.equals("")) {
 
             startActivity(new Intent(this, ServerAuthCodeActivity.class));

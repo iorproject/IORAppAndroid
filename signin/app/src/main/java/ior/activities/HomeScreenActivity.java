@@ -22,7 +22,6 @@ public class HomeScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
-
         buttonDisconnect = findViewById(R.id.buttonDisconnect);
         buttonSignOut = findViewById(R.id.buttonSignOut);
         textViewEmail = findViewById(R.id.textViewEmail);
@@ -30,7 +29,6 @@ public class HomeScreenActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String email = intent.getStringExtra("email");
         textViewEmail.setText(email);
-
 
         buttonSignOut.setOnClickListener(view -> {
 

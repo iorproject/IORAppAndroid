@@ -3,6 +3,7 @@ package utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -75,7 +76,8 @@ public class IorUtils {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
-                writeToFile("", activity);
+                //writeToFile("", activity);
+                writeToSharePreference(activity, "email", "");
                 activity.startActivity(new Intent(activity, ServerAuthCodeActivity.class));
 
             }
@@ -87,10 +89,21 @@ public class IorUtils {
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        writeToFile("", activity);
+                        //writeToFile("", activity);
+                        writeToSharePreference(activity, "email", "");
                         activity.startActivity(new Intent(activity, ServerAuthCodeActivity.class));
                     }
                 });
+
+
+    }
+
+    public static void writeToSharePreference(Activity activity, String key, String val) {
+
+        SharedPreferences sharedPref = activity.getSharedPreferences("ior.activities" ,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(key, val);
+        editor.apply();
     }
 
 }
