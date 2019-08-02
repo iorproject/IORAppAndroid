@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import ior.engine.AccountEngine;
 import utils.IorUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, ServerAuthCodeActivity.class));
         }
         else {
-
 
             Intent intent = new Intent(this, HomeScreenActivity.class);
             intent.putExtra("email", email);

@@ -1,5 +1,6 @@
 package ior.activities;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
@@ -15,7 +16,6 @@ public class MyAccountActivity extends AppCompatActivity {
     private TextView textViewRegisterDate;
     private Button buttonRemoveAccount;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,8 +25,10 @@ public class MyAccountActivity extends AppCompatActivity {
         textViewRegisterDate = findViewById(R.id.textView_myAccount_registerDateVal);
         buttonRemoveAccount = findViewById(R.id.button_myAccount_removeAccount);
 
-        textViewEmail.setText(AccountEngine.getInstance().getUser().getEmail());
-        textViewRegisterDate.setText(AccountEngine.getInstance().getUser().getRegisterDate().toString());
+        //textViewEmail.setText(AccountEngine.getInstance().getUser().getEmail());
+        //textViewRegisterDate.setText(AccountEngine.getInstance().getUser().getRegisterDate().toString());
+        textViewEmail.setText(getSharedPreferences("ior.activities", Context.MODE_PRIVATE)
+                .getString("email", ""));
     }
 
 }
