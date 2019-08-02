@@ -189,7 +189,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
             //String refreshToken = jsonObject.getString("refresh_token");
 
 
-            URL url = new URL("http://10.0.2.2:8080/test/registerUser");
+            URL url = new URL("http://10.0.2.2:8080/ior/registerUser");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
