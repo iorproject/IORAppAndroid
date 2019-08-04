@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import ior.activities.MainActivity;
 import ior.activities.ServerAuthCodeActivity;
@@ -106,4 +109,11 @@ public class IorUtils {
         editor.apply();
     }
 
+    public static String dateToString(Date date) {
+
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        String dateStr = dateFormat.format(date);
+        return dateStr;
+
+    }
 }

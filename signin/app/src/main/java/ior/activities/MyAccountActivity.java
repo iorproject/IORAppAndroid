@@ -8,7 +8,11 @@ import android.widget.TextView;
 
 import com.google.samples.quickstart.signin.R;
 
-import ior.engine.AccountEngine;
+import java.text.DateFormat;
+import java.util.Date;
+
+import ior.engine.ServerHandler;
+import utils.IorUtils;
 
 public class MyAccountActivity extends AppCompatActivity {
 
@@ -25,10 +29,14 @@ public class MyAccountActivity extends AppCompatActivity {
         textViewRegisterDate = findViewById(R.id.textView_myAccount_registerDateVal);
         buttonRemoveAccount = findViewById(R.id.button_myAccount_removeAccount);
 
-        //textViewEmail.setText(AccountEngine.getInstance().getUser().getEmail());
-        //textViewRegisterDate.setText(AccountEngine.getInstance().getUser().getRegisterDate().toString());
-        textViewEmail.setText(getSharedPreferences("ior.activities", Context.MODE_PRIVATE)
-                .getString("email", ""));
+        //textViewEmail.setText(ServerHandler.getInstance().getUser().getEmail());
+        //textViewRegisterDate.setText(ServerHandler.getInstance().getUser().getRegisterDate().toString());
+//        textViewEmail.setText(getSharedPreferences("ior.activities", Context.MODE_PRIVATE)
+//                .getString("email", ""));
+
+        textViewEmail.setText(ServerHandler.getInstance().getUser().getEmail());
+        Date date = ServerHandler.getInstance().getUser().getRegisterDate();
+        textViewRegisterDate.setText(IorUtils.dateToString(date));
     }
 
 }

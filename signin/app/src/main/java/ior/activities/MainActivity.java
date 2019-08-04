@@ -5,21 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
 import com.google.samples.quickstart.signin.R;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-
-import ior.engine.AccountEngine;
+import ior.engine.ServerHandler;
 import utils.IorUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -53,9 +45,12 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
 
-            Intent intent = new Intent(this, HomeScreenActivity.class);
-            intent.putExtra("email", email);
+            new Thread(() -> {
+                ServerHandler.getInstance().fetchUserInfo(email);
+                Intent intent = new Intent(this, HomeScreenActivity.class);
                 startActivity(intent);
+            }).start();
+
 
         }
 
