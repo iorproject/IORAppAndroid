@@ -10,14 +10,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/app_background"
         android:orientation="vertical">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabLayout_receipts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#273EB9"
+            android:layout_margin="3dp"
+            android:background="@drawable/tablayout_background"
             app:tabIndicatorColor="#FF0000"
+            app:tabIndicatorFullWidth="false"
             app:tabSelectedTextColor="#FCF7F7F7"
             app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium"
             app:tabTextColor="#46A6F3">
@@ -41,6 +44,7 @@
             android:id="@+id/viewPager_myReceipts"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="3dp"
             android:layout_marginBottom="56dp" />
 
     </LinearLayout>
@@ -53,12 +57,12 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
-        android:background="#273EB9"
+        android:background="@drawable/navigator_bar_background"
+        app:itemIconTint="@drawable/bottom_navigation_selector"
         app:itemTextColor="#F7F2F2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:itemIconTint="@drawable/bottom_navigation_selector"
         app:menu="@menu/bottom_nav_menu" />
 
 </RelativeLayout>

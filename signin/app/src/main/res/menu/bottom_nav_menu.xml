@@ -12,9 +12,18 @@
         android:icon="@drawable/ic_partners"
         android:title="My partners" />
 
+
+    <item
+        android:id="@+id/navigation_statInfo"
+        android:icon="@drawable/ic_stat"
+        android:title="Stats" />
+
+<!--
+
     <item
         android:id="@+id/navigation_myAccount"
         android:icon="@drawable/ic_account"
         android:title="My Account" />
+-->
 
 </menu>

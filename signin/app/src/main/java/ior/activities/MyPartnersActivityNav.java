@@ -31,7 +31,7 @@ public class MyPartnersActivityNav extends AppCompatActivity {
                     return true;
                 case R.id.navigation_myPartners:
                     return true;
-                case R.id.navigation_myAccount:
+                case R.id.navigation_statInfo:
                     return true;
             }
             return false;
@@ -50,7 +50,7 @@ public class MyPartnersActivityNav extends AppCompatActivity {
         tabLayout = findViewById(R.id.tabLayout_myPartners);
         pageAdapter = new PageAdapter(getSupportFragmentManager());
         pageAdapter.addFragment(new MyPartnersFragment());
-        pageAdapter.addFragment(new AdvancedSearchFragment());
+        pageAdapter.addFragment(new ShareRequestsFragment());
         viewPager.setAdapter(pageAdapter);
 
 

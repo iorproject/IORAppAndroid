@@ -6,8 +6,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.google.samples.quickstart.signin.R;
 
@@ -17,6 +15,7 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
     private ViewPager viewPager;
     private PageAdapter pageAdapter;
     private TabLayout tabLayout;
+    private BottomNavigationView navView;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -28,13 +27,16 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
                 break;
 
             case R.id.navigation_myPartners:
-                ServerHandler.getInstance().getUserPartners(ServerHandler.getInstance().getUser().getEmail()
+                ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getUser().getEmail()
                 , () -> {
                     Intent intent2 = new Intent(this, MyPartnersActivityNav.class);
                     startActivity(intent2);
                 });
-
                 break;
+
+            case R.id.navigation_statInfo:
+                return true;
+
 
         }
                 //IorUtils.onNavigationItemSelected(getApplicationContext(), item, getSupportFragmentManager());
@@ -45,7 +47,7 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_receipts_nav);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         viewPager = findViewById(R.id.viewPager_myReceipts);
         tabLayout = findViewById(R.id.tabLayout_receipts);
