@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ior.activities.MyReceiptsActivityNav">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabLayout_receipts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#273EB9"
+            app:tabIndicatorColor="#FF0000"
+            app:tabSelectedTextColor="#FCF7F7F7"
+            app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:tabTextColor="#46A6F3">
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/tabItem_allReceipts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F8DA2222"
+                android:text="All Receipts" />
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/tabItem_advancedSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Advanced Search" />
+
+        </android.support.design.widget.TabLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager_myReceipts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="56dp" />
+
+    </LinearLayout>
+
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:background="#273EB9"
+        app:itemTextColor="#F7F2F2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:itemIconTint="@drawable/bottom_navigation_selector"
+        app:menu="@menu/bottom_nav_menu" />
+
+</RelativeLayout>

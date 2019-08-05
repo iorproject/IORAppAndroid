@@ -47,10 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
             new Thread(() -> {
                 ServerHandler.getInstance().fetchUserInfo(email);
-                Intent intent = new Intent(this, HomeScreenActivity.class);
+                Intent intent = new Intent(this, MyReceiptsActivityNav.class);
                 startActivity(intent);
             }).start();
-
 
         }
 

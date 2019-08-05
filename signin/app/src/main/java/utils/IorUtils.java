@@ -5,11 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.samples.quickstart.signin.R;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -21,7 +27,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import ior.activities.AllReceiptsFragment;
+import ior.activities.HomeScreenActivity;
 import ior.activities.MainActivity;
+import ior.activities.MyReceiptsActivityNav;
+import ior.activities.PageAdapter;
 import ior.activities.ServerAuthCodeActivity;
 
 public class IorUtils {
@@ -116,4 +126,62 @@ public class IorUtils {
         return dateStr;
 
     }
+
+
+
+
+    public static void onNavigationItemSelected(Context activity, MenuItem item, FragmentManager fm) {
+
+
+        switch (item.getItemId()) {
+
+            case R.id.navigation_myReceipts:
+                Intent intent1 = new Intent(activity, MyReceiptsActivityNav.class);
+                activity.startActivity(intent1);
+                break;
+
+            case R.id.navigation_myPartners:
+                Intent intent2 = new Intent(activity, HomeScreenActivity.class);
+                activity.startActivity(intent2);
+                break;
+
+
+        }
+
+
+//        Fragment fragment = null;
+//        ViewPager viewPager = activity.findViewById(R.id.viewPager_myReceipts);
+//
+//        switch (item.getItemId()) {
+//            case R.id.navigation_myReceipts:
+//                //context.startActivity(new Intent(context, MyReceiptsActivityNav.class));
+//                fragment = new AllReceiptsFragment();
+//                break;
+//
+//            case R.id.navigation_myPartners:
+//
+//                TabLayout tabLayout = activity.findViewById(R.id.tabLayout_receipts);
+//                PageAdapter adapter = new PageAdapter(fm);
+//
+//                TabLayout.Tab tab0 = tabLayout.getTabAt(0);
+//                tab0.setText("My Partners");
+//                tabLayout.getTabAt(1).setText("Requests");
+//                break;
+//
+//            case R.id.navigation_myAccount:
+//                break;
+//
+//        }
+//
+//        if (fragment != null) {
+//
+//            fm.beginTransaction()
+//                    .replace(viewPager.getId(), fragment)
+//                    .commit();
+//
+//            return true;
+//        }
+
+    }
+
 }

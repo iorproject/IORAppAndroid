@@ -7,11 +7,21 @@
 
     <application
         android:allowBackup="true"
-        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-        <activity android:name="ior.activities.MyAccountActivity"></activity>
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name="ior.activities.MyPartnersActivityNav"
+            android:label="@string/title_activity_mypartners_nav"></activity>
+        <activity
+            android:name="ior.activities.MyReceiptsActivityNav"
+            android:label="@string/title_activity_my_receipts_nav" />
+        <activity
+            android:name="ior.activities.ReceiptsActivity"
+            android:label="@string/title_activity_receipts"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name="ior.activities.MyAccountActivity" />
         <activity android:name="ior.activities.HomeScreenActivity" />
         <activity android:name="ior.activities.MainActivity">
             <intent-filter>
@@ -23,7 +33,7 @@
         <activity
             android:name="ior.activities.ServerAuthCodeActivity"
             android:label="@string/name_auth_code_activity"
-            android:theme="@style/ThemeOverlay.MyNoTitleActivity"></activity>
+            android:theme="@style/ThemeOverlay.MyNoTitleActivity" />
     </application>
 
 </manifest>

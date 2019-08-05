@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import utils.ParameterStringBuilder;
@@ -28,12 +29,17 @@ public class ServerHandler {
     }
 
     private User user;
+    private List<String> partners;
 
     private ServerHandler() {
     }
 
     public User getUser() {
         return user;
+    }
+
+    public List<String> getPartners() {
+        return partners;
     }
 
     public void registerUser(String email, String accessToken, String refreshToken) {
@@ -111,6 +117,100 @@ public class ServerHandler {
         catch (IOException e2) {
 
         }
+
+    }
+
+    public List<String> getUserCompanies(String email) {
+
+        List<String> res = null;
+
+        try {
+            URL url = new URL("http://10.0.2.2:8080/ior/userCompanies");
+            //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("email", email);
+
+            con.setDoOutput(true);
+            DataOutputStream out = new DataOutputStream(con.getOutputStream());
+            out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+            out.flush();
+            out.close();
+            int responseCode = con.getResponseCode();
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+
+            Gson gson = new Gson();
+            res = gson.fromJson(content.toString(), List.class);
+
+
+
+        }
+        catch (ProtocolException e1) {
+
+        }
+        catch (IOException e2) {
+
+        }
+
+        return res;
+    }
+
+    public void getUserPartners(String email, Runnable onFinish) {
+
+
+        List<String> res = null;
+
+        Thread thread = new Thread(() -> {
+
+            try {
+                URL url = new URL("http://10.0.2.2:8080/ior/userPartners");
+                //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("GET");
+
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put("email", email);
+
+                con.setDoOutput(true);
+                DataOutputStream out = new DataOutputStream(con.getOutputStream());
+                out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+                out.flush();
+                out.close();
+                int responseCode = con.getResponseCode();
+
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer content = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    content.append(inputLine);
+                }
+                in.close();
+
+                Gson gson = new Gson();
+                partners = gson.fromJson(content.toString(), List.class);
+                onFinish.run();
+
+            }
+            catch (ProtocolException e1) {
+
+            }
+            catch (IOException e2) {
+
+            }
+        });
+
+        thread.start();
 
     }
 
