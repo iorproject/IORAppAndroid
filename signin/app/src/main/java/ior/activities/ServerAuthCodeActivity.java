@@ -197,7 +197,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
 
 
             if (refreshToken.equals(""))
-                ServerHandler.getInstance().fetchUserInfo(email);
+                ServerHandler.getInstance().fetchUserInfo(email, null);
 
         }
 

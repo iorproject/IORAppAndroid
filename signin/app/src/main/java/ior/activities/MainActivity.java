@@ -45,11 +45,13 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
 
-            new Thread(() -> {
-                ServerHandler.getInstance().fetchUserInfo(email);
-                Intent intent = new Intent(this, MyReceiptsActivityNav.class);
-                startActivity(intent);
-            }).start();
+            ServerHandler.getInstance().fetchUserInfo(email, () -> {
+
+                ServerHandler.getInstance().fetchUserCompanies(email, () -> {
+                    Intent intent = new Intent(this, MyReceiptsActivityNav.class);
+                    startActivity(intent);
+                });
+            });
 
         }
 

@@ -5,10 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -27,11 +24,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import ior.activities.AllReceiptsFragment;
 import ior.activities.HomeScreenActivity;
-import ior.activities.MainActivity;
 import ior.activities.MyReceiptsActivityNav;
-import ior.activities.PageAdapter;
 import ior.activities.ServerAuthCodeActivity;
 
 public class IorUtils {

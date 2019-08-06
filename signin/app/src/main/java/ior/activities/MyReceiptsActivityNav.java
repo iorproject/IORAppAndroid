@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.google.samples.quickstart.signin.R;
 
+import ior.adapters.PageAdapter;
 import ior.engine.ServerHandler;
 
 public class MyReceiptsActivityNav extends AppCompatActivity {

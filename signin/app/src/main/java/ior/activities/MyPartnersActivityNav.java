@@ -8,10 +8,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.view.MenuItem;
-import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.google.samples.quickstart.signin.R;
+
+import ior.adapters.PageAdapter;
 
 public class MyPartnersActivityNav extends AppCompatActivity {
     private BottomNavigationView navigationView;

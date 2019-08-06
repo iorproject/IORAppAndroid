@@ -1,4 +1,4 @@
-package ior.activities;
+package ior.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
