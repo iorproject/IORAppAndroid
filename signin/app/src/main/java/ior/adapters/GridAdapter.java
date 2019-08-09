@@ -1,6 +1,7 @@
 package ior.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
@@ -23,6 +24,7 @@ import com.google.samples.quickstart.signin.R;
 
 import java.util.List;
 
+import ior.activities.CompanyReceiptsActivity;
 import ior.engine.Company;
 import ior.engine.ServerHandler;
 
@@ -31,12 +33,14 @@ public class GridAdapter extends BaseAdapter {
     private List<Company> companies;
     private Context context;
     private int mViewResourceId;
+    private String userEmail;
 
-    public GridAdapter(Context context, int viewResourceId, List<Company> companies) {
+    public GridAdapter(Context context, int viewResourceId, List<Company> companies, String email) {
 
         this.context = context;
         this.companies = companies;
         this.mViewResourceId = viewResourceId;
+        this.userEmail = email;
     }
 
     @Override
@@ -76,10 +80,6 @@ public class GridAdapter extends BaseAdapter {
         textView.setText(company.getName());
 
 
-
-
-
-
         //ImageView imageView = new ImageView(context);
         //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         //imageView.setBackgroundResource(R.drawable.rounded_image);
@@ -94,6 +94,20 @@ public class GridAdapter extends BaseAdapter {
         Canvas c = new Canvas(circleBitmap);
         c.drawCircle(bitmap.getWidth()/2, bitmap.getHeight()/2, bitmap.getWidth()/2, paint);
         imageView.setImageBitmap(circleBitmap);
+
+
+        linearLayout.setOnClickListener(v -> {
+
+
+            ServerHandler.getInstance().fetchCompanyReceipts(userEmail, company.getName(), () -> {
+
+
+                Intent intent = new Intent(context, CompanyReceiptsActivity.class);
+                intent.putExtra("email", userEmail);
+                intent.putExtra("company",company.getName());
+                context.startActivity(intent);
+            });
+        });
 
         return convertView;
     }

@@ -39,6 +39,12 @@ public class AllReceiptsFragment extends Fragment {
         view = inflater.inflate(R.layout.all_receipts_fragment, container, false);
         gridView = view.findViewById(R.id.gridView_allReceipts);
         textViewEmail = view.findViewById(R.id.textViewEmail_allreceipts);
+        Bundle bundle = this.getArguments();
+
+        userEmail = bundle != null ?
+                bundle.getString("email", ServerHandler.getInstance().getUser().getEmail())
+                : ServerHandler.getInstance().getUser().getEmail();
+
         textViewEmail.setText(ServerHandler.getInstance().getUser().getEmail());
         companies = ServerHandler.getInstance().getCompanies();
         return view;
@@ -52,12 +58,20 @@ public class AllReceiptsFragment extends Fragment {
 
     private void initGrid() {
 
-        adapter = new GridAdapter(getContext(), R.layout.companies_grid_adapter, companies);
+        adapter = new GridAdapter(getContext(), R.layout.companies_grid_adapter, companies, userEmail);
         gridView.setAdapter(adapter);
 
-        gridView.setOnItemClickListener((parent, view, position, id) -> {
-
-            startActivity(new Intent(getContext(), CompanyReceiptsActivity.class));
-        });
+//        gridView.setOnItemClickListener((parent, view, position, id) -> {
+//
+//            ServerHandler.getInstance().fetchCompanyReceipts(userEmail, view.getTag().toString(), () -> {
+//
+//
+//                Intent intent = new Intent(getContext(), CompanyReceiptsActivity.class);
+//                intent.putExtra("email", userEmail);
+//                intent.putExtra("company",view.getTag().toString());
+//                startActivity(intent);
+//            });
+//            startActivity(new Intent(getContext(), CompanyReceiptsActivity.class));
+//        });
     }
 }

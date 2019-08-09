@@ -1,5 +1,6 @@
 package ior.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import ior.adapters.ReceiptRecycleAdapter;
 import ior.engine.Receipt;
+import ior.engine.ServerHandler;
 
 public class CompanyReceiptsActivity extends AppCompatActivity {
     private TextView mTextMessage;
@@ -23,6 +25,8 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ReceiptRecycleAdapter adapter;
     private List<Receipt> receipts;
+    private String userEmail;
+    private String companyName;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -51,6 +55,10 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        Intent intent = getIntent();
+        userEmail = intent.getStringExtra("email");
+        companyName = intent.getStringExtra("company");
+        receipts = ServerHandler.getInstance().getReceipts(userEmail, companyName);
 
         List<Integer> list = new ArrayList<>();
         list.add(1);
