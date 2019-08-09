@@ -10,11 +10,14 @@ import android.graphics.Shader;
 import android.os.Build;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.samples.quickstart.signin.R;
 
@@ -27,11 +30,13 @@ public class GridAdapter extends BaseAdapter {
 
     private List<Company> companies;
     private Context context;
+    private int mViewResourceId;
 
-    public GridAdapter(Context context, List<Company> companies) {
+    public GridAdapter(Context context, int viewResourceId, List<Company> companies) {
 
         this.context = context;
         this.companies = companies;
+        this.mViewResourceId = viewResourceId;
     }
 
     @Override
@@ -51,12 +56,36 @@ public class GridAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView = new ImageView(context);
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        imageView.setBackgroundResource(R.drawable.rounded_image);
-        imageView.setTag(companies.get(position).getName());
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(180, 180));
-        Bitmap bitmap = companies.get(position).getBitmap();
+
+
+
+        if (convertView == null) {
+
+
+            LayoutInflater inflater = LayoutInflater.from(context);
+            convertView = inflater.inflate(mViewResourceId, parent, false);
+        }
+
+        Company company = companies.get(position);
+        ImageView imageView = convertView.findViewById(R.id.imageView_companiesGridAdapter);
+        TextView textView = convertView.findViewById(R.id.textView_companiesGridAdapter);
+        LinearLayout linearLayout = convertView.findViewById(R.id.linearLayouy_companiesGridAdapter);
+
+        linearLayout.setTag(company.getName());
+        Bitmap bitmap = company.getBitmap();
+        textView.setText(company.getName());
+
+
+
+
+
+
+        //ImageView imageView = new ImageView(context);
+        //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        //imageView.setBackgroundResource(R.drawable.rounded_image);
+        //imageView.setTag(companies.get(position).getName());
+        //imageView.setLayoutParams(new ViewGroup.LayoutParams(190, 190));
+        //Bitmap bitmap = companies.get(position).getBitmap();
         Bitmap circleBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         BitmapShader shader = new BitmapShader (bitmap,  Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
         Paint paint = new Paint();
@@ -66,6 +95,6 @@ public class GridAdapter extends BaseAdapter {
         c.drawCircle(bitmap.getWidth()/2, bitmap.getHeight()/2, bitmap.getWidth()/2, paint);
         imageView.setImageBitmap(circleBitmap);
 
-        return imageView;
+        return convertView;
     }
 }

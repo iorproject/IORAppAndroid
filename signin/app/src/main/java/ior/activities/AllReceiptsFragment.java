@@ -42,20 +42,22 @@ public class AllReceiptsFragment extends Fragment {
         textViewEmail.setText(ServerHandler.getInstance().getUser().getEmail());
         companies = ServerHandler.getInstance().getCompanies();
         return view;
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
         new Thread(this::initGrid).start();
-
     }
 
     private void initGrid() {
 
-        adapter = new GridAdapter(getContext(), companies);
+        adapter = new GridAdapter(getContext(), R.layout.companies_grid_adapter, companies);
         gridView.setAdapter(adapter);
 
+        gridView.setOnItemClickListener((parent, view, position, id) -> {
+
+            startActivity(new Intent(getContext(), CompanyReceiptsActivity.class));
+        });
     }
 }

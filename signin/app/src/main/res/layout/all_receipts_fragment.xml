@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:numColumns="3"
-            android:verticalSpacing="30dp" />
+            android:verticalSpacing="40dp" />
 
         <TextView
             android:id="@+id/textViewEmail_allreceipts"

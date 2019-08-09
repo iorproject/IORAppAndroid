@@ -12,8 +12,11 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name="ior.activities.CompanyReceiptsActivity"
+            android:label="@string/title_activity_company_receipts"></activity>
+        <activity
             android:name="ior.activities.MyPartnersActivityNav"
-            android:label="@string/title_activity_mypartners_nav"></activity>
+            android:label="@string/title_activity_mypartners_nav" />
         <activity
             android:name="ior.activities.MyReceiptsActivityNav"
             android:label="@string/title_activity_my_receipts_nav" />

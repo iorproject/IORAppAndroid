@@ -62,4 +62,5 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_mypartners_nav">My Partners</string>
+    <string name="title_activity_company_receipts">CompanyReceiptsActivity</string>
 </resources>

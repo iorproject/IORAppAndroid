@@ -31,7 +31,7 @@ public class ReceiptsActivity extends AppCompatActivity {
 
 
         pagerAdapter = new SectionsPagerAdapter(getApplicationContext(), getSupportFragmentManager() );
-        pagerAdapter.addFragment(new AllReceiptsFragment(), "All Receipts");
+        pagerAdapter.addFragment(new AllReceiptsFragment(), "All Receipt");
         pagerAdapter.addFragment(new AdvancedSearchFragment(), "Advanced Search");
 
         viewPager.setAdapter(pagerAdapter);
