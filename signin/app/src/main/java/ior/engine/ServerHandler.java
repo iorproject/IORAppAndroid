@@ -3,6 +3,7 @@ package ior.engine;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
@@ -27,11 +28,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import utils.ParameterStringBuilder;
 
@@ -327,7 +330,6 @@ public class ServerHandler {
                         out.flush();
                         out.close();
                         int responseCode = con.getResponseCode();
-
                         BufferedReader in = new BufferedReader(
                                 new InputStreamReader(con.getInputStream()));
                         String inputLine;
@@ -610,9 +612,43 @@ public class ServerHandler {
 
     }
 
-    public List<Receipt> getReceipts(String email, String company) {
+    public float getAveragePurchase(String email){
+        float totalPrice = 0;
+        if(usersReceipts.containsKey(email)) {
+            List<Receipt> receipts = usersReceipts.get(email).values().stream()
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+            for(Receipt receipt : receipts){
+                totalPrice += receipt.getTotalPrice();
+            }
+            return totalPrice / (float)receipts.size();
+        }
+        return totalPrice;
 
-        List<Receipt> receipts = usersReceipts.get(email) == null ?
+    }
+
+    public int getAmountOfPurchases(String email){
+        return usersReceipts.get(email).values().stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList()).size();
+    }
+
+    public float getTotalPurchases(String email){
+        float totalPrice = 0;
+        if(usersReceipts.containsKey(email)) {
+            List<Receipt> receipts = usersReceipts.get(email).values().stream()
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+            for(Receipt receipt : receipts){
+                totalPrice += receipt.getTotalPrice();
+            }
+        }
+        return totalPrice;
+    }
+
+    public List<Receipt> getCompanyReceipts(String email, String company) {
+
+        List<Receipt> receipts = usersReceipts.containsKey(email) ?
                 null : usersReceipts.get(email).get(company);
 
         return receipts;

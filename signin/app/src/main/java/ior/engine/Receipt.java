@@ -26,4 +26,32 @@ public class Receipt {
         this.fileName = fileName;
 
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public String getReceiptNumber() {
+        return receiptNumber;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public float getTotalPrice() {
+        return totalPrice;
+    }
+
+    public eCurrency getCurrency() {
+        return currency;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
 }

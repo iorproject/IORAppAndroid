@@ -58,7 +58,7 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         userEmail = intent.getStringExtra("email");
         companyName = intent.getStringExtra("company");
-        receipts = ServerHandler.getInstance().getReceipts(userEmail, companyName);
+        receipts = ServerHandler.getInstance().getCompanyReceipts(userEmail, companyName);
 
         List<Integer> list = new ArrayList<>();
         list.add(1);
