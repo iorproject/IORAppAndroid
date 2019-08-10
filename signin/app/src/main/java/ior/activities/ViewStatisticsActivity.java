@@ -12,13 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.samples.quickstart.signin.R;
 
 import java.util.ArrayList;
@@ -52,7 +56,7 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         mPieChart = findViewById(R.id.companyPieChart);
         //TODO: achieve email
         email = "ior46800@gmail.com";
-        ServerHandler.getInstance().fetchUserCompanies(email,this::displayStatistics);
+        ServerHandler.getInstance().fetchCompanyReceipts(email,"Amazon",this::displayStatistics);
 
 
         Description description = new Description();
@@ -66,6 +70,28 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         //mPieChart.setDrawEntryLabels(true);
 
         addDataSet();
+
+        mPieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                int pos = e.toString().indexOf("y: ");
+                String totalPrice = e.toString().substring(pos +3);
+                for (int i =0; i<yData.length;++i){
+                    if(yData[i] == Float.parseFloat(totalPrice)){
+                        pos = i;
+                        break;
+                    }
+                }
+
+                String company = xData[pos];
+                Toast.makeText(ViewStatisticsActivity.this, "Company" + company,Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onNothingSelected() {
+
+            }
+        });
     }
 
     private void displayStatistics(){

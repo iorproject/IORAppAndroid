@@ -628,9 +628,10 @@ public class ServerHandler {
     }
 
     public int getAmountOfPurchases(String email){
-        return usersReceipts.get(email).values().stream()
+        return usersReceipts.containsKey(email) ?
+                usersReceipts.get(email).values().stream()
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList()).size();
+                .collect(Collectors.toList()).size() : 0;
     }
 
     public float getTotalPurchases(String email){
