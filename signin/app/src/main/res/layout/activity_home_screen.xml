@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ior.activities.HomeScreenActivity">
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:horizontalSpacing="15dp"
+        android:numColumns="3" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textViewEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="24sp" />
+
+
+        <android.support.v7.widget.GridLayout
+            android:id="@+id/grid_homeScreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            app:columnCount="2"
+            app:rowCount="2">
+
+            <LinearLayout
+                android:id="@+id/linear_homeScreen_myReceipts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:orientation="vertical"
+                android:padding="10dp"
+                app:layout_column="0"
+                app:layout_columnSpan="1"
+                app:layout_columnWeight="1"
+                app:layout_gravity="center"
+                app:layout_row="0"
+                app:layout_rowSpan="1"
+                app:layout_rowWeight="1">
+
+                <ImageView
+                    android:id="@+id/imageView_homeScreen_myReceipts"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/receipt_icon" />
+
+                <TextView
+                    android:id="@+id/textView_homeScreen_myReceipts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:text="My Receipts"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
+
+            <FrameLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:orientation="vertical"
+                app:layout_column="1"
+                app:layout_columnSpan="1"
+                app:layout_columnWeight="1"
+                app:layout_gravity="center"
+                app:layout_row="0"
+                app:layout_rowSpan="1"
+                app:layout_rowWeight="1">
+
+                <Button
+                    android:id="@+id/buttonNotiMyFriends"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="right"
+                    android:text="i"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:visibility="invisible" />
+
+                <LinearLayout
+                    android:id="@+id/linear_homeScreen_myPartners"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/imageView_homeScreen_myPartners"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:scaleType="fitXY"
+                        app:srcCompat="@drawable/my_friends_icon" />
+
+                    <TextView
+                        android:id="@+id/textView_homeScreen_myPartners"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:text="My Partners"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+            </FrameLayout>
+
+
+            <LinearLayout
+                android:id="@+id/linear_homeScreen_statInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical"
+                android:padding="10dp"
+                app:layout_column="0"
+                app:layout_columnSpan="1"
+                app:layout_columnWeight="1"
+                app:layout_gravity="center"
+                app:layout_row="1"
+                app:layout_rowSpan="1"
+                app:layout_rowWeight="1">
+
+                <ImageView
+                    android:id="@+id/imageView_homeScreen_statInfo"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/stats_info_icon" />
+
+                <TextView
+                    android:id="@+id/textView_homeScreen_statInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:text="Stats Info"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical"
+                app:layout_column="1"
+                app:layout_columnSpan="1"
+                app:layout_columnWeight="1"
+                app:layout_gravity="center"
+                app:layout_row="1"
+                app:layout_rowSpan="1"
+                app:layout_rowWeight="1">
+
+                <LinearLayout
+                    android:id="@+id/linear_homeScreen_myAccount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+
+                    <ImageView
+                        android:id="@+id/imageView_homeScreen_myAccount"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:scaleType="fitXY"
+                        app:srcCompat="@drawable/my_account_icon" />
+
+                    <TextView
+                        android:id="@+id/textView_homeScreen_myAccount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:text="My Account"
+                        android:textColor="@android:color/black" />
+
+
+                </LinearLayout>
+            </FrameLayout>
+
+
+        </android.support.v7.widget.GridLayout>
+
+
+        <Button
+            android:id="@+id/buttonSignOut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/sign_out" />
+
+        <Button
+            android:id="@+id/buttonDisconnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/disconnect" />
+    </LinearLayout>
+</RelativeLayout>
