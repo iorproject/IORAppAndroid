@@ -3,8 +3,11 @@ package ior.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -15,6 +18,8 @@ import ior.engine.ServerHandler;
 import utils.IorUtils;
 
 public class MainActivity extends AppCompatActivity {
+
+    ProgressBar progressBar;
 
 
     @Override
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getSharedPreferences("ior.activities" ,Context.MODE_PRIVATE);
         String email = sharedPref.getString("email", "");
         //String email = IorUtils.readFromFile(this);
+        progressBar = findViewById(R.id.progressBar);
         if (email.equals("")) {
 
             startActivity(new Intent(this, ServerAuthCodeActivity.class));
@@ -52,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 });
             });
+
+            progressBar.getIndeterminateDrawable().setColorFilter(0xFF303F9F, android.graphics.PorterDuff.Mode.MULTIPLY);
+
+            //countDownTimer.start();
+
+
 
         }
 

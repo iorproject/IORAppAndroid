@@ -201,43 +201,6 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
 
         }
 
-//            URL url = new URL("http://10.0.2.2:8080/ior/registerUser");
-//            //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-//            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//            con.setRequestMethod("GET");
-//
-//            Map<String, String> parameters = new HashMap<>();
-//            parameters.put("email", email);
-//            parameters.put("access_token", accessToken);
-//            parameters.put("refresh_token", refreshToken);
-//
-//            con.setDoOutput(true);
-//            DataOutputStream out = new DataOutputStream(con.getOutputStream());
-//            out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-//            out.flush();
-//            out.close();
-//
-//
-//        int responseCode = con.getResponseCode();
-//        BufferedReader in = new BufferedReader(
-//                new InputStreamReader(con.getInputStream()));
-//        String inputLine;
-//        StringBuffer response = new StringBuffer();
-//
-//        while ((inputLine = in.readLine()) != null) {
-//            response.append(inputLine);
-//        }
-//        in.close();
-//    }
-//        catch (JSONException e) {
-//
-//        int xxx = 4;
-//    }
-//        catch (IOException e2) {
-//
-//        int fvsdfsd = 5;
-//    }
-
         IorUtils.writeToSharePreference(this, "email", email);
         Intent intent = new Intent(this, HomeScreenActivity.class);
         intent.putExtra("email", email);

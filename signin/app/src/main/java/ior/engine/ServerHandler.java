@@ -32,11 +32,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import utils.ParameterStringBuilder;
 
 public class ServerHandler {
-    private static final long TIME_TO_FETCH = 2;
+    private static final long TIME_TO_FETCH = 5;
     private static final ServerHandler ourInstance = new ServerHandler();
     private Date partnersLastFetch = null;
     private Date companiesLastFetch = null;
@@ -267,7 +268,6 @@ public class ServerHandler {
                     URL url = new URL("http://10.0.2.2:8080/ior/userShareRequests");
                     //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestMethod("GET");
 
                     Map<String, String> parameters = new HashMap<>();
                     parameters.put("email", email);
@@ -277,6 +277,8 @@ public class ServerHandler {
                     out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
                     out.flush();
                     out.close();
+                    con.setRequestMethod("GET");
+
                     int responseCode = con.getResponseCode();
 
                     BufferedReader in = new BufferedReader(
@@ -552,7 +554,7 @@ public class ServerHandler {
                         List<LinkedTreeMap<String, Object>> receiptsDb = gson.fromJson(content.toString(), List.class);
                         //companies = new ArrayList<>();
 
-                        if (usersReceipts.get(userEmail) == null) {
+                        if (!usersReceipts.containsKey(userEmail)) {
                             usersReceipts.put(userEmail, new HashMap<>());
                         }
 
@@ -562,11 +564,11 @@ public class ServerHandler {
 
                             String receiptsEmail = userEmail;
                             String receiptCompany = company;
-                            //String receiptNumber = receiptDB.get("receiptNumber").toString();
+                            String receiptNumber = receiptDB.get("receiptNumber").toString();
                             String receiptDateStr = receiptDB.get("creationDate").toString();
                             String receiptCurrencyStr = receiptDB.get("currency").toString();
                             float receiptPrice = (float)((double)(receiptDB.get("totalPrice")));
-                            //String receiptFileName = receiptDB.get("fileName").toString();
+                            String receiptFileName = receiptDB.get("fileName").toString();
                             Date receiptDate = null;
                             eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
                             SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a");
@@ -575,9 +577,9 @@ public class ServerHandler {
 
                                 receiptDate = formatter.parse(receiptDateStr);
                                 Receipt temp = new Receipt(receiptsEmail, receiptCompany,
-                                        "A12345", receiptDate,
+                                        receiptNumber, receiptDate,
                                         receiptPrice, receiptCurrency
-                                ,"Amazon12.pdf");
+                                ,receiptFileName);
 
                                 receipts.add(temp);
 
@@ -616,6 +618,19 @@ public class ServerHandler {
                 null : usersReceipts.get(email).get(company);
 
         return receipts;
+
+    }
+
+    public Company getCompany(String companyName) {
+
+        Company company = null;
+
+        for (Company c : companies) {
+            if (c.getName().equals(companyName))
+                company = c;
+        }
+
+        return company;
 
     }
 }
