@@ -72,7 +72,7 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
         companyName = intent.getStringExtra("company");
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(companyName + "'s receipts");
-        receipts = ServerHandler.getInstance().getReceipts(userEmail, companyName);
+        receipts = ServerHandler.getInstance().getCompanyReceipts(userEmail, companyName);
         counter = findViewById(R.id.textViewCounter_companyReceipts);
         imageViewNext = findViewById(R.id.imageView_next_companyReceipts);
         imageViewPrev = findViewById(R.id.imageView_prev_companyReceipts);

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -28,6 +30,7 @@ import ior.activities.HomeScreenActivity;
 import ior.activities.MyReceiptsActivityNav;
 import ior.activities.ServerAuthCodeActivity;
 import ior.engine.ServerHandler;
+import ior.activities.ShowProfileActivity;
 
 public class IorUtils {
 
@@ -145,6 +148,8 @@ public class IorUtils {
         }
 
 
+
+
 //        Fragment fragment = null;
 //        ViewPager viewPager = activity.findViewById(R.id.viewPager_myReceipts);
 //
@@ -178,6 +183,28 @@ public class IorUtils {
 //            return true;
 //        }
 
+    }
+
+    public static ActionBarDrawerToggle setNavigateBar(Activity activity)
+    {
+        DrawerLayout drawerLayout = activity.findViewById(R.id.drawer);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(activity,drawerLayout,R.string.open, R.string.close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        return toggle;
+    }
+
+    public static Intent getItemIntent(Activity activity, int itemId)
+    {
+        Intent result  = null;
+        switch (itemId)
+        {
+            case R.id.profile:
+                result = new Intent(activity, ShowProfileActivity.class);
+
+        }
+
+        return result;
     }
 
 }
