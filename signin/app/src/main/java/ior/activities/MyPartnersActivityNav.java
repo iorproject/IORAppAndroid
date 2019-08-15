@@ -43,7 +43,6 @@ public class MyPartnersActivityNav extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_partners_nav);
         navigationView = findViewById(R.id.nav_view);
-        navigationView = findViewById(R.id.nav_view);
         navigationView.setSelectedItemId(R.id.navigation_myPartners);
         navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         viewPager = findViewById(R.id.viewPager_myPartners);

@@ -2,6 +2,10 @@
     <string name="app_name">IOR</string>
     <string name="title_text">Google Sign-In</string>
 
+    <!--Navigate bar-->
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
     <!-- Sign-in status messages -->
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="signed_in">Signed in</string>
