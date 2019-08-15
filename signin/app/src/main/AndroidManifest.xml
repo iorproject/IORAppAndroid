@@ -25,6 +25,9 @@
             android:name="ior.activities.MyPartnersActivityNav"
             android:label="@string/title_activity_mypartners_nav" />
         <activity
+            android:name="ior.activities.ViewStatisticsActivity"
+            android:label="@string/title_view_statistics" />
+        <activity
             android:name="ior.activities.MyReceiptsActivityNav"
             android:label="@string/title_activity_my_receipts_nav" />
         <activity
