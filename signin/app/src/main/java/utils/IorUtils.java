@@ -27,6 +27,7 @@ import java.util.Date;
 import ior.activities.HomeScreenActivity;
 import ior.activities.MyReceiptsActivityNav;
 import ior.activities.ServerAuthCodeActivity;
+import ior.engine.ServerHandler;
 
 public class IorUtils {
 
@@ -85,6 +86,7 @@ public class IorUtils {
 
                 //writeToFile("", activity);
                 writeToSharePreference(activity, "email", "");
+                ServerHandler.getInstance().reset();
                 activity.startActivity(new Intent(activity, ServerAuthCodeActivity.class));
 
             }

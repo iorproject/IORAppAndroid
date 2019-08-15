@@ -98,15 +98,20 @@ public class GridAdapter extends BaseAdapter {
 
         linearLayout.setOnClickListener(v -> {
 
+            Intent intent = new Intent(context, CompanyReceiptsActivity.class);
+            intent.putExtra("email", userEmail);
+            intent.putExtra("company",company.getName());
+            context.startActivity(intent);
 
-            ServerHandler.getInstance().fetchCompanyReceipts(userEmail, company.getName(), () -> {
 
-
-                Intent intent = new Intent(context, CompanyReceiptsActivity.class);
-                intent.putExtra("email", userEmail);
-                intent.putExtra("company",company.getName());
-                context.startActivity(intent);
-            });
+//            ServerHandler.getInstance().fetchCompanyReceipts(userEmail, company.getName(), () -> {
+//
+//
+//                Intent intent = new Intent(context, CompanyReceiptsActivity.class);
+//                intent.putExtra("email", userEmail);
+//                intent.putExtra("company",company.getName());
+//                context.startActivity(intent);
+//            });
         });
 
         return convertView;

@@ -11,6 +11,7 @@ import com.google.samples.quickstart.signin.R;
 
 import ior.adapters.PageAdapter;
 import ior.engine.ServerHandler;
+import utils.IorUtils;
 
 public class MyReceiptsActivityNav extends AppCompatActivity {
     private ViewPager viewPager;
@@ -28,7 +29,7 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
                 break;
 
             case R.id.navigation_myPartners:
-                ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getUser().getEmail()
+                ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail()
                 , () -> {
                     Intent intent2 = new Intent(this, MyPartnersActivityNav.class);
                     startActivity(intent2);
@@ -36,6 +37,7 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
                 break;
 
             case R.id.navigation_statInfo:
+                IorUtils.signOut(this);
                 return true;
 
 

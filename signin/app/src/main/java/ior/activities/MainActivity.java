@@ -3,8 +3,6 @@ package ior.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ProgressBar;
@@ -53,11 +51,20 @@ public class MainActivity extends AppCompatActivity {
 
             ServerHandler.getInstance().fetchUserInfo(email, () -> {
 
-                ServerHandler.getInstance().fetchUserCompanies(email, () -> {
-                    Intent intent = new Intent(this, MyReceiptsActivityNav.class);
-                    startActivity(intent);
-                });
+                Intent intent = new Intent(this, MyReceiptsActivityNav.class);
+                startActivity(intent);
+
+
             });
+
+//            ServerHandler.getInstance().fetchUserAllReceipts(email, null);
+//            ServerHandler.getInstance().fetchUserInfo(email, () -> {
+//
+//                ServerHandler.getInstance().fetchCompanies(email, () -> {
+//                    Intent intent = new Intent(this, MyReceiptsActivityNav.class);
+//                    startActivity(intent);
+//                });
+//            });
 
             progressBar.getIndeterminateDrawable().setColorFilter(0xFF303F9F, android.graphics.PorterDuff.Mode.MULTIPLY);
 

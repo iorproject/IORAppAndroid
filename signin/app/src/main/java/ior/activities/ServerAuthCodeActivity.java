@@ -60,6 +60,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
     //private GoogleSignInClient mGoogleSignInClient;
     private TextView mAuthCodeTextView;
     private String email = null;
+    private String name = "";
     private String access_token = null;
     private String refresh_token = null;
 
@@ -141,6 +142,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
                 String authCode = account.getServerAuthCode();
 
                 this.email = account.getEmail();
+                name = account.getDisplayName();
 
                 // Show signed-un UI
                 updateUI(account);
@@ -171,6 +173,8 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
                             Log.i("Omerr", message);
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            //IorUtils.writeToSharePreference(getParent(), "email", email);
+                            //startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
                     }
                 });
@@ -187,24 +191,26 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
 
         String accessToken = "";
         String refreshToken = "";
+        IorUtils.writeToSharePreference(this, "email", email);
 
         try {
             accessToken = jsonObject.getString("access_token");
             refreshToken = jsonObject.getString("refresh_token");
-            ServerHandler.getInstance().registerUser(email, accessToken, refreshToken);
+
+            ServerHandler.getInstance().registerUser(email, name,  accessToken, refreshToken,
+                    () -> startActivity(new Intent(this, MainActivity.class)));
         }
         catch (JSONException e) {
 
 
             if (refreshToken.equals(""))
-                ServerHandler.getInstance().fetchUserInfo(email, null);
-
+                startActivity(new Intent(this, MainActivity.class));
         }
 
-        IorUtils.writeToSharePreference(this, "email", email);
-        Intent intent = new Intent(this, HomeScreenActivity.class);
-        intent.putExtra("email", email);
-        startActivity(intent);
+//        IorUtils.writeToSharePreference(this, "email", email);
+//        Intent intent = new Intent(this, HomeScreenActivity.class);
+//        intent.putExtra("email", email);
+//        startActivity(intent);
 
     }
 

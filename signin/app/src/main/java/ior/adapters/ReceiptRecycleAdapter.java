@@ -12,6 +12,7 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Shader;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,6 +26,8 @@ import android.widget.Toast;
 import com.google.api.services.people.v1.model.Birthday;
 import com.google.samples.quickstart.signin.R;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -143,12 +146,25 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
         viewHolder.imageViewPreviewFile.setOnClickListener(v -> {
 
 
-
             mContex.startActivityForResult(new Intent(mContex, ReceiptFileActivity.class),
                     1);
-            parent.setAlpha(0.5f);
+            parent.setAlpha(0.7f);
             //mContex.startActivity(new Intent(mContex, ReceiptFileActivity.class));
 
+
+
+        });
+
+
+        viewHolder.imageViewDownloadFile.setOnClickListener(v -> {
+
+            String url = "https://firebasestorage.googleapis.com/v0/b/iorproject.appspot.com/o/receipts%2Fior46800%40gmail.com%2FInvoice_51706333284.pdf?alt=media&token=a4fb5bbc-ef3c-44a8-a71b-7dd3e17dc2d4";
+
+                //url= URLEncoder.encode(url,"UTF-8");
+                ServerHandler.getInstance().downloadFile(mContex, url, "aaa.pdf", () -> {
+
+                    Toast.makeText(mContex, "File Download Successfully", Toast.LENGTH_SHORT).show();
+                });
 
 
         });
