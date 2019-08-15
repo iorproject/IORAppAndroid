@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class User {
 
+
     private String email;
     private Date registerDate;
     private String name;

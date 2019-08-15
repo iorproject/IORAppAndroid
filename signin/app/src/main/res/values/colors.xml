@@ -5,4 +5,15 @@
     <color name="blue_grey_700">#455A64</color>
     <color name="blue_grey_800">#37474F</color>
     <color name="blue_grey_900">#263238</color>
+    <color name="whiteHeader">#FFFFFF</color>
+    <color name="blackHeader">#000000</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#292b3d</color>
+    <color name="graylight_account">#fafafa</color>
+    <color name="startblue_account">#09c6df</color>
+    <color name="endblue_account">#0bcce6</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="startcolorparents">#fb8c00</color>
+    <color name="endcolorparents">#d84315</color>
+
 </resources>
