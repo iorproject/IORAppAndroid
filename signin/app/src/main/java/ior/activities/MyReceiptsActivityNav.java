@@ -39,11 +39,11 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
                 break;
 
             case R.id.navigation_myPartners:
-                ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getUser().getEmail()
-                , () -> {
+                ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail(),
+                () -> {
                     Intent intent2 = new Intent(this, MyPartnersActivityNav.class);
                     startActivity(intent2);
-//                });
+                });
                 break;
 
             case R.id.navigation_statInfo:

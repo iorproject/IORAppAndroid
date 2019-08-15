@@ -33,9 +33,9 @@ public class MyPartnersFragment extends Fragment {
         //partners = ServerHandler.getInstance().getPartners();
         recyclerView = view.findViewById(R.id.partners_recyclerview);
         List<User> partners = new ArrayList<>();
-        partners.add(new User("eliran@3123",null));
-        partners.add(new User("moshe@3123",null));
-        partners.add(new User("sapir@3123",null));
+//        partners.add(new User("eliran@3123",null));
+//        partners.add(new User("moshe@3123",null));
+//        partners.add(new User("sapir@3123",null));
 
 
         PartnerRecyclerAdapter partnerRecyclerAdapter = new PartnerRecyclerAdapter(getContext(),partners);
