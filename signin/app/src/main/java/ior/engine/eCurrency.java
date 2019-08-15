@@ -28,6 +28,7 @@ public enum eCurrency {
         switch (str) {
 
             case "$":
+            case "US":
                 res = eCurrency.DOLLAR;
                 break;
 

@@ -1,13 +1,9 @@
 package ior.activities;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayout;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,11 +38,12 @@ public class AllReceiptsFragment extends Fragment {
         Bundle bundle = this.getArguments();
 
         userEmail = bundle != null ?
-                bundle.getString("email", ServerHandler.getInstance().getUser().getEmail())
-                : ServerHandler.getInstance().getUser().getEmail();
+                bundle.getString("email", ServerHandler.getInstance().getSignInUser().getEmail())
+                : ServerHandler.getInstance().getSignInUser().getEmail();
 
-        textViewEmail.setText(ServerHandler.getInstance().getUser().getEmail());
-        companies = ServerHandler.getInstance().getCompanies();
+        textViewEmail.setText(ServerHandler.getInstance().getSignInUser().getEmail());
+        companies = ServerHandler.getInstance().getUserCompanies(userEmail);
+        //companies = ServerHandler.getInstance().getCompanies();
         return view;
     }
 

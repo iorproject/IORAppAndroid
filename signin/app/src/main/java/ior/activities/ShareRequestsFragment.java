@@ -22,7 +22,7 @@ public class ShareRequestsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.share_requests_fragment, container, false);
         TextView textView = view.findViewById(R.id.textViewSahre);
-        textView.setText(ServerHandler.getInstance().getRequests().get(2));
+        textView.setText(ServerHandler.getInstance().getRequests().get(0));
         return view;
     }
 }

@@ -60,6 +60,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
     //private GoogleSignInClient mGoogleSignInClient;
     private TextView mAuthCodeTextView;
     private String email = null;
+    private String name = "";
     private String access_token = null;
     private String refresh_token = null;
 
@@ -141,6 +142,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
                 String authCode = account.getServerAuthCode();
 
                 this.email = account.getEmail();
+                name = account.getDisplayName();
 
                 // Show signed-un UI
                 updateUI(account);
@@ -171,6 +173,8 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
                             Log.i("Omerr", message);
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            //IorUtils.writeToSharePreference(getParent(), "email", email);
+                            //startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
                     }
                 });
@@ -187,61 +191,26 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
 
         String accessToken = "";
         String refreshToken = "";
+        IorUtils.writeToSharePreference(this, "email", email);
 
         try {
             accessToken = jsonObject.getString("access_token");
             refreshToken = jsonObject.getString("refresh_token");
-            ServerHandler.getInstance().registerUser(email, accessToken, refreshToken);
+
+            ServerHandler.getInstance().registerUser(email, name,  accessToken, refreshToken,
+                    () -> startActivity(new Intent(this, MainActivity.class)));
         }
         catch (JSONException e) {
 
 
             if (refreshToken.equals(""))
-                ServerHandler.getInstance().fetchUserInfo(email, null);
-
+                startActivity(new Intent(this, MainActivity.class));
         }
 
-//            URL url = new URL("http://10.0.2.2:8080/ior/registerUser");
-//            //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-//            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//            con.setRequestMethod("GET");
-//
-//            Map<String, String> parameters = new HashMap<>();
-//            parameters.put("email", email);
-//            parameters.put("access_token", accessToken);
-//            parameters.put("refresh_token", refreshToken);
-//
-//            con.setDoOutput(true);
-//            DataOutputStream out = new DataOutputStream(con.getOutputStream());
-//            out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-//            out.flush();
-//            out.close();
-//
-//
-//        int responseCode = con.getResponseCode();
-//        BufferedReader in = new BufferedReader(
-//                new InputStreamReader(con.getInputStream()));
-//        String inputLine;
-//        StringBuffer response = new StringBuffer();
-//
-//        while ((inputLine = in.readLine()) != null) {
-//            response.append(inputLine);
-//        }
-//        in.close();
-//    }
-//        catch (JSONException e) {
-//
-//        int xxx = 4;
-//    }
-//        catch (IOException e2) {
-//
-//        int fvsdfsd = 5;
-//    }
-
-        IorUtils.writeToSharePreference(this, "email", email);
-        Intent intent = new Intent(this, HomeScreenActivity.class);
-        intent.putExtra("email", email);
-        startActivity(intent);
+//        IorUtils.writeToSharePreference(this, "email", email);
+//        Intent intent = new Intent(this, HomeScreenActivity.class);
+//        intent.putExtra("email", email);
+//        startActivity(intent);
 
     }
 

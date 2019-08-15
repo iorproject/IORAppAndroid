@@ -1,9 +1,13 @@
 package ior.engine;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
@@ -22,11 +26,13 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -39,7 +45,7 @@ import java.util.stream.Collectors;
 import utils.ParameterStringBuilder;
 
 public class ServerHandler {
-    private static final long TIME_TO_FETCH = 2;
+    private static final long TIME_TO_FETCH = 5;
     private static final ServerHandler ourInstance = new ServerHandler();
     private Date partnersLastFetch = null;
     private Date companiesLastFetch = null;
@@ -50,18 +56,20 @@ public class ServerHandler {
         return ourInstance;
     }
 
-    private User user;
+    private User signInUser;
     private List<String> partners;
     private List<String> requests;
     private List<Company> companies;
+    private Map<String, Company> companyMap = new HashMap<>();
     private Map<String, Map<String, List<Receipt>>> usersReceipts = new HashMap<>();
+    private Map<String, User> usersInfoMap = new HashMap<>();
 
 
     private ServerHandler() {
     }
 
-    public User getUser() {
-        return user;
+    public User getSignInUser() {
+        return signInUser;
     }
 
     public List<String> getPartners() {
@@ -76,55 +84,50 @@ public class ServerHandler {
         return companies;
     }
 
-    public void registerUser(String email, String accessToken, String refreshToken) {
+    public List<Company> getUserCompanies(String userEmail) {
 
-        try {
-            URL url = new URL("http://10.0.2.2:8080/ior/registerUser");
-            //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
+        List<Company> result = new ArrayList<>();
 
-            Map<String, String> parameters = new HashMap<>();
-            parameters.put("email", email);
-            parameters.put("access_token", accessToken);
-            parameters.put("refresh_token", refreshToken);
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            Date now = Calendar.getInstance().getTime();
-            String data = dateFormat.format(now);
-            parameters.put("register_date", data);
+        for (String name : usersReceipts.get(userEmail).keySet()) {
 
-            con.setDoOutput(true);
-            DataOutputStream out = new DataOutputStream(con.getOutputStream());
-            out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-            out.flush();
-            out.close();
-            int responseCode = con.getResponseCode();
-            this.user = new User(email, now);
+            result.add(companyMap.get(name));
 
         }
-        catch (ProtocolException e1) {
 
-        }
-        catch (IOException e2) {
+        return result;
 
-        }
     }
 
+    public Company getCompany(String name) {
 
-    public void fetchUserInfo(String email, Runnable onFinish) {
+        return companyMap.get(name);
+    }
+
+    public void setSignInUser(User signInUser) {
+        this.signInUser = signInUser;
+    }
+
+    public void registerUser(String email, String name, String accessToken, String refreshToken, Runnable onFinish) {
 
 
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    URL url = new URL("http://10.0.2.2:8080/ior/userInfo");
+                    URL url = new URL("http://10.0.2.2:8080/ior/registerUser");
                     //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("GET");
 
                     Map<String, String> parameters = new HashMap<>();
                     parameters.put("email", email);
+                    parameters.put("access_token", accessToken);
+                    parameters.put("refresh_token", refreshToken);
+                    parameters.put("name", name);
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                    Date now = Calendar.getInstance().getTime();
+                    String data = dateFormat.format(now);
+                    parameters.put("register_date", data);
 
                     con.setDoOutput(true);
                     DataOutputStream out = new DataOutputStream(con.getOutputStream());
@@ -133,23 +136,11 @@ public class ServerHandler {
                     out.close();
                     int responseCode = con.getResponseCode();
 
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(con.getInputStream()));
-                    String inputLine;
-                    StringBuffer content = new StringBuffer();
-                    while ((inputLine = in.readLine()) != null) {
-                        content.append(inputLine);
-                    }
-                    in.close();
+                }
+                catch (ProtocolException e1) {
 
-                    Gson gson = new Gson();
-                    User user = gson.fromJson(content.toString(), User.class);
-
-                    ServerHandler.getInstance().user = user;
-
-                } catch (ProtocolException e1) {
-
-                } catch (IOException e2) {
+                }
+                catch (IOException e2) {
 
                 }
                 return null;
@@ -157,9 +148,112 @@ public class ServerHandler {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                onFinish.run();
+                fetchCompanies(email, () -> {
+
+                    onFinish.run();
+
+                });
             }
         }.execute();
+
+
+//        try {
+//            URL url = new URL("http://10.0.2.2:8080/ior/registerUser");
+//            //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
+//            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+//            con.setRequestMethod("GET");
+//
+//            Map<String, String> parameters = new HashMap<>();
+//            parameters.put("email", email);
+//            parameters.put("access_token", accessToken);
+//            parameters.put("refresh_token", refreshToken);
+//            parameters.put("name", name);
+//            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+//            Date now = Calendar.getInstance().getTime();
+//            String data = dateFormat.format(now);
+//            parameters.put("register_date", data);
+//
+//            con.setDoOutput(true);
+//            DataOutputStream out = new DataOutputStream(con.getOutputStream());
+//            out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+//            out.flush();
+//            out.close();
+//            int responseCode = con.getResponseCode();
+//            this.user = new User(email, name, now);
+//
+//        }
+//        catch (ProtocolException e1) {
+//
+//        }
+//        catch (IOException e2) {
+//
+//        }
+    }
+
+
+    public void fetchUserInfo(String email, Runnable onFinish) {
+
+        if (!usersInfoMap.containsKey(email)) {
+
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    try {
+                        URL url = new URL("http://10.0.2.2:8080/ior/userInfo");
+                        //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        con.setRequestMethod("GET");
+
+                        Map<String, String> parameters = new HashMap<>();
+                        parameters.put("email", email);
+
+                        con.setDoOutput(true);
+                        DataOutputStream out = new DataOutputStream(con.getOutputStream());
+                        out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+                        out.flush();
+                        out.close();
+                        int responseCode = con.getResponseCode();
+
+                        BufferedReader in = new BufferedReader(
+                                new InputStreamReader(con.getInputStream()));
+                        String inputLine;
+                        StringBuffer content = new StringBuffer();
+                        while ((inputLine = in.readLine()) != null) {
+                            content.append(inputLine);
+                        }
+                        in.close();
+
+                        Gson gson = new Gson();
+                        User user = gson.fromJson(content.toString(), User.class);
+
+                        ServerHandler.getInstance().signInUser = user;
+                        ServerHandler.getInstance().usersInfoMap.put(email, user);
+                        int x = 5;
+
+                    } catch (ProtocolException e1) {
+                        int fff = 4;
+
+                    } catch (IOException e2) {
+                        int ssss = 3;
+                    } catch (Exception e) {
+                        int sadsada = 4;
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    fetchCompanies(email, () -> {
+
+                        onFinish.run();
+
+                    });
+                }
+            }.execute();
+        } else {
+
+            onFinish.run();
+        }
 
 
 //        new Thread(() -> {
@@ -213,49 +307,112 @@ public class ServerHandler {
         partnersLastFetch = date;
         if (lastFetch == null || isTimeToFetch(date, lastFetch)) {
 
-            Thread thread = new Thread(() -> {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    try {
+                        URL url = new URL("http://10.0.2.2:8080/ior/userPartners");
+                        //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        con.setRequestMethod("GET");
 
-                try {
-                    URL url = new URL("http://10.0.2.2:8080/ior/userPartners");
-                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestMethod("GET");
+                        Map<String, String> parameters = new HashMap<>();
+                        parameters.put("email", email);
 
-                    Map<String, String> parameters = new HashMap<>();
-                    parameters.put("email", email);
+                        con.setDoOutput(true);
+                        DataOutputStream out = new DataOutputStream(con.getOutputStream());
+                        out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+                        out.flush();
+                        out.close();
+                        int responseCode = con.getResponseCode();
 
-                    con.setDoOutput(true);
-                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
-                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-                    out.flush();
-                    out.close();
-                    int responseCode = con.getResponseCode();
+                        BufferedReader in = new BufferedReader(
+                                new InputStreamReader(con.getInputStream()));
+                        String inputLine;
+                        StringBuffer content = new StringBuffer();
+                        while ((inputLine = in.readLine()) != null) {
+                            content.append(inputLine);
+                        }
+                        in.close();
 
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(con.getInputStream()));
-                    String inputLine;
-                    StringBuffer content = new StringBuffer();
-                    while ((inputLine = in.readLine()) != null) {
-                        content.append(inputLine);
+                        Gson gson = new Gson();
+                        List<LinkedTreeMap<String, Object>> partnersDB = gson.fromJson(content.toString(), List.class);
+
+                        for (LinkedTreeMap<String, Object> partner : partnersDB) {
+
+                            String email = partner.get("email").toString();
+                            String name = partner.get("name").toString();
+                            Date registerDate = (Date) partner.get("registerDate");
+                            usersInfoMap.put(email, new User(email, name, registerDate));
+
+                        }
+
+                        // REMOVEEE
+                        partners = gson.fromJson(content.toString(), List.class);
+                        fetchRequests(email, onFinish);
+
+                    } catch (ProtocolException e1) {
+
+                    } catch (IOException e2) {
+
                     }
-                    in.close();
+                    return null;
+                }
 
-                    Gson gson = new Gson();
-                    partners = gson.fromJson(content.toString(), List.class);
-                    fetchRequests(email, onFinish);
-                    //onFinish.run();
-
-                } catch (ProtocolException e1) {
-
-                } catch (IOException e2) {
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    onFinish.run();
 
                 }
-            });
-
-            thread.start();
-
-        } else
+            }.execute();
+        } else {
             onFinish.run();
+
+
+//            Thread thread = new Thread(() -> {
+//
+//                try {
+//                    URL url = new URL("http://10.0.2.2:8080/ior/userPartners");
+//                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
+//                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+//                    con.setRequestMethod("GET");
+//
+//                    Map<String, String> parameters = new HashMap<>();
+//                    parameters.put("email", email);
+//
+//                    con.setDoOutput(true);
+//                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
+//                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+//                    out.flush();
+//                    out.close();
+//                    int responseCode = con.getResponseCode();
+//
+//                    BufferedReader in = new BufferedReader(
+//                            new InputStreamReader(con.getInputStream()));
+//                    String inputLine;
+//                    StringBuffer content = new StringBuffer();
+//                    while ((inputLine = in.readLine()) != null) {
+//                        content.append(inputLine);
+//                    }
+//                    in.close();
+//
+//                    Gson gson = new Gson();
+//                    partners = gson.fromJson(content.toString(), List.class);
+//                    fetchRequests(email, onFinish);
+//                    //onFinish.run();
+//
+//                } catch (ProtocolException e1) {
+//
+//                } catch (IOException e2) {
+//
+//                }
+//            });
+//
+//            thread.start();
+//
+//        } else
+//            onFinish.run();
+        }
     }
 
 
@@ -270,7 +427,6 @@ public class ServerHandler {
                     URL url = new URL("http://10.0.2.2:8080/ior/userShareRequests");
                     //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestMethod("GET");
 
                     Map<String, String> parameters = new HashMap<>();
                     parameters.put("email", email);
@@ -280,6 +436,8 @@ public class ServerHandler {
                     out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
                     out.flush();
                     out.close();
+                    con.setRequestMethod("GET");
+
                     int responseCode = con.getResponseCode();
 
                     BufferedReader in = new BufferedReader(
@@ -305,7 +463,7 @@ public class ServerHandler {
     }
 
 
-    public void fetchUserCompanies(String email, Runnable onFinish) {
+    public void fetchCompanies(String email, Runnable onFinish) {
 
         Date date = new Date();
         Date lastFetch = companiesLastFetch;
@@ -340,14 +498,15 @@ public class ServerHandler {
                         in.close();
 
                         Gson gson = new Gson();
-                        // data: array of : ["companyName" -> "aaa" , "logoUrl" -> "httpdsdsa"] , [...]
+                        // data: array of : ["companyName" -> "aaa" , "oUrl" -> "httpdsdsa"] , [...]
 
                         List<LinkedTreeMap<String, String>> companiesDB = gson.fromJson(content.toString(), List.class);
                         companies = new ArrayList<>();
 
                         for (LinkedTreeMap<String, String> companyDB : companiesDB) {
 
-                            companies.add(new Company(companyDB.get("companyName"), companyDB.get("logoUrl")));
+                            companyMap.put(companyDB.get("companyName"), new Company(companyDB.get("companyName"), companyDB.get("logoUrl")));
+                            //companies.add(new Company(companyDB.get("companyName"), companyDB.get("logoUrl")));
                         }
                         //onFinish.run();
 
@@ -362,7 +521,8 @@ public class ServerHandler {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    fetchBitmaps(onFinish);
+                    fetchUserAllReceipts(email, onFinish);
+                    //fetchBitmaps(email, onFinish);
                 }
             }.execute();
 
@@ -421,22 +581,35 @@ public class ServerHandler {
             onFinish.run();
     }
 
-    private void fetchBitmaps(Runnable onFinish) {
+    private void fetchBitmaps(String userEmail, Runnable onFinish) {
 
 
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                for (Company company : companies) {
 
-                    loadBitmap(company);
+
+                for (String companyName : usersReceipts.get(userEmail).keySet()) {
+                    Company company = companyMap.get(companyName);
+                    if (company.getBitmap() == null) {
+                        loadBitmap(company);
+                    }
+
                 }
 
                 return null;
+//
+//                for (Company company : companies) {
+//
+//                    loadBitmap(company);
+//                }
+//
+//                return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
+
                 onFinish.run();
             }
         }.execute();
@@ -466,9 +639,11 @@ public class ServerHandler {
         Bitmap bm = null;
         InputStream is = null;
         BufferedInputStream bis = null;
+        String url = company.getUrl();
+
         try
         {
-            URLConnection conn = new URL(company.getUrl()).openConnection();
+            URLConnection conn = new URL(url).openConnection();
             conn.connect();
             is = conn.getInputStream();
             bis = new BufferedInputStream(is, 8192);
@@ -554,7 +729,7 @@ public class ServerHandler {
                         List<LinkedTreeMap<String, Object>> receiptsDb = gson.fromJson(content.toString(), List.class);
                         //companies = new ArrayList<>();
 
-                        if (usersReceipts.get(userEmail) == null) {
+                        if (!usersReceipts.containsKey(userEmail)) {
                             usersReceipts.put(userEmail, new HashMap<>());
                         }
 
@@ -564,11 +739,11 @@ public class ServerHandler {
 
                             String receiptsEmail = userEmail;
                             String receiptCompany = company;
-                            //String receiptNumber = receiptDB.get("receiptNumber").toString();
+                            String receiptNumber = receiptDB.get("receiptNumber").toString();
                             String receiptDateStr = receiptDB.get("creationDate").toString();
                             String receiptCurrencyStr = receiptDB.get("currency").toString();
                             float receiptPrice = (float)((double)(receiptDB.get("totalPrice")));
-                            //String receiptFileName = receiptDB.get("fileName").toString();
+                            String receiptFileName = receiptDB.get("fileName").toString();
                             Date receiptDate = null;
                             eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
                             SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a");
@@ -577,9 +752,9 @@ public class ServerHandler {
 
                                 receiptDate = formatter.parse(receiptDateStr);
                                 Receipt temp = new Receipt(receiptsEmail, receiptCompany,
-                                        "A12345", receiptDate,
+                                        receiptNumber, receiptDate,
                                         receiptPrice, receiptCurrency
-                                ,"Amazon12.pdf");
+                                ,receiptFileName);
 
                                 receipts.add(temp);
 
@@ -654,5 +829,162 @@ public class ServerHandler {
 
         return receipts;
 
+    }
+
+//    public Company getCompany(String companyName) {
+//
+//        Company company = null;
+//
+//        for (Company c : companies) {
+//            if (c.getName().equals(companyName))
+//                company = c;
+//        }
+//
+//        return company;
+//
+//    }
+
+    public void fetchUserAllReceipts(String userEmail, Runnable onFinish) {
+
+
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+
+                try {
+                    URL url = new URL("http://10.0.2.2:8080/ior/userAllReceipts");
+                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("GET");
+
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put("email", userEmail);
+
+                    con.setDoOutput(true);
+                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
+                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+                    out.flush();
+                    out.close();
+                    int responseCode = con.getResponseCode();
+
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(con.getInputStream()));
+                    String inputLine;
+                    StringBuffer content = new StringBuffer();
+                    while ((inputLine = in.readLine()) != null) {
+                        content.append(inputLine);
+                    }
+                    in.close();
+
+                    Gson gson = new Gson();
+                    // data: array of : ["companyName" -> "aaa" , "logoUrl" -> "httpdsdsa"] , [...]
+
+                    List<LinkedTreeMap<String, Object>> receiptsDb = gson.fromJson(content.toString(), List.class);
+                    //companies = new ArrayList<>();
+
+                    signInUser.setAmountReceipts(receiptsDb.size());
+                    if (!usersReceipts.containsKey(userEmail)) {
+                        usersReceipts.put(userEmail, new HashMap<>());
+                    }
+
+                    for (LinkedTreeMap<String, Object> receiptDB : receiptsDb) {
+
+                        String receiptsEmail = userEmail;
+                        String receiptCompany = receiptDB.get("companyName").toString();
+                        String receiptNumber = receiptDB.get("receiptNumber").toString();
+                        String receiptDateStr = receiptDB.get("creationDate").toString();
+                        String receiptCurrencyStr = receiptDB.get("currency").toString();
+                        float receiptPrice = (float)((double)(receiptDB.get("totalPrice")));
+                        String receiptFileName = receiptDB.get("fileName").toString();
+                        Date receiptDate = null;
+                        eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
+                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a");
+
+                        try {
+
+                            receiptDate = formatter.parse(receiptDateStr);
+                            Receipt temp = new Receipt(receiptsEmail, receiptCompany,
+                                    receiptNumber, receiptDate,
+                                    receiptPrice, receiptCurrency
+                                    ,receiptFileName);
+
+
+                            if (!usersReceipts.get(userEmail).containsKey(receiptCompany))
+                                usersReceipts.get(userEmail).put(receiptCompany, new ArrayList<>());
+
+
+                            usersReceipts.get(userEmail).get(receiptCompany).add(temp);
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                } catch (ProtocolException e1) {
+
+                } catch (IOException e2) {
+
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                fetchBitmaps(userEmail, onFinish);
+            }
+        }.execute();
+
+    }
+
+
+    public  void downloadFile(Activity activity, String url, String fileName, Runnable onFinish) {
+
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        1);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            // Permission has already been granted
+            DownloadFileTask task = new DownloadFileTask(activity, url, fileName, onFinish);
+            task.execute();
+        }
+
+
+
+
+
+
+
+    }
+
+
+    public  void reset() {
+
+        this.usersInfoMap.clear();
+        this.companyMap.clear();
+        this.usersReceipts.clear();
+        this.signInUser = null;
+        this.companiesLastFetch = null;
     }
 }

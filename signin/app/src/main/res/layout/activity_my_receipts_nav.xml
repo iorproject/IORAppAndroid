@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+    android:id="@+id/frameLayout_companyReceipts"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ior.activities.MyReceiptsActivityNav">
@@ -61,7 +61,7 @@
         android:layout_marginEnd="0dp"
         android:background="@drawable/navigator_bar_background"
         app:itemIconTint="@drawable/bottom_navigation_selector"
-        app:itemTextColor="#F7F2F2"
+        app:itemTextColor="@color/bottom_nav_item_text_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
