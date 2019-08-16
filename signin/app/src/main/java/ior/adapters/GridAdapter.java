@@ -80,20 +80,16 @@ public class GridAdapter extends BaseAdapter {
         textView.setText(company.getName());
 
 
-        //ImageView imageView = new ImageView(context);
-        //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        //imageView.setBackgroundResource(R.drawable.rounded_image);
-        //imageView.setTag(companies.get(position).getName());
-        //imageView.setLayoutParams(new ViewGroup.LayoutParams(190, 190));
-        //Bitmap bitmap = companies.get(position).getBitmap();
-        Bitmap circleBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        BitmapShader shader = new BitmapShader (bitmap,  Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        Paint paint = new Paint();
-        paint.setShader(shader);
-        paint.setAntiAlias(true);
-        Canvas c = new Canvas(circleBitmap);
-        c.drawCircle(bitmap.getWidth()/2, bitmap.getHeight()/2, bitmap.getWidth()/2, paint);
-        imageView.setImageBitmap(circleBitmap);
+
+//        Bitmap circleBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+//        BitmapShader shader = new BitmapShader (bitmap,  Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+//        Paint paint = new Paint();
+//        paint.setShader(shader);
+//        paint.setAntiAlias(true);
+//        Canvas c = new Canvas(circleBitmap);
+//        c.drawCircle(bitmap.getWidth()/2, bitmap.getHeight()/2, bitmap.getWidth()/2, paint);
+//        imageView.setImageBitmap(circleBitmap);
+        imageView.setImageBitmap(bitmap);
 
 
         linearLayout.setOnClickListener(v -> {

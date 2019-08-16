@@ -824,7 +824,7 @@ public class ServerHandler {
 
     public List<Receipt> getCompanyReceipts(String email, String company) {
 
-        List<Receipt> receipts = usersReceipts.containsKey(email) ?
+        List<Receipt> receipts = !usersReceipts.containsKey(email) ?
                 null : usersReceipts.get(email).get(company);
 
         return receipts;
@@ -897,7 +897,8 @@ public class ServerHandler {
                         String receiptDateStr = receiptDB.get("creationDate").toString();
                         String receiptCurrencyStr = receiptDB.get("currency").toString();
                         float receiptPrice = (float)((double)(receiptDB.get("totalPrice")));
-                        String receiptFileName = receiptDB.get("fileName").toString();
+                        String receiptFileName = receiptDB.get("fileName") == null ? "" :
+                        receiptDB.get("fileName").toString();
                         Date receiptDate = null;
                         eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
                         SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a");

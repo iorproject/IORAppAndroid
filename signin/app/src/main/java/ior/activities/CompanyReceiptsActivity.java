@@ -24,6 +24,7 @@ import java.util.List;
 import ior.adapters.ReceiptRecycleAdapter;
 import ior.engine.Receipt;
 import ior.engine.ServerHandler;
+import utils.IorUtils;
 
 public class CompanyReceiptsActivity extends AppCompatActivity {
     private TextView mTextMessage;
@@ -39,6 +40,7 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
     private ImageView imageViewPrev;
     private RecyclerView.LayoutManager recycleLayoutManager;
     private FrameLayout container;
+    private BottomNavigationView navViewBottom;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -77,6 +79,11 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
         imageViewNext = findViewById(R.id.imageView_next_companyReceipts);
         imageViewPrev = findViewById(R.id.imageView_prev_companyReceipts);
         container = findViewById(R.id.frameLayout_companyReceipts);
+
+        navViewBottom = findViewById(R.id.nav_view);
+        navViewBottom.setOnNavigationItemSelectedListener(menuItem -> {
+            return IorUtils.onNavigationItemSelected(this, menuItem);
+        });
 
         recycleLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView = findViewById(R.id.recyclerView_companyReceipts);

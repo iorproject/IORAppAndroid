@@ -32,12 +32,17 @@
                 android:textColor="@android:color/black"
                 android:textSize="24sp" />
 
-            <ImageView
-                android:id="@+id/imageView_company_receiptAdapter"
+            <com.mikhaellopez.circularimageview.CircularImageView
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:layout_weight="1"
-                app:srcCompat="@android:color/background_dark" />
+                android:src="@drawable/profie"
+                app:civ_border_color="#313131"
+                app:civ_border_width="0dp"
+                app:civ_shadow="true"
+                app:civ_shadow_color="#3F51B5"
+                app:civ_shadow_radius="1"
+                android:id="@+id/imageView_company_receiptAdapter"
+                android:layout_gravity="start"/>
 
         </FrameLayout>
 

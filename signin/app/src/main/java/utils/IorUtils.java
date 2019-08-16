@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -27,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ior.activities.HomeScreenActivity;
+import ior.activities.MyPartnersActivityNav;
 import ior.activities.MyReceiptsActivityNav;
 import ior.activities.ServerAuthCodeActivity;
 import ior.engine.ServerHandler;
@@ -44,8 +46,7 @@ public class IorUtils {
                     CURRENT_USER_FILE_NAME, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
             outputStreamWriter.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
 
         }
     }
@@ -58,21 +59,20 @@ public class IorUtils {
         try {
             InputStream inputStream = context.openFileInput(CURRENT_USER_FILE_NAME);
 
-            if ( inputStream != null ) {
+            if (inputStream != null) {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 String receiveString = "";
                 StringBuilder stringBuilder = new StringBuilder();
 
-                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                while ((receiveString = bufferedReader.readLine()) != null) {
                     stringBuilder.append(receiveString);
                 }
 
                 inputStream.close();
                 ret = stringBuilder.toString();
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             Log.e("login activity", "File not found: " + e.toString());
         } catch (IOException e) {
             Log.e("login activity", "Can not read file: " + e.toString());
@@ -112,7 +112,7 @@ public class IorUtils {
 
     public static void writeToSharePreference(Activity activity, String key, String val) {
 
-        SharedPreferences sharedPref = activity.getSharedPreferences("ior.activities" ,Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = activity.getSharedPreferences("ior.activities", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(key, val);
         editor.apply();
@@ -125,8 +125,6 @@ public class IorUtils {
         return dateStr;
 
     }
-
-
 
 
     public static void onNavigationItemSelected(Context activity, MenuItem item, FragmentManager fm) {
@@ -146,8 +144,6 @@ public class IorUtils {
 
 
         }
-
-
 
 
 //        Fragment fragment = null;
@@ -185,20 +181,17 @@ public class IorUtils {
 
     }
 
-    public static ActionBarDrawerToggle setNavigateBar(Activity activity)
-    {
+    public static ActionBarDrawerToggle setNavigateBar(Activity activity) {
         DrawerLayout drawerLayout = activity.findViewById(R.id.drawer);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(activity,drawerLayout,R.string.open, R.string.close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(activity, drawerLayout, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         return toggle;
     }
 
-    public static Intent getItemIntent(Activity activity, int itemId)
-    {
-        Intent result  = null;
-        switch (itemId)
-        {
+    public static Intent getItemIntent(Activity activity, int itemId) {
+        Intent result = null;
+        switch (itemId) {
             case R.id.profile:
                 result = new Intent(activity, ShowProfileActivity.class);
 
@@ -207,4 +200,32 @@ public class IorUtils {
         return result;
     }
 
+    public static boolean onNavigationItemSelected(Activity activity, MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.navigation_myReceipts:
+                ServerHandler.getInstance().fetchUserInfo(ServerHandler.getInstance().getSignInUser().getEmail(),
+                        () -> {
+                            Intent intent = new Intent(activity, MyReceiptsActivityNav.class);
+                            activity.startActivity(intent);
+                        });
+                return true;
+
+            case R.id.navigation_myPartners:
+                ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail(),
+                        () -> {
+                            Intent intent = new Intent(activity, MyPartnersActivityNav.class);
+                            activity.startActivity(intent);
+                        });
+                return true;
+
+            case R.id.navigation_statInfo:
+                IorUtils.signOut(activity);
+                return true;
+
+        }
+
+        return false;
+    }
 }
