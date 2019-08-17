@@ -18,16 +18,22 @@ import android.widget.TextView;
 
 import com.google.samples.quickstart.signin.R;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 import ior.adapters.ReceiptRecycleAdapter;
 import ior.engine.Receipt;
 import ior.engine.ServerHandler;
+import ior.engine.eCurrency;
 import utils.IorUtils;
 
 public class CompanyReceiptsActivity extends AppCompatActivity {
-    private TextView mTextMessage;
 
     private RecyclerView recyclerView;
     private ReceiptRecycleAdapter adapter;
@@ -42,51 +48,63 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
     private FrameLayout container;
     private BottomNavigationView navViewBottom;
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.navigation_home:
-//                    mTextMessage.setText(R.string.title_home);
-//                    return true;
-//                case R.id.navigation_dashboard:
-//                    mTextMessage.setText(R.string.title_dashboard);
-//                    return true;
-//                case R.id.navigation_notifications:
-//                    mTextMessage.setText(R.string.title_notifications);
-//                    return true;
-//            }
-            return false;
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company_receipts);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         Intent intent = getIntent();
         userEmail = intent.getStringExtra("email");
         companyName = intent.getStringExtra("company");
+        String barTitle = intent.getStringExtra("barTitle");
+        boolean filter = intent.getBooleanExtra("filter", false);
+
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(companyName + "'s receipts");
-        receipts = ServerHandler.getInstance().getCompanyReceipts(userEmail, companyName);
+        actionBar.setTitle(barTitle);
+        if (!filter)
+            receipts = ServerHandler.getInstance().getCompanyReceipts(userEmail, companyName);
+
+        else {
+
+            String startDateStr = intent.getStringExtra("startDate");
+            String endDateStr = intent.getStringExtra("endDate");
+            float minPrice = intent.getFloatExtra("minPrice", 0);
+            float maxPrice = intent.getFloatExtra("maxPrice", 0);
+            List<String> currenciesStr = intent.getStringArrayListExtra("currencies");
+            List<eCurrency> currencies = new ArrayList<>();
+            for (String c : currenciesStr)
+                currencies.add(eCurrency.createCurrency(c));
+
+            List<String> companies = intent.getStringArrayListExtra("companies");
+
+            DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+            try{
+
+                Date startDate = startDateStr == null ? format.parse("01 Jan 2019") : format.parse(startDateStr);
+                Date endDate = endDateStr == null ? Calendar.getInstance().getTime() : format.parse(endDateStr);
+                receipts = ServerHandler.getInstance().getReceiptsFiltered(userEmail,
+                        companies, startDate, endDate, minPrice, maxPrice, currencies);
+            }
+            catch (Exception e) {
+
+                int fff = 5;
+
+            }
+
+
+        }
+
         counter = findViewById(R.id.textViewCounter_companyReceipts);
         imageViewNext = findViewById(R.id.imageView_next_companyReceipts);
         imageViewPrev = findViewById(R.id.imageView_prev_companyReceipts);
         container = findViewById(R.id.frameLayout_companyReceipts);
-
         navViewBottom = findViewById(R.id.nav_view);
-        navViewBottom.setOnNavigationItemSelectedListener(menuItem -> {
-            return IorUtils.onNavigationItemSelected(this, menuItem);
-        });
+        recyclerView = findViewById(R.id.recyclerView_companyReceipts);
+
+        navViewBottom.setOnNavigationItemSelectedListener(menuItem ->
+                IorUtils.onNavigationItemSelected(this, menuItem));
 
         recycleLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView = findViewById(R.id.recyclerView_companyReceipts);
         adapter = new ReceiptRecycleAdapter(this, R.layout.receipts_adapter, receipts, container);
         recyclerView.setLayoutManager(recycleLayoutManager);
         recyclerView.setAdapter(adapter);
@@ -109,40 +127,36 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
             }
 
 
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
-            currentPosition = ((LinearLayoutManager) recycleLayoutManager).findFirstVisibleItemPosition();
-            /* Log.e ("VisibleItem", String.valueOf(firstVisibleItem));*/
+                currentPosition = ((LinearLayoutManager) recycleLayoutManager).findFirstVisibleItemPosition();
+                /* Log.e ("VisibleItem", String.valueOf(firstVisibleItem));*/
 
-            counter.setText((currentPosition + 1) + " / " + receipts.size());
+                counter.setText((currentPosition + 1) + " / " + receipts.size());
 
-            if (currentPosition == 0) {
-                imageViewPrev.setImageResource(R.drawable.prev_arrow_unable);
-                imageViewPrev.setEnabled(false);
+                if (currentPosition == 0) {
+                    imageViewPrev.setImageResource(R.drawable.prev_arrow_unable);
+                    imageViewPrev.setEnabled(false);
+                } else {
+                    imageViewPrev.setImageResource(R.drawable.next_arrow_able);
+                    imageViewPrev.setEnabled(true);
+                }
+
+
+                if (currentPosition < receipts.size() - 1) {
+                    imageViewNext.setImageResource(R.drawable.next_arrow_able);
+                    imageViewNext.setEnabled(true);
+                } else {
+                    imageViewNext.setImageResource(R.drawable.next_arrow_unable);
+                    imageViewNext.setEnabled(false);
+                }
+
             }
-            else {
-                imageViewPrev.setImageResource(R.drawable.next_arrow_able);
-                imageViewPrev.setEnabled(true);
-            }
-
-
-            if (currentPosition < receipts.size() - 1) {
-                imageViewNext.setImageResource(R.drawable.next_arrow_able);
-                imageViewNext.setEnabled(true);
-            }
-            else {
-                imageViewNext.setImageResource(R.drawable.next_arrow_unable);
-                imageViewNext.setEnabled(false);
-            }
-
-        }
-    });
-
-
-
+        });
     }
+
 
     @Override
     public void onBackPressed() {

@@ -259,7 +259,7 @@
                 app:srcCompat="@drawable/ic_file_download_black_24dp" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/textViewName_filterItemAdapter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-thin"

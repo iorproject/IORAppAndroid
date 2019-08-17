@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import utils.ParameterStringBuilder;
 
@@ -988,4 +989,21 @@ public class ServerHandler {
         this.signInUser = null;
         this.companiesLastFetch = null;
     }
+
+    public List<Receipt> getReceiptsFiltered(String userEmail, List<String> companies, Date startDate, Date endDate, float minPrice, float maxPrice, List<eCurrency> currencies) {
+
+        List<Receipt> receipts = new ArrayList<>();
+        for (List<Receipt> list : usersReceipts.get(userEmail).values())
+            receipts.addAll(list);
+
+        Stream<Receipt> stream = receipts.stream().filter(receipt -> companies.contains(receipt.getCompany()))
+                .filter(receipt -> !receipt.getCreationDate().before(startDate) && !receipt.getCreationDate().after(endDate))
+                .filter(receipt -> currencies.contains(receipt.getCurrency()));
+
+        int x = 5;
+
+        return receipts;
+    }
+
+
 }

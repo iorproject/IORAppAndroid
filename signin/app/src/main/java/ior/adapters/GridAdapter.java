@@ -14,6 +14,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -62,7 +63,6 @@ public class GridAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
 
-
         if (convertView == null) {
 
 
@@ -97,6 +97,7 @@ public class GridAdapter extends BaseAdapter {
             Intent intent = new Intent(context, CompanyReceiptsActivity.class);
             intent.putExtra("email", userEmail);
             intent.putExtra("company",company.getName());
+            intent.putExtra("barTitle", company.getName() + "'s Receipts");
             context.startActivity(intent);
 
 
@@ -109,6 +110,9 @@ public class GridAdapter extends BaseAdapter {
 //                context.startActivity(intent);
 //            });
         });
+
+        textView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.companies_logos_transmition));
+        linearLayout.setAnimation(AnimationUtils.loadAnimation(context, R.anim.companies_logos_fade));
 
         return convertView;
     }
