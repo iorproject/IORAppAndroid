@@ -77,7 +77,7 @@ public class GridAdapter extends BaseAdapter {
 
         linearLayout.setTag(company.getName());
         Bitmap bitmap = company.getBitmap();
-        textView.setText(company.getName());
+        textView.setText(company.getName().substring(0, 1).toUpperCase() + company.getName().substring(1));
 
 
 
@@ -111,7 +111,7 @@ public class GridAdapter extends BaseAdapter {
 //            });
         });
 
-        textView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.companies_logos_transmition));
+        //textView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.companies_logos_transmition));
         linearLayout.setAnimation(AnimationUtils.loadAnimation(context, R.anim.companies_logos_fade));
 
         return convertView;

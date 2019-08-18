@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_receipt_background"
+    tools:context="ior.activities.CalendarActivity">
+
+    <CalendarView
+        android:id="@+id/calendarView"
+        style="@android:style/Widget.Material.Light.CalendarView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusedMonthDateColor="#FF0303"
+        android:weekDayTextAppearance="@style/TextAppearance.AppCompat.Body2" />
+</RelativeLayout>

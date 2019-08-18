@@ -101,7 +101,8 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
 
         Receipt currentReceipt = receipts.get(position);
 
-        viewHolder.textViewID.setText(currentReceipt.getReceiptNumber());
+        String receiptId = currentReceipt.getReceiptNumber().equals("") ? "---" : currentReceipt.getReceiptNumber();
+        viewHolder.textViewID.setText(receiptId);
         viewHolder.textViewCompany.setText(currentReceipt.getCompany());
         viewHolder.textViewEmail.setText(currentReceipt.getEmail());
         String ppp = String.valueOf(currentReceipt.getTotalPrice());
@@ -114,11 +115,14 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
         if (currentReceipt.getFileName().equals("")) {
             viewHolder.imageViewPreviewFile.setVisibility(View.GONE);
             viewHolder.linearLayoutDownloadFile.setVisibility(View.GONE);
-
+        }
+        else {
+            viewHolder.imageViewPreviewFile.setVisibility(View.VISIBLE);
+            viewHolder.linearLayoutDownloadFile.setVisibility(View.VISIBLE);
         }
 
         TextView textViewFileName = viewHolder.textViewFileName;
-        String fileName = currentReceipt.getFileName().equals("") ? "No File" : currentReceipt.getFileName();
+        String fileName = currentReceipt.getFileName().equals("") ? "---" : currentReceipt.getFileName();
         if (fileName.length() > MAX_TEXT_LENGTH) {
 
             fileName = fileName.substring(0, MAX_TEXT_LENGTH - 3) + "...";

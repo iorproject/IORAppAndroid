@@ -37,8 +37,11 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,7 +54,7 @@ public class ServerHandler {
     private Date partnersLastFetch = null;
     private Date companiesLastFetch = null;
     private Date requestsLastFetch = null;
-    private Map<String, Map<String, Date>> companiesReceiptsLastFetch = new HashMap<>();
+    private Map<String, Map<String, Date>> companiesReceiptsLastFetch = new LinkedHashMap<>();
 
     public static ServerHandler getInstance() {
         return ourInstance;
@@ -61,8 +64,8 @@ public class ServerHandler {
     private List<String> partners;
     private List<String> requests;
     private List<Company> companies;
-    private Map<String, Company> companyMap = new HashMap<>();
-    private Map<String, Map<String, List<Receipt>>> usersReceipts = new HashMap<>();
+    private Map<String, Company> companyMap = new LinkedHashMap<>();
+    private Map<String, Map<String, List<Receipt>>> usersReceipts = new LinkedHashMap<>();
     private Map<String, User> usersInfoMap = new HashMap<>();
 
 
@@ -887,7 +890,7 @@ public class ServerHandler {
 
                     signInUser.setAmountReceipts(receiptsDb.size());
                     if (!usersReceipts.containsKey(userEmail)) {
-                        usersReceipts.put(userEmail, new HashMap<>());
+                        usersReceipts.put(userEmail, new LinkedHashMap<>());
                     }
 
                     for (LinkedTreeMap<String, Object> receiptDB : receiptsDb) {
@@ -936,6 +939,7 @@ public class ServerHandler {
 
             @Override
             protected void onPostExecute(Void aVoid) {
+
                 fetchBitmaps(userEmail, onFinish);
             }
         }.execute();
@@ -990,20 +994,54 @@ public class ServerHandler {
         this.companiesLastFetch = null;
     }
 
-    public List<Receipt> getReceiptsFiltered(String userEmail, List<String> companies, Date startDate, Date endDate, float minPrice, float maxPrice, List<eCurrency> currencies) {
+    public List<Receipt> getReceiptsFiltered(
+            String userEmail, List<String> companies, Date startDate, Date endDate,
+            float minPrice, float maxPrice, List<eCurrency> currencies) {
 
         List<Receipt> receipts = new ArrayList<>();
         for (List<Receipt> list : usersReceipts.get(userEmail).values())
             receipts.addAll(list);
 
-        Stream<Receipt> stream = receipts.stream().filter(receipt -> companies.contains(receipt.getCompany()))
+        receipts = usersReceipts.get(userEmail).values().stream().flatMap(List::stream).collect(Collectors.toList())
+                .stream()
+                .filter(receipt -> companies.contains(receipt.getCompany()))
                 .filter(receipt -> !receipt.getCreationDate().before(startDate) && !receipt.getCreationDate().after(endDate))
-                .filter(receipt -> currencies.contains(receipt.getCurrency()));
+                .filter(receipt -> currencies.contains(receipt.getCurrency()))
+                .filter(receipt -> receipt.getTotalPrice() >= minPrice && receipt.getTotalPrice() <= maxPrice)
+                .collect(Collectors.toList());
 
-        int x = 5;
 
         return receipts;
     }
 
 
+    public List<eCurrency> getUserCurrencies(String userEmail) {
+
+        Set<eCurrency> set = new HashSet<>();
+        List<eCurrency> res = new ArrayList<>();
+        for (List<Receipt> list : usersReceipts.get(userEmail).values()) {
+
+            for (Receipt r : list)
+                set.add(r.getCurrency());
+
+        }
+
+        res.addAll(set);
+
+        return res;
+
+    }
+
+    public float getUserMaxPriceReceipt(String userEmail) {
+
+        float maxPrice = 0;
+        List<Receipt> receipts = usersReceipts.get(userEmail).values().stream().flatMap(List::stream).collect(Collectors.toList());
+        for (Receipt receipt : receipts) {
+
+            if (receipt.getTotalPrice() > maxPrice)
+                maxPrice = receipt.getTotalPrice();
+        }
+
+        return maxPrice;
+    }
 }

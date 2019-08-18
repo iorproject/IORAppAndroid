@@ -39,16 +39,17 @@ public class ReceiptFileActivity extends AppCompatActivity {
 
 
 
-        String url = "https://firebasestorage.googleapis.com/v0/b/iorproject.appspot.com/o/receipts%2Fior46800%40gmail.com%2FInvoice_51706333284.pdf?alt=media&token=a4fb5bbc-ef3c-44a8-a71b-7dd3e17dc2d4";
+        String url = "https://storage.googleapis.com/iorproject.appspot.com/receipts/ior46800@gmail.com/1562317568000/IV_IN194076978.pdf?GoogleAccessId=firebase-adminsdk-j2rk3@iorproject.iam.gserviceaccount.com&Expires=1574616015&Signature=RnjYHHPpZFpVWTsM22KsfUwDHaKa37F3sLhDE4F9uvpZYG2Fa5SCg56wE6813kgWNyXK3B3HX6R6ewXccIOD%2BeOj9UZxIKS10hRxC%2FOth82grcbAwXMlTj4MNp6raBLq6xZ8fdm4eZgZBua3VqeS70JZWHAn1cdtGoXd6BHNXkdaCgF48AZjri9ulmz5STL6npX8CF8DhtdP4CWi%2BCWc4%2FZ7f5dSQGXB8Ty0ZBjdyN2KcDsuE%2FLe%2FttbqJ3QyFmTecL92nPCB%2FkVk0HrodNq1Xs7jdS17NAMixXVXapFtLV7brvIOgqyFRrlkHzITpJ0dItEAt6JKAr3%2FEKNDN67bw%3D%3D";
         try{
 
             url= URLEncoder.encode(url,"UTF-8");
             webView = findViewById(R.id.webView_file);
             webView.setWebViewClient(new WebViewClient());
-            webView.getSettings().setSupportZoom(true);
+            //webView.getSettings().setSupportZoom(true);
             webView.getSettings().setJavaScriptEnabled(true);
             String url2 = "http://www.pdf995.com/samples/pdf.pdf";
             webView.loadUrl("http://drive.google.com/viewerng/viewer?embedded=true&url="+  url);
+
             //webView.loadUrl(url);
 
             webView.getSettings().setBuiltInZoomControls(true);

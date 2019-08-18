@@ -9,12 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.samples.quickstart.signin.R;
 
@@ -57,6 +59,7 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
         userEmail = intent.getStringExtra("email");
         companyName = intent.getStringExtra("company");
         String barTitle = intent.getStringExtra("barTitle");
+        barTitle = barTitle.substring(0, 1).toUpperCase() + barTitle.substring(1);
         boolean filter = intent.getBooleanExtra("filter", false);
 
         ActionBar actionBar = getSupportActionBar();
@@ -77,10 +80,10 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
 
             List<String> companies = intent.getStringArrayListExtra("companies");
 
-            DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+            DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
             try{
 
-                Date startDate = startDateStr == null ? format.parse("01 Jan 2019") : format.parse(startDateStr);
+                Date startDate = startDateStr == null ? format.parse("1/1/2019") : format.parse(startDateStr);
                 Date endDate = endDateStr == null ? Calendar.getInstance().getTime() : format.parse(endDateStr);
                 receipts = ServerHandler.getInstance().getReceiptsFiltered(userEmail,
                         companies, startDate, endDate, minPrice, maxPrice, currencies);
@@ -94,6 +97,7 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
 
         }
 
+
         counter = findViewById(R.id.textViewCounter_companyReceipts);
         imageViewNext = findViewById(R.id.imageView_next_companyReceipts);
         imageViewPrev = findViewById(R.id.imageView_prev_companyReceipts);
@@ -103,6 +107,21 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
 
         navViewBottom.setOnNavigationItemSelectedListener(menuItem ->
                 IorUtils.onNavigationItemSelected(this, menuItem));
+
+
+        if (receipts.size() == 0) {
+
+            counter.setVisibility(View.INVISIBLE);
+            imageViewNext.setVisibility(View.INVISIBLE);
+            imageViewPrev.setVisibility(View.INVISIBLE);
+            Toast t = Toast.makeText(this, "No Receipts found", Toast.LENGTH_LONG);
+            t.setGravity(Gravity.CENTER, 0, 0);
+            t.show();
+            return;
+
+
+        }
+
 
         recycleLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         adapter = new ReceiptRecycleAdapter(this, R.layout.receipts_adapter, receipts, container);

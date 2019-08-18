@@ -1,52 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:scrollbarSize="6dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:overScrollMode="ifContentScrolls"
+        android:paddingBottom="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#DAFFFFFF"
             android:orientation="vertical"
-            android:paddingBottom="5dp">
+            android:paddingBottom="5dp"
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/filter_title_advanced_search_background"
                 android:orientation="horizontal"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp">
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp">
 
                 <TextView
                     android:id="@+id/textViewCompany_advancedSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="20dp"
                     android:layout_weight="1"
                     android:text="Company"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
-                    android:textStyle="bold|italic" />
+                    android:textStyle="italic" />
 
                 <CheckBox
                     android:id="@+id/checkBoxCompany_advancedSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|end"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="20dp"
                     android:layout_weight="0"
-                    android:text="@android:string/selectAll" />
+                    android:text="select all" />
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/imageViewSeparator_advancedSearch"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#A8A7A7" />
@@ -56,15 +62,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:orientation="horizontal" />
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp" />
 
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:background="#B9FFFFFF"
             android:orientation="vertical"
             android:paddingBottom="5dp">
@@ -74,39 +81,239 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/filter_title_advanced_search_background"
                 android:orientation="horizontal"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp">
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp">
 
                 <TextView
-                    android:id="@+id/textViewCompany2_advancedSearch"
+                    android:id="@+id/textViewDae_advancedSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="20dp"
                     android:layout_weight="1"
-                    android:text="Company"
+                    android:text="Date"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
-                    android:textStyle="bold|italic" />
+                    android:textStyle="italic" />
 
-                <CheckBox
-                    android:id="@+id/checkBoxCompany2_advancedSearch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|end"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="0"
-                    android:text="@android:string/selectAll" />
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/imageViewSeparator2_advancedSearch"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#A8A7A7" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textViewStartDateKey_advancedSearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Start Date"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/imageViewCalendarStart_advancedSearch"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        app:srcCompat="@drawable/calendar" />
+
+
+                    <TextView
+                        android:id="@+id/textViewStartDateVal_advancedSearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="No Limit"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textViewEndDateKey_advancedSearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="End Date"
+                        android:textSize="16sp" />
+
+
+                    <ImageView
+                        android:id="@+id/imageViewCalendarEnd_advancedSearch"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        app:srcCompat="@drawable/calendar" />
+
+
+                    <TextView
+                        android:id="@+id/textViewEndDateVal_advancedSearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="No Limit"
+                        android:textSize="14sp" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
         </LinearLayout>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/filter_title_advanced_search_background"
+                android:orientation="horizontal"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp">
+
+                <TextView
+                    android:id="@+id/textViewCurrency_advancedSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:text="Currency"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textStyle="italic" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxCurrency_advancedSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|end"
+                    android:layout_marginEnd="20dp"
+                    android:layout_weight="0"
+                    android:text="select all" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imageViewSeparator3_advancedSearch"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#A8A7A7" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycleViewCurrency_advancedSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/filter_title_advanced_search_background"
+                android:orientation="horizontal"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp">
+
+                <TextView
+                    android:id="@+id/textViewPrice_advancedSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:text="Price"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imageViewSeparator4_advancedSearch"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#A8A7A7" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textViewPriceRange_advancedSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Price range 0 - 1" />
+            </LinearLayout>
+
+            <org.florescu.android.rangeseekbar.RangeSeekBar
+                android:id="@+id/rangeSeekbarPrice2_advancedSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:visibility="gone"
+
+                />
+
+            <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
+                android:id="@+id/rangeSeekbarPrice_advancedSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                app:bar_color="#C5CADF"
+                app:bar_highlight_color="#338BCE"
+                app:corner_radius="2"
+                app:data_type="_integer"
+                app:left_thumb_color="#1A246D"
+                app:left_thumb_color_pressed="#3F51B5"
+                app:right_thumb_color="#1A246D"
+                app:right_thumb_color_pressed="#3F51B5" />
+
+
+        </LinearLayout>
 
 
         <Button
@@ -114,6 +321,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Button"
-            android:visibility="visible" />
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/buttonApply_advancedSearch"
+
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/apply_button_advanced_search"
+            android:fontFamily="sans-serif-thin"
+            android:shadowColor="#A8A8A8"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="1"
+            android:text="APPLY"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
     </LinearLayout>
-</RelativeLayout>
+</ScrollView>

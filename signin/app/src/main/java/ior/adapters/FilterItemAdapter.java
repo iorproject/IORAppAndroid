@@ -54,7 +54,9 @@ public class FilterItemAdapter extends RecyclerView.Adapter<FilterItemAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
 
-        viewHolder.textViewName.setText(items.get(position).getName());
+        String name = items.get(position).getName();
+        name = name.substring(0, 1).toUpperCase() + name.substring(1);
+        viewHolder.textViewName.setText(name);
         FilterItem item = items.get(position);
 
 
