@@ -1,11 +1,15 @@
 package ior.activities;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,32 +37,42 @@ import ior.engine.ServerHandler;
 
 public class ViewStatisticsActivity extends AppCompatActivity {
 
-    private static String TAG = "ViewStatisticsActivity";
 
+    private class ColorRGB{
+        private int red;
+        private int green;
+        private int blue;
+
+        public ColorRGB(int red, int green, int blue) {
+            this.red = red;
+            this.green = green;
+            this.blue = blue;
+        }
+    }
+
+    private static String TAG = "ViewStatisticsActivity";
+    private Context context;
     private TextView totalPricePurchase;
     private TextView amountOfPurchases;
     private TextView averagePricePurchase;
     private String email;
-    private List<Receipt> receipts;
 
-    private float[] yData = {25.3f,10.6f,66.76f,44.32f,46.01f,16.89f,23.9f};
-    private String [] xData = {"Amazon","Booking","Gmail","Alibaba","Ebay","ASOS","hotels.com"};
+    private List<String> xData;
+    private List<Float> yData;
     private PieChart mPieChart;
-
+    private ColorRGB baseColor = new ColorRGB(80,148,176);;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_statistics);
+        context = this;
         Log.d(TAG,"OnCreate: starting pieChart");
         totalPricePurchase = findViewById(R.id.total_purchases_value);
         amountOfPurchases = findViewById(R.id.amount_of_purchases_value);
         averagePricePurchase = findViewById(R.id.average_purchase_value);
         mPieChart = findViewById(R.id.companyPieChart);
-        //TODO: achieve email
-        email = "ior46800@gmail.com";
-        ServerHandler.getInstance().fetchCompanyReceipts(email,"Amazon",this::displayStatistics);
-
-
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
         Description description = new Description();
         description.setText("Company expenses (in ILS)");
         mPieChart.setDescription(description);
@@ -68,23 +82,32 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         mPieChart.setCenterText("Company chart");
         mPieChart.setCenterTextSize(10);
         //mPieChart.setDrawEntryLabels(true);
+        displayStatistics();
+    }
 
+    private void displayStatistics(){
+        totalPricePurchase.setText(Double.toString(Math.round(ServerHandler.getInstance().getTotalPurchases(email) * 100.0) / 100.0));
+        averagePricePurchase.setText(Double.toString((Math.round(ServerHandler.getInstance().getAveragePurchase(email) * 100.0) / 100.0)));
+        amountOfPurchases.setText(Integer.toString(ServerHandler.getInstance().getAmountOfPurchases(email)));
+        xData = ServerHandler.getInstance().getCompaniesName(email);
+        yData = ServerHandler.getInstance().getCompaniesTotalPrice(email);
         addDataSet();
-
         mPieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
+
                 int pos = e.toString().indexOf("y: ");
                 String totalPrice = e.toString().substring(pos +3);
-                for (int i =0; i<yData.length;++i){
-                    if(yData[i] == Float.parseFloat(totalPrice)){
+                for (int i =0; i<yData.size();++i){
+                    if(yData.get(i) == Float.parseFloat(totalPrice)){
                         pos = i;
                         break;
                     }
                 }
+                String company = xData.get(pos);
 
-                String company = xData[pos];
-                Toast.makeText(ViewStatisticsActivity.this, "Company" + company,Toast.LENGTH_LONG).show();
+                CompanyStatisticsDialog companyStatisticsDialog = new CompanyStatisticsDialog(context,email,company);
+                companyStatisticsDialog.show();
             }
 
             @Override
@@ -92,21 +115,43 @@ public class ViewStatisticsActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
-    private void displayStatistics(){
-        totalPricePurchase.setText(Double.toString(ServerHandler.getInstance().getTotalPurchases(email)));
-        averagePricePurchase.setText(Double.toString(ServerHandler.getInstance().getAveragePurchase(email)));
-        amountOfPurchases.setText(Integer.toString(ServerHandler.getInstance().getAmountOfPurchases(email)));
+
+    private double getHue(int red, int green, int blue) {
+
+        float min = Math.min(Math.min(red, green), blue);
+        float max = Math.max(Math.max(red, green), blue);
+
+        if (min == max) {
+            return 0;
+        }
+
+        float hue = 0f;
+        if (max == red) {
+            hue = (green - blue) / (max - min);
+
+        } else if (max == green) {
+            hue = 2f + (blue - red) / (max - min);
+
+        } else {
+            hue = 4f + (red - green) / (max - min);
+        }
+
+        hue = hue * 60;
+        if (hue < 0) hue = hue + 360;
+
+        return hue;
     }
 
-    private void addDataSet(){
+        private void addDataSet(){
         List<PieEntry> yEntry = new ArrayList<>();
         List<String> xEntry = new ArrayList<>();
 
-        for(int i = 0; i< yData.length;++i){
-            yEntry.add(new PieEntry(yData[i],i));
-            xEntry.add(xData[i]);
+        for(int i = 0; i< yData.size();++i){
+            yEntry.add(new PieEntry(yData.get(i),i));
+            xEntry.add(xData.get(i));
         }
 
         //create data set
@@ -116,14 +161,20 @@ public class ViewStatisticsActivity extends AppCompatActivity {
 
         //add colors to dataset
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.BLUE);
-        colors.add(Color.RED);
-        colors.add(Color.DKGRAY);
-        colors.add(Color.MAGENTA);
-        colors.add(Color.GRAY);
-        colors.add(Color.GREEN);
-        colors.add(Color.YELLOW);
-        colors.add(Color.LTGRAY);
+        float saturaion = 0.55f;
+        float brightness = 0.69f;
+        double baseHue = getHue(baseColor.red,baseColor.green,baseColor.blue);
+        colors.add(Color.rgb(baseColor.red,baseColor.green,baseColor.blue));
+
+            double step = (240.0 / (double)xData.size());
+
+            for (int i = 1; i < xData.size(); ++i)
+            {
+                double nextColorHue = (baseHue + step * ((double)i)) % 240.0;
+                colors.add(ColorUtils.HSLToColor(new float[]{(float)nextColorHue,saturaion,brightness}));
+            }
+
+
         pieDataSet.setColors(colors);
 
         //add legend to to chart

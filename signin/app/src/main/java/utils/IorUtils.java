@@ -32,6 +32,7 @@ import ior.activities.MainActivity;
 import ior.activities.MyPartnersActivityNav;
 import ior.activities.MyReceiptsActivityNav;
 import ior.activities.ServerAuthCodeActivity;
+import ior.activities.ViewStatisticsActivity;
 import ior.engine.ServerHandler;
 import ior.activities.ShowProfileActivity;
 
@@ -200,6 +201,15 @@ public class IorUtils {
                 break;
 
             case R.id.navigation_statInfo:
+                if (activity.getClass() != ViewStatisticsActivity.class) {
+                    Intent intent = new Intent(activity, ViewStatisticsActivity.class);
+                    intent.putExtra("email",ServerHandler.getInstance().getSignInUser().getEmail());
+                    activity.startActivity(intent);
+                    return true;
+                }
+
+                break;
+
 
         }
 

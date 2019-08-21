@@ -68,7 +68,8 @@
     <string name="title_activity_mypartners_nav">My Partners</string>
     <string name="title_activity_company_receipts">CompanyReceiptsActivity</string>
     <string name="title_view_statistics">Receipts statistics</string>
-    <string name="total_purchases">total price purchases:</string>
-    <string name="amount_of_purchases">amount of purchases:</string>
-    <string name="average_purchase">average price purchase:</string>
+    <string name="title_company_statistics">Company Statistics</string>
+    <string name="total_purchases">Total price purchases:</string>
+    <string name="amount_of_purchases">Amount of purchases:</string>
+    <string name="average_purchase">Average price purchase:</string>
 </resources>
