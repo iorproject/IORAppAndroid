@@ -18,12 +18,15 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/total_purchases"/>
+                android:paddingRight="5dp"
+                android:text="@string/total_purchases"
+                android:textColor="#090000" />
 
             <TextView
                 android:id="@+id/total_purchases_value"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="#090000" />
         </TableRow>
 
         <TableRow
@@ -33,27 +36,32 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/amount_of_purchases" />
-
-            <TextView
-                android:id="@+id/amount_of_purchases_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/average_purchase" />
+                android:text="@string/average_purchase"
+                android:textColor="#090000" />
 
             <TextView
                 android:id="@+id/average_purchase_value"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="#090000" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingRight="5dp"
+                android:text="@string/amount_of_purchases"
+                android:textColor="#090000" />
+
+            <TextView
+                android:id="@+id/amount_of_purchases_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#090000" />
         </TableRow>
 
     </TableLayout>
