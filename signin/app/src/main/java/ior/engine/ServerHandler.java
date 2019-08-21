@@ -11,9 +11,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
-import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -21,20 +19,17 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,10 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import utils.ParameterStringBuilder;
 
@@ -753,6 +745,33 @@ public class ServerHandler {
             return totalPrice / (float)receipts.size();
         }
         return totalPrice;
+    }
+
+    public float getMostExpensivePurchase(String email){
+        return usersReceipts.containsKey(email) ?
+                usersReceipts.get(email).values().stream()
+                        .flatMap(Collection::stream)
+                        .map(receipt -> receipt.getTotalPrice())
+                        .max(Comparator.comparingDouble(Float::valueOf))
+                        .get() : 0;
+    }
+
+    public float getLatestPurchase(String email){
+        List<Receipt> receipts = new ArrayList<>();
+        for (List<Receipt> list : usersReceipts.get(email).values())
+            receipts.addAll(list);
+
+        Receipt latestReceipt = !receipts.isEmpty() ? receipts.get(0) : null;
+        if(latestReceipt == null){
+            return 0;
+        }
+
+        for(Receipt receipt : receipts){
+            if(receipt.getCreationDate().after(latestReceipt.getCreationDate())){
+                latestReceipt = receipt;
+            }
+        }
+        return latestReceipt.getTotalPrice();
     }
 
     public int getAmountOfPurchases(String email){

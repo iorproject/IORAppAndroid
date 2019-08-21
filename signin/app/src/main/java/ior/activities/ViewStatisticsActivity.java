@@ -59,6 +59,8 @@ public class ViewStatisticsActivity extends AppCompatActivity {
     private TextView totalPricePurchase;
     private TextView amountOfPurchases;
     private TextView averagePricePurchase;
+    private TextView mostExpensivePurchase;
+    private TextView latestPurchase;
     private String email;
 
     private List<String> xData;
@@ -74,6 +76,8 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         totalPricePurchase = findViewById(R.id.total_purchases_value);
         amountOfPurchases = findViewById(R.id.amount_of_purchases_value);
         averagePricePurchase = findViewById(R.id.average_purchase_value);
+        mostExpensivePurchase = findViewById(R.id.most_expensive_purchase_value);
+        latestPurchase = findViewById(R.id.latest_purchase_value);
         mPieChart = findViewById(R.id.companyPieChart);
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
@@ -91,7 +95,8 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         navViewBottom.setSelectedItemId(R.id.navigation_statInfo);
 
         navViewBottom.setOnNavigationItemSelectedListener(menuItem -> {
-            return IorUtils.onNavigationItemSelected(this, menuItem);
+            IorUtils.onNavigationItemSelected(this, menuItem);
+            return false;
         });
 
 
@@ -103,6 +108,8 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         totalPricePurchase.setText(Double.toString(Math.round(ServerHandler.getInstance().getTotalPurchases(email) * 100.0) / 100.0));
         averagePricePurchase.setText(Double.toString((Math.round(ServerHandler.getInstance().getAveragePurchase(email) * 100.0) / 100.0)));
         amountOfPurchases.setText(Integer.toString(ServerHandler.getInstance().getAmountOfPurchases(email)));
+        mostExpensivePurchase.setText(Double.toString(Math.round(ServerHandler.getInstance().getMostExpensivePurchase(email) * 100.0) / 100.0));
+        latestPurchase.setText(Double.toString(Math.round(ServerHandler.getInstance().getLatestPurchase(email) * 100.0) / 100.0));
         xData = ServerHandler.getInstance().getCompaniesName(email);
         yData = ServerHandler.getInstance().getCompaniesTotalPrice(email);
         addDataSet();
@@ -110,14 +117,8 @@ public class ViewStatisticsActivity extends AppCompatActivity {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
 
-                int pos = e.toString().indexOf("y: ");
-                String totalPrice = e.toString().substring(pos +3);
-                for (int i =0; i<yData.size();++i){
-                    if(yData.get(i) == Float.parseFloat(totalPrice)){
-                        pos = i;
-                        break;
-                    }
-                }
+                int pos = h.toString().indexOf("x: ");
+                pos =Integer.parseInt(h.toString().substring(pos +3,pos +4));
                 String company = xData.get(pos);
 
                 CompanyStatisticsDialog companyStatisticsDialog = new CompanyStatisticsDialog(context,email,company);
@@ -170,7 +171,7 @@ public class ViewStatisticsActivity extends AppCompatActivity {
 
         //create data set
         PieDataSet pieDataSet = new PieDataSet(yEntry, "Companies");
-        pieDataSet.setSliceSpace(2);
+        pieDataSet.setSliceSpace(3);
         pieDataSet.setValueTextSize(12);
 
         //add colors to dataset

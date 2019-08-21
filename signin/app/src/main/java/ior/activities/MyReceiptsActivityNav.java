@@ -88,7 +88,8 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
         setContentView(R.layout.activity_my_receipts_nav);
         navViewBottom = findViewById(R.id.nav_view);
         navViewBottom.setOnNavigationItemSelectedListener(menuItem -> {
-            return IorUtils.onNavigationItemSelected(this, menuItem);
+            IorUtils.onNavigationItemSelected(this, menuItem);
+            return false;
         });
 
 
