@@ -37,20 +37,26 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import utils.ParameterStringBuilder;
 
 public class ServerHandler {
     private static final long TIME_TO_FETCH = 5;
     private static final ServerHandler ourInstance = new ServerHandler();
+
+    private Runnable onProgressFetchingData = null;
     private Date partnersLastFetch = null;
     private Date companiesLastFetch = null;
     private Date requestsLastFetch = null;
-    private Map<String, Map<String, Date>> companiesReceiptsLastFetch = new HashMap<>();
+    private Map<String, Map<String, Date>> companiesReceiptsLastFetch = new LinkedHashMap<>();
 
     public static ServerHandler getInstance() {
         return ourInstance;
@@ -60,12 +66,16 @@ public class ServerHandler {
     private List<String> partners;
     private List<String> requests;
     private List<Company> companies;
-    private Map<String, Company> companyMap = new HashMap<>();
-    private Map<String, Map<String, List<Receipt>>> usersReceipts = new HashMap<>();
+    private Map<String, Company> companyMap = new LinkedHashMap<>();
+    private Map<String, Map<String, List<Receipt>>> usersReceipts = new LinkedHashMap<>();
     private Map<String, User> usersInfoMap = new HashMap<>();
 
 
     private ServerHandler() {
+    }
+
+    public void setOnProgressFetchingData(Runnable onProgressFetchingData) {
+        this.onProgressFetchingData = onProgressFetchingData;
     }
 
     public User getSignInUser() {
@@ -224,10 +234,14 @@ public class ServerHandler {
                         in.close();
 
                         Gson gson = new Gson();
-                        User user = gson.fromJson(content.toString(), User.class);
+                        Map<String, String> userMap = gson.fromJson(content.toString(), Map.class);
+                        String email = userMap.get("email");
+                        String name = userMap.get("name");
+                        String dateStr = userMap.get("registerDate");
+                        Date registerDate = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss").parse(dateStr);
 
-                        ServerHandler.getInstance().signInUser = user;
-                        ServerHandler.getInstance().usersInfoMap.put(email, user);
+                        ServerHandler.getInstance().signInUser = new User(email, name, registerDate);
+                        ServerHandler.getInstance().usersInfoMap.put(email, signInUser);
                         int x = 5;
 
                     } catch (ProtocolException e1) {
@@ -243,6 +257,9 @@ public class ServerHandler {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
+                    if (onProgressFetchingData != null)
+                        onProgressFetchingData.run();
+
                     fetchCompanies(email, () -> {
 
                         onFinish.run();
@@ -254,6 +271,7 @@ public class ServerHandler {
 
             onFinish.run();
         }
+    }
 
 
 //        new Thread(() -> {
@@ -297,7 +315,6 @@ public class ServerHandler {
 //            }
 //        }).start();
 
-    }
 
 
     public void fetchUserPartners(String email, Runnable onFinish) {
@@ -368,50 +385,6 @@ public class ServerHandler {
         } else {
             onFinish.run();
 
-
-//            Thread thread = new Thread(() -> {
-//
-//                try {
-//                    URL url = new URL("http://10.0.2.2:8080/ior/userPartners");
-//                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-//                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//                    con.setRequestMethod("GET");
-//
-//                    Map<String, String> parameters = new HashMap<>();
-//                    parameters.put("email", email);
-//
-//                    con.setDoOutput(true);
-//                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
-//                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-//                    out.flush();
-//                    out.close();
-//                    int responseCode = con.getResponseCode();
-//
-//                    BufferedReader in = new BufferedReader(
-//                            new InputStreamReader(con.getInputStream()));
-//                    String inputLine;
-//                    StringBuffer content = new StringBuffer();
-//                    while ((inputLine = in.readLine()) != null) {
-//                        content.append(inputLine);
-//                    }
-//                    in.close();
-//
-//                    Gson gson = new Gson();
-//                    partners = gson.fromJson(content.toString(), List.class);
-//                    fetchRequests(email, onFinish);
-//                    //onFinish.run();
-//
-//                } catch (ProtocolException e1) {
-//
-//                } catch (IOException e2) {
-//
-//                }
-//            });
-//
-//            thread.start();
-//
-//        } else
-//            onFinish.run();
         }
     }
 
@@ -458,8 +431,6 @@ public class ServerHandler {
                 } catch (IOException e2) {
 
                 }
-
-
     }
 
 
@@ -521,61 +492,13 @@ public class ServerHandler {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
+                    if (onProgressFetchingData != null)
+                        onProgressFetchingData.run();
+
                     fetchUserAllReceipts(email, onFinish);
                     //fetchBitmaps(email, onFinish);
                 }
             }.execute();
-
-
-//
-//            Thread thread = new Thread(() -> {
-//
-//                try {
-//                    URL url = new URL("http://10.0.2.2:8080/ior/userCompanies");
-//                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-//                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//                    con.setRequestMethod("GET");
-//
-//                    Map<String, String> parameters = new HashMap<>();
-//                    parameters.put("email", email);
-//
-//                    con.setDoOutput(true);
-//                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
-//                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-//                    out.flush();
-//                    out.close();
-//                    int responseCode = con.getResponseCode();
-//
-//                    BufferedReader in = new BufferedReader(
-//                            new InputStreamReader(con.getInputStream()));
-//                    String inputLine;
-//                    StringBuffer content = new StringBuffer();
-//                    while ((inputLine = in.readLine()) != null) {
-//                        content.append(inputLine);
-//                    }
-//                    in.close();
-//
-//                    Gson gson = new Gson();
-//                    // data: array of : ["companyName" -> "aaa" , "logoUrl" -> "httpdsdsa"] , [...]
-//
-//                    List<LinkedTreeMap<String, String>> companiesDB = gson.fromJson(content.toString(), List.class);
-//                    companies = new ArrayList<>();
-//
-//                    for (LinkedTreeMap<String, String> companyDB : companiesDB) {
-//
-//                        companies.add(new Company(companyDB.get("companyName"), companyDB.get("logoUrl")));
-//                    }
-//                    fetchBitmaps(onFinish);
-//                    //onFinish.run();
-//
-//                } catch (ProtocolException e1) {
-//
-//                } catch (IOException e2) {
-//
-//                }
-//            });
-//
-//            thread.start();
 
         } else
             onFinish.run();
@@ -583,32 +506,28 @@ public class ServerHandler {
 
     private void fetchBitmaps(String userEmail, Runnable onFinish) {
 
-
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
 
-
                 for (String companyName : usersReceipts.get(userEmail).keySet()) {
-                    Company company = companyMap.get(companyName);
-                    if (company.getBitmap() == null) {
-                        loadBitmap(company);
-                    }
+                    if (companyMap.containsKey(companyName)) {
 
+                        Company company = companyMap.get(companyName);
+                        if (company.getBitmap() == null) {
+                            loadBitmap(company);
+                        }
+                    }
                 }
 
                 return null;
-//
-//                for (Company company : companies) {
-//
-//                    loadBitmap(company);
-//                }
-//
-//                return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                if (onProgressFetchingData != null)
+                    onProgressFetchingData.run();
+
 
                 onFinish.run();
             }
@@ -824,7 +743,7 @@ public class ServerHandler {
 
     public List<Receipt> getCompanyReceipts(String email, String company) {
 
-        List<Receipt> receipts = usersReceipts.containsKey(email) ?
+        List<Receipt> receipts = !usersReceipts.containsKey(email) ?
                 null : usersReceipts.get(email).get(company);
 
         return receipts;
@@ -886,7 +805,7 @@ public class ServerHandler {
 
                     signInUser.setAmountReceipts(receiptsDb.size());
                     if (!usersReceipts.containsKey(userEmail)) {
-                        usersReceipts.put(userEmail, new HashMap<>());
+                        usersReceipts.put(userEmail, new LinkedHashMap<>());
                     }
 
                     for (LinkedTreeMap<String, Object> receiptDB : receiptsDb) {
@@ -897,7 +816,8 @@ public class ServerHandler {
                         String receiptDateStr = receiptDB.get("creationDate").toString();
                         String receiptCurrencyStr = receiptDB.get("currency").toString();
                         float receiptPrice = (float)((double)(receiptDB.get("totalPrice")));
-                        String receiptFileName = receiptDB.get("fileName").toString();
+                        String receiptFileName = receiptDB.get("fileName") == null ? "" :
+                        receiptDB.get("fileName").toString();
                         Date receiptDate = null;
                         eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
                         SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a");
@@ -934,6 +854,9 @@ public class ServerHandler {
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                if (onProgressFetchingData != null)
+                    onProgressFetchingData.run();
+
                 fetchBitmaps(userEmail, onFinish);
             }
         }.execute();
@@ -986,5 +909,56 @@ public class ServerHandler {
         this.usersReceipts.clear();
         this.signInUser = null;
         this.companiesLastFetch = null;
+    }
+
+    public List<Receipt> getReceiptsFiltered(
+            String userEmail, List<String> companies, Date startDate, Date endDate,
+            float minPrice, float maxPrice, List<eCurrency> currencies) {
+
+        List<Receipt> receipts = new ArrayList<>();
+        for (List<Receipt> list : usersReceipts.get(userEmail).values())
+            receipts.addAll(list);
+
+        receipts = usersReceipts.get(userEmail).values().stream().flatMap(List::stream).collect(Collectors.toList())
+                .stream()
+                .filter(receipt -> companies.contains(receipt.getCompany()))
+                .filter(receipt -> !receipt.getCreationDate().before(startDate) && !receipt.getCreationDate().after(endDate))
+                .filter(receipt -> currencies.contains(receipt.getCurrency()))
+                .filter(receipt -> receipt.getTotalPrice() >= minPrice && receipt.getTotalPrice() <= maxPrice)
+                .collect(Collectors.toList());
+
+
+        return receipts;
+    }
+
+
+    public List<eCurrency> getUserCurrencies(String userEmail) {
+
+        Set<eCurrency> set = new HashSet<>();
+        List<eCurrency> res = new ArrayList<>();
+        for (List<Receipt> list : usersReceipts.get(userEmail).values()) {
+
+            for (Receipt r : list)
+                set.add(r.getCurrency());
+
+        }
+
+        res.addAll(set);
+
+        return res;
+
+    }
+
+    public float getUserMaxPriceReceipt(String userEmail) {
+
+        float maxPrice = 0;
+        List<Receipt> receipts = usersReceipts.get(userEmail).values().stream().flatMap(List::stream).collect(Collectors.toList());
+        for (Receipt receipt : receipts) {
+
+            if (receipt.getTotalPrice() > maxPrice)
+                maxPrice = receipt.getTotalPrice();
+        }
+
+        return maxPrice;
     }
 }

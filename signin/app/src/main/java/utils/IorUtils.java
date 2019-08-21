@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -27,6 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ior.activities.HomeScreenActivity;
+import ior.activities.MainActivity;
+import ior.activities.MyPartnersActivityNav;
 import ior.activities.MyReceiptsActivityNav;
 import ior.activities.ServerAuthCodeActivity;
 import ior.engine.ServerHandler;
@@ -44,8 +47,7 @@ public class IorUtils {
                     CURRENT_USER_FILE_NAME, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
             outputStreamWriter.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
 
         }
     }
@@ -58,21 +60,20 @@ public class IorUtils {
         try {
             InputStream inputStream = context.openFileInput(CURRENT_USER_FILE_NAME);
 
-            if ( inputStream != null ) {
+            if (inputStream != null) {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 String receiveString = "";
                 StringBuilder stringBuilder = new StringBuilder();
 
-                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                while ((receiveString = bufferedReader.readLine()) != null) {
                     stringBuilder.append(receiveString);
                 }
 
                 inputStream.close();
                 ret = stringBuilder.toString();
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             Log.e("login activity", "File not found: " + e.toString());
         } catch (IOException e) {
             Log.e("login activity", "Can not read file: " + e.toString());
@@ -83,14 +84,17 @@ public class IorUtils {
 
     public static void signOut(Activity activity) {
 
+        writeToSharePreference(activity, "email", "");
+        ServerHandler.getInstance().reset();
+
         mGoogleSignInClient.signOut().addOnCompleteListener(activity, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
                 //writeToFile("", activity);
-                writeToSharePreference(activity, "email", "");
-                ServerHandler.getInstance().reset();
-                activity.startActivity(new Intent(activity, ServerAuthCodeActivity.class));
+                //writeToSharePreference(activity, "email", "");
+                //ServerHandler.getInstance().reset();
+                //activity.startActivity(new Intent(activity, ServerAuthCodeActivity.class));
 
             }
         });
@@ -101,7 +105,6 @@ public class IorUtils {
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        //writeToFile("", activity);
                         writeToSharePreference(activity, "email", "");
                         activity.startActivity(new Intent(activity, ServerAuthCodeActivity.class));
                     }
@@ -112,7 +115,7 @@ public class IorUtils {
 
     public static void writeToSharePreference(Activity activity, String key, String val) {
 
-        SharedPreferences sharedPref = activity.getSharedPreferences("ior.activities" ,Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = activity.getSharedPreferences("ior.activities", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(key, val);
         editor.apply();
@@ -125,9 +128,6 @@ public class IorUtils {
         return dateStr;
 
     }
-
-
-
 
     public static void onNavigationItemSelected(Context activity, MenuItem item, FragmentManager fm) {
 
@@ -146,65 +146,63 @@ public class IorUtils {
 
 
         }
-
-
-
-
-//        Fragment fragment = null;
-//        ViewPager viewPager = activity.findViewById(R.id.viewPager_myReceipts);
-//
-//        switch (item.getItemId()) {
-//            case R.id.navigation_myReceipts:
-//                //context.startActivity(new Intent(context, MyReceiptsActivityNav.class));
-//                fragment = new AllReceiptsFragment();
-//                break;
-//
-//            case R.id.navigation_myPartners:
-//
-//                TabLayout tabLayout = activity.findViewById(R.id.tabLayout_receipts);
-//                PageAdapter adapter = new PageAdapter(fm);
-//
-//                TabLayout.Tab tab0 = tabLayout.getTabAt(0);
-//                tab0.setText("My Partners");
-//                tabLayout.getTabAt(1).setText("Requests");
-//                break;
-//
-//            case R.id.navigation_myAccount:
-//                break;
-//
-//        }
-//
-//        if (fragment != null) {
-//
-//            fm.beginTransaction()
-//                    .replace(viewPager.getId(), fragment)
-//                    .commit();
-//
-//            return true;
-//        }
-
     }
 
-    public static ActionBarDrawerToggle setNavigateBar(Activity activity)
-    {
+    public static ActionBarDrawerToggle setNavigateBar(Activity activity) {
         DrawerLayout drawerLayout = activity.findViewById(R.id.drawer);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(activity,drawerLayout,R.string.open, R.string.close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(activity, drawerLayout, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         return toggle;
     }
 
-    public static Intent getItemIntent(Activity activity, int itemId)
-    {
-        Intent result  = null;
-        switch (itemId)
-        {
+    public static Intent getItemIntent(Activity activity, int itemId) {
+        Intent result = null;
+        switch (itemId) {
             case R.id.profile:
                 result = new Intent(activity, ShowProfileActivity.class);
+                break;
 
+            case R.id.signOut_menu:
+                IorUtils.signOut(activity);
+                result = new Intent(activity, MainActivity.class);
         }
 
         return result;
     }
 
+    public static boolean onNavigationItemSelected(Activity activity, MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.navigation_myReceipts:
+                if (activity.getClass() != MyReceiptsActivityNav.class) {
+                    ServerHandler.getInstance().fetchUserInfo(ServerHandler.getInstance().getSignInUser().getEmail(),
+                            () -> {
+                                Intent intent = new Intent(activity, MyReceiptsActivityNav.class);
+                                activity.startActivity(intent);
+                            });
+                    return true;
+                }
+                break;
+
+
+            case R.id.navigation_myPartners:
+                if (activity.getClass() != MyPartnersActivityNav.class) {
+                    ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail(),
+                            () -> {
+                                Intent intent = new Intent(activity, MyPartnersActivityNav.class);
+                                activity.startActivity(intent);
+                            });
+                    return true;
+                }
+
+                break;
+
+            case R.id.navigation_statInfo:
+
+        }
+
+        return false;
+    }
 }

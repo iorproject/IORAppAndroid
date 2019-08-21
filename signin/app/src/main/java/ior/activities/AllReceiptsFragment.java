@@ -43,15 +43,11 @@ public class AllReceiptsFragment extends Fragment {
 
         textViewEmail.setText(ServerHandler.getInstance().getSignInUser().getEmail());
         companies = ServerHandler.getInstance().getUserCompanies(userEmail);
+        initGrid();
         //companies = ServerHandler.getInstance().getCompanies();
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        new Thread(this::initGrid).start();
-    }
 
     private void initGrid() {
 

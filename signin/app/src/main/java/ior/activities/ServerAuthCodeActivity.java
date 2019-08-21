@@ -58,7 +58,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
     private static final int RC_GET_AUTH_CODE = 9003;
 
     //private GoogleSignInClient mGoogleSignInClient;
-    private TextView mAuthCodeTextView;
+    //private TextView mAuthCodeTextView;
     private String email = null;
     private String name = "";
     private String access_token = null;
@@ -70,7 +70,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_google);
 
         // Views
-        mAuthCodeTextView = findViewById(R.id.detail);
+        //mAuthCodeTextView = findViewById(R.id.detail);
 
         // Button click listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
@@ -215,21 +215,21 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
     }
 
     private void updateUI(@Nullable GoogleSignInAccount account) {
-        if (account != null) {
-            ((TextView) findViewById(R.id.status)).setText(R.string.signed_in);
-
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
-
-            String authCode = account.getServerAuthCode();
-            mAuthCodeTextView.setText(getString(R.string.auth_code_fmt, authCode));
-        } else {
-            ((TextView) findViewById(R.id.status)).setText(R.string.signed_out);
-            mAuthCodeTextView.setText(getString(R.string.auth_code_fmt, "null"));
-
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
-        }
+//        if (account != null) {
+//            ((TextView) findViewById(R.id.status)).setText(R.string.signed_in);
+//
+//            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+//            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+//
+//            String authCode = account.getServerAuthCode();
+//            mAuthCodeTextView.setText(getString(R.string.auth_code_fmt, authCode));
+//        } else {
+//            ((TextView) findViewById(R.id.status)).setText(R.string.signed_out);
+//            mAuthCodeTextView.setText(getString(R.string.auth_code_fmt, "null"));
+//
+//            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+//            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
+//        }
     }
 
     /**
@@ -260,5 +260,10 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
                 revokeAccess();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 }

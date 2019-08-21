@@ -4,7 +4,7 @@ import com.squareup.okhttp.internal.framed.Variant;
 
 public enum eCurrency {
 
-    NIS("NIS"),
+    NIS("₪"),
     DOLLAR("$"),
     EURO("€");
 
@@ -37,6 +37,8 @@ public enum eCurrency {
                 break;
 
             case "NIS":
+            case "₪":
+            case "?":
                 res = eCurrency.NIS;
                 break;
 

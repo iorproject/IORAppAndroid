@@ -18,6 +18,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -99,7 +101,8 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
 
         Receipt currentReceipt = receipts.get(position);
 
-        viewHolder.textViewID.setText(currentReceipt.getReceiptNumber());
+        String receiptId = currentReceipt.getReceiptNumber().equals("") ? "---" : currentReceipt.getReceiptNumber();
+        viewHolder.textViewID.setText(receiptId);
         viewHolder.textViewCompany.setText(currentReceipt.getCompany());
         viewHolder.textViewEmail.setText(currentReceipt.getEmail());
         String ppp = String.valueOf(currentReceipt.getTotalPrice());
@@ -112,11 +115,14 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
         if (currentReceipt.getFileName().equals("")) {
             viewHolder.imageViewPreviewFile.setVisibility(View.GONE);
             viewHolder.linearLayoutDownloadFile.setVisibility(View.GONE);
-
+        }
+        else {
+            viewHolder.imageViewPreviewFile.setVisibility(View.VISIBLE);
+            viewHolder.linearLayoutDownloadFile.setVisibility(View.VISIBLE);
         }
 
         TextView textViewFileName = viewHolder.textViewFileName;
-        String fileName = currentReceipt.getFileName().equals("") ? "No File" : currentReceipt.getFileName();
+        String fileName = currentReceipt.getFileName().equals("") ? "---" : currentReceipt.getFileName();
         if (fileName.length() > MAX_TEXT_LENGTH) {
 
             fileName = fileName.substring(0, MAX_TEXT_LENGTH - 3) + "...";
@@ -132,17 +138,10 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
 
         textViewFileName.setText(fileName);
         Bitmap bitmap = ServerHandler.getInstance().getCompany(currentReceipt.getCompany()).getBitmap();
+        if (bitmap == null)
+            bitmap = BitmapFactory.decodeResource(mContex.getResources(), R.mipmap.ic_error_loading);
 
-        Bitmap circleBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        BitmapShader shader = new BitmapShader (bitmap,  Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        Paint paint = new Paint();
-        paint.setShader(shader);
-        paint.setAntiAlias(true);
-        Canvas c = new Canvas(circleBitmap);
-        c.drawCircle(bitmap.getWidth()/2, bitmap.getHeight()/2, bitmap.getWidth()/2, paint);
-        viewHolder.imageViewCompany.setImageBitmap(circleBitmap);
-
-
+        viewHolder.imageViewCompany.setImageBitmap(bitmap);
         viewHolder.imageViewPreviewFile.setOnClickListener(v -> {
 
 

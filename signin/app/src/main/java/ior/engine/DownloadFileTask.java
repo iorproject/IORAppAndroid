@@ -18,7 +18,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, String> {
     public static File file;
     Runnable onFinish;
     String url;
-    Context mContex;
+    Context mContext;
     ProgressDialog mProgressDialog;
     String fileName;
 
@@ -26,7 +26,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, String> {
     public DownloadFileTask(Context activity, String url, String fileName, Runnable onFinish) {
         this.onFinish = onFinish;
         this.url = url;
-        this.mContex = activity;
+        this.mContext = activity;
         this.fileName = fileName;
 
         mProgressDialog = new ProgressDialog(activity);

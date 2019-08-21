@@ -14,6 +14,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -62,7 +63,6 @@ public class GridAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
 
-
         if (convertView == null) {
 
 
@@ -76,24 +76,22 @@ public class GridAdapter extends BaseAdapter {
         LinearLayout linearLayout = convertView.findViewById(R.id.linearLayouy_companiesGridAdapter);
 
         linearLayout.setTag(company.getName());
-        Bitmap bitmap = company.getBitmap();
-        textView.setText(company.getName());
+        Bitmap bitmap = company.getBitmap() != null ? company.getBitmap()
+                :
+                BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_error_loading);
+        textView.setText(company.getName().substring(0, 1).toUpperCase() + company.getName().substring(1));
 
 
-        //ImageView imageView = new ImageView(context);
-        //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        //imageView.setBackgroundResource(R.drawable.rounded_image);
-        //imageView.setTag(companies.get(position).getName());
-        //imageView.setLayoutParams(new ViewGroup.LayoutParams(190, 190));
-        //Bitmap bitmap = companies.get(position).getBitmap();
-        Bitmap circleBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        BitmapShader shader = new BitmapShader (bitmap,  Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        Paint paint = new Paint();
-        paint.setShader(shader);
-        paint.setAntiAlias(true);
-        Canvas c = new Canvas(circleBitmap);
-        c.drawCircle(bitmap.getWidth()/2, bitmap.getHeight()/2, bitmap.getWidth()/2, paint);
-        imageView.setImageBitmap(circleBitmap);
+
+//        Bitmap circleBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+//        BitmapShader shader = new BitmapShader (bitmap,  Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+//        Paint paint = new Paint();
+//        paint.setShader(shader);
+//        paint.setAntiAlias(true);
+//        Canvas c = new Canvas(circleBitmap);
+//        c.drawCircle(bitmap.getWidth()/2, bitmap.getHeight()/2, bitmap.getWidth()/2, paint);
+//        imageView.setImageBitmap(circleBitmap);
+        imageView.setImageBitmap(bitmap);
 
 
         linearLayout.setOnClickListener(v -> {
@@ -101,6 +99,7 @@ public class GridAdapter extends BaseAdapter {
             Intent intent = new Intent(context, CompanyReceiptsActivity.class);
             intent.putExtra("email", userEmail);
             intent.putExtra("company",company.getName());
+            intent.putExtra("barTitle", company.getName() + "'s Receipts");
             context.startActivity(intent);
 
 
@@ -113,6 +112,9 @@ public class GridAdapter extends BaseAdapter {
 //                context.startActivity(intent);
 //            });
         });
+
+        //textView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.companies_logos_transmition));
+        linearLayout.setAnimation(AnimationUtils.loadAnimation(context, R.anim.companies_logos_fade));
 
         return convertView;
     }

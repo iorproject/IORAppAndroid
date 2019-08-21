@@ -17,10 +17,10 @@
 
         <ImageView
             android:id="@+id/google_icon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginBottom="10dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_marginTop="@dimen/g_top_margin"
+            android:layout_marginBottom="10dp"
             android:contentDescription="@string/desc_google_icon"
             android:src="@drawable/googleg_color" />
 
@@ -29,39 +29,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
+            android:gravity="center"
             android:text="@string/title_text"
-            android:gravity="center"
             android:textColor="@android:color/white"
-            android:textSize="36sp" />
+            android:textSize="36sp"
+            android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/status"
+            android:id="@+id/app_title_google"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/signed_out"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/detail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fadeScrollbars="true"
+            android:layout_marginTop="10dp"
             android:gravity="center"
-            android:maxLines="5"
-            android:padding="10dp"
-            android:scrollbars="vertical"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:text="@string/app_name"
+            android:textColor="#2196F3"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/button_optional_action"
-            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:text="Optional Action"
-            tools:visibility="visible" />
 
     </LinearLayout>
 
