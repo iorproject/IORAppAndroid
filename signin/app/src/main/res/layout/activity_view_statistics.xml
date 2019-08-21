@@ -73,6 +73,24 @@
         android:layout_below="@+id/titles"
         android:layout_alignBottom="@+id/titles"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="1dp"></com.github.mikephil.charting.charts.PieChart>
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="56dp"></com.github.mikephil.charting.charts.PieChart>
+
+
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:background="@drawable/navigator_bar_background"
+        app:itemIconTint="@drawable/bottom_navigation_selector"
+        app:itemTextColor="@color/bottom_nav_item_text_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
 
 </RelativeLayout>

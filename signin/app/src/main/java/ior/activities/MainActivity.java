@@ -64,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
         else {
             ServerHandler.getInstance().setOnProgressFetchingData(this::updateProgressBar);
             ServerHandler.getInstance().fetchUserInfo(email, () -> {
-
                         Intent intent = new Intent(this, MyReceiptsActivityNav.class);
                         startActivity(intent);
+                        finish();
                     });
 
 

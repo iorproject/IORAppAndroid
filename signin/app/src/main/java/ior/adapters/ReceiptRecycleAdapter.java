@@ -112,7 +112,7 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
         String date = format.format(currentReceipt.getCreationDate());
         viewHolder.textViewDate.setText(date);
-        if (currentReceipt.getFileName().equals("")) {
+        if (currentReceipt.getFileName().equals("") || currentReceipt.getAttachmentUrl().equals("")) {
             viewHolder.imageViewPreviewFile.setVisibility(View.GONE);
             viewHolder.linearLayoutDownloadFile.setVisibility(View.GONE);
         }
@@ -144,8 +144,9 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
         viewHolder.imageViewCompany.setImageBitmap(bitmap);
         viewHolder.imageViewPreviewFile.setOnClickListener(v -> {
 
-
-            mContex.startActivityForResult(new Intent(mContex, ReceiptFileActivity.class),
+            Intent intent = new Intent(mContex, ReceiptFileActivity.class);
+            intent.putExtra("url", currentReceipt.getAttachmentUrl());
+            mContex.startActivityForResult(intent,
                     1);
             parent.setAlpha(0.7f);
             //mContex.startActivity(new Intent(mContex, ReceiptFileActivity.class));

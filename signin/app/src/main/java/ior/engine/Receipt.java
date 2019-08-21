@@ -11,10 +11,11 @@ public class Receipt {
     private final float totalPrice;
     private final eCurrency currency;
     private final String fileName;
+    private final String attachmentUrl;
 
     public Receipt(String email, String company, String number, Date date,
                    float totalPrice, eCurrency currency,
-                   String fileName) {
+                   String fileName, String attachmentUrl) {
 
 
         this.email = email;
@@ -24,6 +25,7 @@ public class Receipt {
         this.totalPrice = totalPrice;
         this.currency = currency;
         this.fileName = fileName;
+        this.attachmentUrl = attachmentUrl;
 
     }
 
@@ -53,5 +55,9 @@ public class Receipt {
 
     public String getFileName() {
         return fileName;
+    }
+
+    public String getAttachmentUrl() {
+        return attachmentUrl;
     }
 }

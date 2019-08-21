@@ -280,50 +280,6 @@ public class ServerHandler {
         }
     }
 
-
-//        new Thread(() -> {
-//
-//            try {
-//                URL url = new URL("http://10.0.2.2:8080/ior/userInfo");
-//                //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-//                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//                con.setRequestMethod("GET");
-//
-//                Map<String, String> parameters = new HashMap<>();
-//                parameters.put("email", email);
-//
-//                con.setDoOutput(true);
-//                DataOutputStream out = new DataOutputStream(con.getOutputStream());
-//                out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-//                out.flush();
-//                out.close();
-//                int responseCode = con.getResponseCode();
-//
-//                BufferedReader in = new BufferedReader(
-//                        new InputStreamReader(con.getInputStream()));
-//                String inputLine;
-//                StringBuffer content = new StringBuffer();
-//                while ((inputLine = in.readLine()) != null) {
-//                    content.append(inputLine);
-//                }
-//                in.close();
-//
-//                Gson gson = new Gson();
-//                User user = gson.fromJson(content.toString(), User.class);
-//
-//                this.user = user;
-//                onFinish.run();
-//
-//
-//            } catch (ProtocolException e1) {
-//
-//            } catch (IOException e2) {
-//
-//            }
-//        }).start();
-
-
-
     public void fetchUserPartners(String email, Runnable onFinish) {
 
         Date date = new Date();
@@ -739,7 +695,7 @@ public class ServerHandler {
                                 Receipt temp = new Receipt(receiptsEmail, receiptCompany,
                                         receiptNumber, receiptDate,
                                         receiptPrice, receiptCurrency
-                                ,receiptFileName);
+                                ,receiptFileName, "");
 
                                 receipts.add(temp);
 
@@ -913,6 +869,8 @@ public class ServerHandler {
                         float receiptPrice = (float)((double)(receiptDB.get("totalPrice")));
                         String receiptFileName = receiptDB.get("fileName") == null ? "" :
                         receiptDB.get("fileName").toString();
+                        String attUrl = receiptDB.containsKey("attachmentURL") ? receiptDB.get("attachmentURL")
+                                .toString() : "";
                         Date receiptDate = null;
                         eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
                         SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a");
@@ -923,7 +881,7 @@ public class ServerHandler {
                             Receipt temp = new Receipt(receiptsEmail, receiptCompany,
                                     receiptNumber, receiptDate,
                                     receiptPrice, receiptCurrency
-                                    ,receiptFileName);
+                                    ,receiptFileName, attUrl);
 
 
                             if (!usersReceipts.get(userEmail).containsKey(receiptCompany))

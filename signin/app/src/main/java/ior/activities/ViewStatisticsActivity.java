@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.ColorUtils;
@@ -34,8 +35,11 @@ import java.util.List;
 
 import ior.engine.Receipt;
 import ior.engine.ServerHandler;
+import utils.IorUtils;
 
 public class ViewStatisticsActivity extends AppCompatActivity {
+
+    private BottomNavigationView navViewBottom;
 
 
     private class ColorRGB{
@@ -81,6 +85,16 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         mPieChart.setTransparentCircleAlpha(0);
         mPieChart.setCenterText("Company chart");
         mPieChart.setCenterTextSize(10);
+
+
+        navViewBottom = findViewById(R.id.nav_view);
+        navViewBottom.setSelectedItemId(R.id.navigation_statInfo);
+
+        navViewBottom.setOnNavigationItemSelectedListener(menuItem -> {
+            return IorUtils.onNavigationItemSelected(this, menuItem);
+        });
+
+
         //mPieChart.setDrawEntryLabels(true);
         displayStatistics();
     }
