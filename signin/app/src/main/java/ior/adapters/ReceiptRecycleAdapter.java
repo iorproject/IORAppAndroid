@@ -138,17 +138,10 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
 
         textViewFileName.setText(fileName);
         Bitmap bitmap = ServerHandler.getInstance().getCompany(currentReceipt.getCompany()).getBitmap();
+        if (bitmap == null)
+            bitmap = BitmapFactory.decodeResource(mContex.getResources(), R.mipmap.ic_error_loading);
 
-        Bitmap circleBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        BitmapShader shader = new BitmapShader (bitmap,  Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        Paint paint = new Paint();
-        paint.setShader(shader);
-        paint.setAntiAlias(true);
-        Canvas c = new Canvas(circleBitmap);
-        c.drawCircle(bitmap.getWidth()/2, bitmap.getHeight()/2, bitmap.getWidth()/2, paint);
-        viewHolder.imageViewCompany.setImageBitmap(circleBitmap);
-
-
+        viewHolder.imageViewCompany.setImageBitmap(bitmap);
         viewHolder.imageViewPreviewFile.setOnClickListener(v -> {
 
 

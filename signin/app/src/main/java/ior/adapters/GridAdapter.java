@@ -76,7 +76,9 @@ public class GridAdapter extends BaseAdapter {
         LinearLayout linearLayout = convertView.findViewById(R.id.linearLayouy_companiesGridAdapter);
 
         linearLayout.setTag(company.getName());
-        Bitmap bitmap = company.getBitmap();
+        Bitmap bitmap = company.getBitmap() != null ? company.getBitmap()
+                :
+                BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_error_loading);
         textView.setText(company.getName().substring(0, 1).toUpperCase() + company.getName().substring(1));
 
 

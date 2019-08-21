@@ -51,6 +51,8 @@ import utils.ParameterStringBuilder;
 public class ServerHandler {
     private static final long TIME_TO_FETCH = 5;
     private static final ServerHandler ourInstance = new ServerHandler();
+
+    private Runnable onProgressFetchingData = null;
     private Date partnersLastFetch = null;
     private Date companiesLastFetch = null;
     private Date requestsLastFetch = null;
@@ -70,6 +72,10 @@ public class ServerHandler {
 
 
     private ServerHandler() {
+    }
+
+    public void setOnProgressFetchingData(Runnable onProgressFetchingData) {
+        this.onProgressFetchingData = onProgressFetchingData;
     }
 
     public User getSignInUser() {
@@ -228,10 +234,14 @@ public class ServerHandler {
                         in.close();
 
                         Gson gson = new Gson();
-                        User user = gson.fromJson(content.toString(), User.class);
+                        Map<String, String> userMap = gson.fromJson(content.toString(), Map.class);
+                        String email = userMap.get("email");
+                        String name = userMap.get("name");
+                        String dateStr = userMap.get("registerDate");
+                        Date registerDate = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss").parse(dateStr);
 
-                        ServerHandler.getInstance().signInUser = user;
-                        ServerHandler.getInstance().usersInfoMap.put(email, user);
+                        ServerHandler.getInstance().signInUser = new User(email, name, registerDate);
+                        ServerHandler.getInstance().usersInfoMap.put(email, signInUser);
                         int x = 5;
 
                     } catch (ProtocolException e1) {
@@ -247,6 +257,9 @@ public class ServerHandler {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
+                    if (onProgressFetchingData != null)
+                        onProgressFetchingData.run();
+
                     fetchCompanies(email, () -> {
 
                         onFinish.run();
@@ -258,6 +271,7 @@ public class ServerHandler {
 
             onFinish.run();
         }
+    }
 
 
 //        new Thread(() -> {
@@ -301,7 +315,6 @@ public class ServerHandler {
 //            }
 //        }).start();
 
-    }
 
 
     public void fetchUserPartners(String email, Runnable onFinish) {
@@ -372,50 +385,6 @@ public class ServerHandler {
         } else {
             onFinish.run();
 
-
-//            Thread thread = new Thread(() -> {
-//
-//                try {
-//                    URL url = new URL("http://10.0.2.2:8080/ior/userPartners");
-//                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-//                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//                    con.setRequestMethod("GET");
-//
-//                    Map<String, String> parameters = new HashMap<>();
-//                    parameters.put("email", email);
-//
-//                    con.setDoOutput(true);
-//                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
-//                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-//                    out.flush();
-//                    out.close();
-//                    int responseCode = con.getResponseCode();
-//
-//                    BufferedReader in = new BufferedReader(
-//                            new InputStreamReader(con.getInputStream()));
-//                    String inputLine;
-//                    StringBuffer content = new StringBuffer();
-//                    while ((inputLine = in.readLine()) != null) {
-//                        content.append(inputLine);
-//                    }
-//                    in.close();
-//
-//                    Gson gson = new Gson();
-//                    partners = gson.fromJson(content.toString(), List.class);
-//                    fetchRequests(email, onFinish);
-//                    //onFinish.run();
-//
-//                } catch (ProtocolException e1) {
-//
-//                } catch (IOException e2) {
-//
-//                }
-//            });
-//
-//            thread.start();
-//
-//        } else
-//            onFinish.run();
         }
     }
 
@@ -462,8 +431,6 @@ public class ServerHandler {
                 } catch (IOException e2) {
 
                 }
-
-
     }
 
 
@@ -525,61 +492,13 @@ public class ServerHandler {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
+                    if (onProgressFetchingData != null)
+                        onProgressFetchingData.run();
+
                     fetchUserAllReceipts(email, onFinish);
                     //fetchBitmaps(email, onFinish);
                 }
             }.execute();
-
-
-//
-//            Thread thread = new Thread(() -> {
-//
-//                try {
-//                    URL url = new URL("http://10.0.2.2:8080/ior/userCompanies");
-//                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-//                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//                    con.setRequestMethod("GET");
-//
-//                    Map<String, String> parameters = new HashMap<>();
-//                    parameters.put("email", email);
-//
-//                    con.setDoOutput(true);
-//                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
-//                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-//                    out.flush();
-//                    out.close();
-//                    int responseCode = con.getResponseCode();
-//
-//                    BufferedReader in = new BufferedReader(
-//                            new InputStreamReader(con.getInputStream()));
-//                    String inputLine;
-//                    StringBuffer content = new StringBuffer();
-//                    while ((inputLine = in.readLine()) != null) {
-//                        content.append(inputLine);
-//                    }
-//                    in.close();
-//
-//                    Gson gson = new Gson();
-//                    // data: array of : ["companyName" -> "aaa" , "logoUrl" -> "httpdsdsa"] , [...]
-//
-//                    List<LinkedTreeMap<String, String>> companiesDB = gson.fromJson(content.toString(), List.class);
-//                    companies = new ArrayList<>();
-//
-//                    for (LinkedTreeMap<String, String> companyDB : companiesDB) {
-//
-//                        companies.add(new Company(companyDB.get("companyName"), companyDB.get("logoUrl")));
-//                    }
-//                    fetchBitmaps(onFinish);
-//                    //onFinish.run();
-//
-//                } catch (ProtocolException e1) {
-//
-//                } catch (IOException e2) {
-//
-//                }
-//            });
-//
-//            thread.start();
 
         } else
             onFinish.run();
@@ -587,32 +506,28 @@ public class ServerHandler {
 
     private void fetchBitmaps(String userEmail, Runnable onFinish) {
 
-
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
 
-
                 for (String companyName : usersReceipts.get(userEmail).keySet()) {
-                    Company company = companyMap.get(companyName);
-                    if (company.getBitmap() == null) {
-                        loadBitmap(company);
-                    }
+                    if (companyMap.containsKey(companyName)) {
 
+                        Company company = companyMap.get(companyName);
+                        if (company.getBitmap() == null) {
+                            loadBitmap(company);
+                        }
+                    }
                 }
 
                 return null;
-//
-//                for (Company company : companies) {
-//
-//                    loadBitmap(company);
-//                }
-//
-//                return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                if (onProgressFetchingData != null)
+                    onProgressFetchingData.run();
+
 
                 onFinish.run();
             }
@@ -939,6 +854,8 @@ public class ServerHandler {
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                if (onProgressFetchingData != null)
+                    onProgressFetchingData.run();
 
                 fetchBitmaps(userEmail, onFinish);
             }

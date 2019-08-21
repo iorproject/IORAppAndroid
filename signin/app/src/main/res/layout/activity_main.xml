@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,11 +9,53 @@
 
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_horizontal|center_vertical"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.sasank.roundedhorizontalprogress.RoundedHorizontalProgressBar
+                android:id="@+id/progressBarFetchingData"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:indeterminate="false"
+                android:maxHeight="35dp"
+                android:minHeight="35dp"
+                android:progress="40"
+                app:backgroundColor="#7ABEF5"
+                app:progressColor="#273480" />
+
+            <TextView
+                android:id="@+id/textViewProgress_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="0 %"
+                android:textColor="@android:color/white"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/textView_loading_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0"
+            android:shadowColor="@android:color/white"
+            android:text="Retrieving data from server..."
+            android:textColor="@color/design_default_color_primary_dark"
+            android:textSize="18sp"
+            android:textStyle="bold|italic" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -25,18 +67,8 @@
             android:layout_weight="0"
             android:max="100"
             android:progress="0"
-            android:progressDrawable="@drawable/ring_loadong_bar" />
+            android:progressDrawable="@drawable/ring_loadong_bar"
+            android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/textView_loading_main"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="0"
-            android:shadowColor="@android:color/white"
-            android:text="Receiving Data From Server ..."
-            android:textColor="@color/design_default_color_primary_dark"
-            android:textSize="24sp"
-            android:textStyle="bold|italic" />
     </LinearLayout>
-</FrameLayout>
+</LinearLayout>

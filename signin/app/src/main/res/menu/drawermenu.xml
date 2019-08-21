@@ -12,5 +12,9 @@
         android:title="About"
         android:icon="@drawable/ic_info_black_24dp"
         ></item>
+    <item android:id="@+id/signOut_menu"
+        android:title="Sign Out"
+        android:icon="@mipmap/ic_sign_out"
+        ></item>
 
 </menu>

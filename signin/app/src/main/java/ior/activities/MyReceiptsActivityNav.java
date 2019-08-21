@@ -8,7 +8,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.samples.quickstart.signin.R;
 
@@ -118,6 +120,7 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         mToggle = IorUtils.setNavigateBar(this);
+        mDraw = findViewById(R.id.drawer);
         navigationView = findViewById(R.id.nav_view_top);
         navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -128,7 +131,7 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        mDraw.closeDrawer(Gravity.LEFT);
         int x = 5;
     }
 }

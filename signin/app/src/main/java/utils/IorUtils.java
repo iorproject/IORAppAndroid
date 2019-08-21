@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ior.activities.HomeScreenActivity;
+import ior.activities.MainActivity;
 import ior.activities.MyPartnersActivityNav;
 import ior.activities.MyReceiptsActivityNav;
 import ior.activities.ServerAuthCodeActivity;
@@ -83,14 +84,17 @@ public class IorUtils {
 
     public static void signOut(Activity activity) {
 
+        writeToSharePreference(activity, "email", "");
+        ServerHandler.getInstance().reset();
+
         mGoogleSignInClient.signOut().addOnCompleteListener(activity, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
                 //writeToFile("", activity);
-                writeToSharePreference(activity, "email", "");
-                ServerHandler.getInstance().reset();
-                activity.startActivity(new Intent(activity, ServerAuthCodeActivity.class));
+                //writeToSharePreference(activity, "email", "");
+                //ServerHandler.getInstance().reset();
+                //activity.startActivity(new Intent(activity, ServerAuthCodeActivity.class));
 
             }
         });
@@ -101,7 +105,6 @@ public class IorUtils {
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        //writeToFile("", activity);
                         writeToSharePreference(activity, "email", "");
                         activity.startActivity(new Intent(activity, ServerAuthCodeActivity.class));
                     }
@@ -126,7 +129,6 @@ public class IorUtils {
 
     }
 
-
     public static void onNavigationItemSelected(Context activity, MenuItem item, FragmentManager fm) {
 
 
@@ -144,41 +146,6 @@ public class IorUtils {
 
 
         }
-
-
-//        Fragment fragment = null;
-//        ViewPager viewPager = activity.findViewById(R.id.viewPager_myReceipts);
-//
-//        switch (item.getItemId()) {
-//            case R.id.navigation_myReceipts:
-//                //context.startActivity(new Intent(context, MyReceiptsActivityNav.class));
-//                fragment = new AllReceiptsFragment();
-//                break;
-//
-//            case R.id.navigation_myPartners:
-//
-//                TabLayout tabLayout = activity.findViewById(R.id.tabLayout_receipts);
-//                PageAdapter adapter = new PageAdapter(fm);
-//
-//                TabLayout.Tab tab0 = tabLayout.getTabAt(0);
-//                tab0.setText("My Partners");
-//                tabLayout.getTabAt(1).setText("Requests");
-//                break;
-//
-//            case R.id.navigation_myAccount:
-//                break;
-//
-//        }
-//
-//        if (fragment != null) {
-//
-//            fm.beginTransaction()
-//                    .replace(viewPager.getId(), fragment)
-//                    .commit();
-//
-//            return true;
-//        }
-
     }
 
     public static ActionBarDrawerToggle setNavigateBar(Activity activity) {
@@ -194,7 +161,11 @@ public class IorUtils {
         switch (itemId) {
             case R.id.profile:
                 result = new Intent(activity, ShowProfileActivity.class);
+                break;
 
+            case R.id.signOut_menu:
+                IorUtils.signOut(activity);
+                result = new Intent(activity, MainActivity.class);
         }
 
         return result;
@@ -205,24 +176,30 @@ public class IorUtils {
         switch (item.getItemId()) {
 
             case R.id.navigation_myReceipts:
-                ServerHandler.getInstance().fetchUserInfo(ServerHandler.getInstance().getSignInUser().getEmail(),
-                        () -> {
-                            Intent intent = new Intent(activity, MyReceiptsActivityNav.class);
-                            activity.startActivity(intent);
-                        });
-                return true;
+                if (activity.getClass() != MyReceiptsActivityNav.class) {
+                    ServerHandler.getInstance().fetchUserInfo(ServerHandler.getInstance().getSignInUser().getEmail(),
+                            () -> {
+                                Intent intent = new Intent(activity, MyReceiptsActivityNav.class);
+                                activity.startActivity(intent);
+                            });
+                    return true;
+                }
+                break;
+
 
             case R.id.navigation_myPartners:
-                ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail(),
-                        () -> {
-                            Intent intent = new Intent(activity, MyPartnersActivityNav.class);
-                            activity.startActivity(intent);
-                        });
-                return true;
+                if (activity.getClass() != MyPartnersActivityNav.class) {
+                    ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail(),
+                            () -> {
+                                Intent intent = new Intent(activity, MyPartnersActivityNav.class);
+                                activity.startActivity(intent);
+                            });
+                    return true;
+                }
+
+                break;
 
             case R.id.navigation_statInfo:
-                IorUtils.signOut(activity);
-                return true;
 
         }
 

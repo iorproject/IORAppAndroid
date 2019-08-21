@@ -23,7 +23,7 @@
                 android:layout_height="37dp"
                 android:layout_gravity="right|center_horizontal"
                 android:backgroundTint="@android:color/transparent"
-                android:onClick="editProfile"
+                android:onClick="uploadPic"
                 app:srcCompat="@drawable/ic_edit_black_24dp" />
 
             <com.mikhaellopez.circularimageview.CircularImageView

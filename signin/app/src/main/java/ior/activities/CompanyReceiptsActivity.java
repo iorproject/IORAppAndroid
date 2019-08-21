@@ -175,12 +175,7 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
             }
         });
     }
-
-
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(this, MyReceiptsActivityNav.class));
-    }
+    
 
     public void scrollReceipt(View view) {
 

@@ -286,16 +286,6 @@
                     android:text="Price range 0 - 1" />
             </LinearLayout>
 
-            <org.florescu.android.rangeseekbar.RangeSeekBar
-                android:id="@+id/rangeSeekbarPrice2_advancedSearch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:visibility="gone"
-
-                />
-
             <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
                 android:id="@+id/rangeSeekbarPrice_advancedSearch"
                 android:layout_width="match_parent"

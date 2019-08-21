@@ -18,13 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+import com.google.api.client.util.DateTime;
 import com.google.samples.quickstart.signin.R;
-
-import org.florescu.android.rangeseekbar.RangeSeekBar;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +38,9 @@ import ior.engine.eCurrency;
 public class AdvancedSearchFragment extends Fragment {
 
     private static final String UNDEFINED_DATE = "No Limit";
+    private static final int START_DATE_CODE = 1;
+    private static final int END_DATE_CODE = 2;
+
 
     private View view;
     private RecyclerView recyclerViewCompany;
@@ -57,7 +60,6 @@ public class AdvancedSearchFragment extends Fragment {
     private ImageView imageViewStartDate;
     private ImageView imageViewEndDate;
     private TextView textViewPriceRange;
-    private RangeSeekBar rangeSeekBarPrice2;
     private CrystalRangeSeekbar rangeSeekBarPrice;
     private Button buttonApply;
 
@@ -159,9 +161,7 @@ public class AdvancedSearchFragment extends Fragment {
         rangeSeekBarPrice.setMaxValue(maxReceiptPrice);
         rangeSeekBarPrice.setMinStartValue(0);
         rangeSeekBarPrice.setMaxStartValue(maxReceiptPrice);
-        //rangeSeekBarPrice.setRangeValues(0, maxReceiptPrice);
-        //rangeSeekBarPrice.setSelectedMinValue(0);
-        //rangeSeekBarPrice.setSelectedMaxValue(maxReceiptPrice);
+
 
         textViewPriceRange.setText("Price range 0 - " + maxReceiptPrice);
 
@@ -170,13 +170,6 @@ public class AdvancedSearchFragment extends Fragment {
 
             textViewPriceRange.setText("Price range " + minValue + " - " + maxValue);
         });
-//        rangeSeekBarPrice.setOnRangeSeekBarChangeListener((bar, minValue, maxValue) -> {
-//
-//            textViewPriceRange.setText("Price range " + minValue + " - " + maxValue);
-//
-//        });
-
-
 
     }
 
@@ -185,10 +178,9 @@ public class AdvancedSearchFragment extends Fragment {
 
         view.setAlpha(0.5f);
         Intent intent = new Intent(getContext(), CalendarActivity.class);
-        int code = v.getId() == imageViewStartDate.getId() ? 1 : 2;
+        int code = v.getId() == imageViewStartDate.getId() ? START_DATE_CODE : END_DATE_CODE;
         intent.putExtra("code", code);
         startActivityForResult(intent, code);
-
 
     }
 
@@ -196,13 +188,13 @@ public class AdvancedSearchFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         view.setAlpha(1.0f);
-        if (resultCode == 1) {
+        if (resultCode == START_DATE_CODE) {
 
             String date = data.getStringExtra("date");
             textViewStartDate.setText(date);
 
         }
-        else if (resultCode == 2) {
+        else if (resultCode == END_DATE_CODE) {
 
             String date = data.getStringExtra("date");
             textViewEndDate.setText(date);
@@ -244,10 +236,18 @@ public class AdvancedSearchFragment extends Fragment {
 
             DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
             try {
-                if (!format.parse(startDate).before(format.parse(endDate))) {
+                Date dateEnd = format.parse(endDate);
+                Date dateStart = format.parse(startDate);
+                if (!dateStart.before(dateEnd)) {
 
                     Toast.makeText(getContext(), "Start date is not before end date", Toast.LENGTH_SHORT).show();
                     return;
+                }
+                else {
+
+                    dateEnd.setTime(dateEnd.getTime() + (1000 * 60 * 60 * 24));
+                    endDate = format.format(dateEnd);
+                    int x = 5;
                 }
             }
             catch (Exception e) {
