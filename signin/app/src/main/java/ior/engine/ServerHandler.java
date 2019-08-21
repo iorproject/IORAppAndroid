@@ -132,7 +132,7 @@ public class ServerHandler {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    URL url = new URL("http://10.0.0.6:8080/ior/registerUser");
+                    URL url = new URL("http://10.0.2.2:8080/ior/registerUser");
                     //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("GET");
@@ -176,7 +176,7 @@ public class ServerHandler {
 
 
 //        try {
-//            URL url = new URL("http://10.0.0.6:8080/ior/registerUser");
+//            URL url = new URL("http://10.0.2.2:8080/ior/registerUser");
 //            //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
 //            HttpURLConnection con = (HttpURLConnection) url.openConnection();
 //            con.setRequestMethod("GET");
@@ -217,7 +217,7 @@ public class ServerHandler {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        URL url = new URL("http://10.0.0.6:8080/ior/userInfo");
+                        URL url = new URL("http://10.0.2.2:8080/ior/userInfo");
                         //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
@@ -246,9 +246,9 @@ public class ServerHandler {
                         String email = userMap.get("email");
                         String name = userMap.get("name");
                         String dateStr = userMap.get("registerDate");
-//                        Date registerDate = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss").parse(dateStr);
+                        Date registerDate = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss").parse(dateStr);
 
-                        ServerHandler.getInstance().signInUser = new User(email, name, new Date());
+                        ServerHandler.getInstance().signInUser = new User(email, name, registerDate);
                         ServerHandler.getInstance().usersInfoMap.put(email, signInUser);
                         int x = 5;
 
@@ -284,7 +284,7 @@ public class ServerHandler {
 //        new Thread(() -> {
 //
 //            try {
-//                URL url = new URL("http://10.0.0.6:8080/ior/userInfo");
+//                URL url = new URL("http://10.0.2.2:8080/ior/userInfo");
 //                //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
 //                HttpURLConnection con = (HttpURLConnection) url.openConnection();
 //                con.setRequestMethod("GET");
@@ -335,7 +335,7 @@ public class ServerHandler {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        URL url = new URL("http://10.0.0.6:8080/ior/userPartners");
+                        URL url = new URL("http://10.0.2.2:8080/ior/userPartners");
                         //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
@@ -404,7 +404,7 @@ public class ServerHandler {
 //        if (lastFetch == null || isTimeToFetch(date, lastFetch)) {
 
                 try {
-                    URL url = new URL("http://10.0.0.6:8080/ior/userShareRequests");
+                    URL url = new URL("http://10.0.2.2:8080/ior/userShareRequests");
                     //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -452,7 +452,7 @@ public class ServerHandler {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        URL url = new URL("http://10.0.0.6:8080/ior/userCompanies");
+                        URL url = new URL("http://10.0.2.2:8080/ior/userCompanies");
                         //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
@@ -513,7 +513,7 @@ public class ServerHandler {
 //            Thread thread = new Thread(() -> {
 //
 //                try {
-//                    URL url = new URL("http://10.0.0.6:8080/ior/userCompanies");
+//                    URL url = new URL("http://10.0.2.2:8080/ior/userCompanies");
 //                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
 //                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
 //                    con.setRequestMethod("GET");
@@ -683,7 +683,7 @@ public class ServerHandler {
 
 
                     try {
-                        URL url = new URL("http://10.0.0.6:8080/ior/companyReceiptsByUser");
+                        URL url = new URL("http://10.0.2.2:8080/ior/companyReceiptsByUser");
                         //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
@@ -868,7 +868,7 @@ public class ServerHandler {
 
 
                 try {
-                    URL url = new URL("http://10.0.0.6:8080/ior/userAllReceipts");
+                    URL url = new URL("http://10.0.2.2:8080/ior/userAllReceipts");
                     //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("GET");
@@ -919,9 +919,9 @@ public class ServerHandler {
 
                         try {
 
-                            //receiptDate = formatter.parse(receiptDateStr);
+                            receiptDate = formatter.parse(receiptDateStr);
                             Receipt temp = new Receipt(receiptsEmail, receiptCompany,
-                                    receiptNumber, new Date(),
+                                    receiptNumber, receiptDate,
                                     receiptPrice, receiptCurrency
                                     ,receiptFileName);
 
