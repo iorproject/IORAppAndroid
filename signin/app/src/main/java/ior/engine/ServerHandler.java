@@ -42,6 +42,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -92,6 +94,12 @@ public class ServerHandler {
 
     public List<Company> getCompanies() {
         return companies;
+    }
+
+    public Optional<Company> getCompanyByName(String companyName){
+        return companies.stream()
+                .filter(company -> company.getName().equals(companyName))
+                .findFirst();
     }
 
     public List<Company> getUserCompanies(String userEmail) {
@@ -259,7 +267,6 @@ public class ServerHandler {
                 protected void onPostExecute(Void aVoid) {
                     if (onProgressFetchingData != null)
                         onProgressFetchingData.run();
-
                     fetchCompanies(email, () -> {
 
                         onFinish.run();
@@ -491,7 +498,8 @@ public class ServerHandler {
                 }
 
                 @Override
-                protected void onPostExecute(Void aVoid) {
+                protected void onPostExecute(Void aVoid)
+                {
                     if (onProgressFetchingData != null)
                         onProgressFetchingData.run();
 
@@ -500,11 +508,63 @@ public class ServerHandler {
                 }
             }.execute();
 
+
+//
+//            Thread thread = new Thread(() -> {
+//
+//                try {
+//                    URL url = new URL("http://10.0.2.2:8080/ior/userCompanies");
+//                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
+//                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+//                    con.setRequestMethod("GET");
+//
+//                    Map<String, String> parameters = new HashMap<>();
+//                    parameters.put("email", email);
+//
+//                    con.setDoOutput(true);
+//                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
+//                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+//                    out.flush();
+//                    out.close();
+//                    int responseCode = con.getResponseCode();
+//
+//                    BufferedReader in = new BufferedReader(
+//                            new InputStreamReader(con.getInputStream()));
+//                    String inputLine;
+//                    StringBuffer content = new StringBuffer();
+//                    while ((inputLine = in.readLine()) != null) {
+//                        content.append(inputLine);
+//                    }
+//                    in.close();
+//
+//                    Gson gson = new Gson();
+//                    // data: array of : ["companyName" -> "aaa" , "logoUrl" -> "httpdsdsa"] , [...]
+//
+//                    List<LinkedTreeMap<String, String>> companiesDB = gson.fromJson(content.toString(), List.class);
+//                    companies = new ArrayList<>();
+//
+//                    for (LinkedTreeMap<String, String> companyDB : companiesDB) {
+//
+//                        companies.add(new Company(companyDB.get("companyName"), companyDB.get("logoUrl")));
+//                    }
+//                    fetchBitmaps(onFinish);
+//                    //onFinish.run();
+//
+//                } catch (ProtocolException e1) {
+//
+//                } catch (IOException e2) {
+//
+//                }
+//            });
+//
+//            thread.start();
+
         } else
             onFinish.run();
     }
 
     private void fetchBitmaps(String userEmail, Runnable onFinish) {
+
 
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -521,13 +581,19 @@ public class ServerHandler {
                 }
 
                 return null;
+//
+//                for (Company company : companies) {
+//
+//                    loadBitmap(company);
+//                }
+//
+//                return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 if (onProgressFetchingData != null)
                     onProgressFetchingData.run();
-
 
                 onFinish.run();
             }
@@ -721,11 +787,28 @@ public class ServerHandler {
 
     }
 
+    public float getAveragePurchasePerCompany(String email, String company){
+        float totalPrice = 0;
+        if(usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company)) {
+            List<Receipt> receipts = new ArrayList<>(usersReceipts.get(email).get(company));
+            for(Receipt receipt : receipts){
+                totalPrice += receipt.getTotalPrice();
+            }
+            return totalPrice / (float)receipts.size();
+        }
+        return totalPrice;
+    }
+
     public int getAmountOfPurchases(String email){
         return usersReceipts.containsKey(email) ?
                 usersReceipts.get(email).values().stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList()).size() : 0;
+    }
+
+    public int getAmountOfPurchasesPerCompany(String email, String company){
+        return usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company) ?
+                usersReceipts.get(email).get(company).size() : 0;
     }
 
     public float getTotalPurchases(String email){
@@ -740,6 +823,18 @@ public class ServerHandler {
         }
         return totalPrice;
     }
+
+    public float getTotalPurchasesPerCompany(String email, String company){
+        float totalPrice = 0;
+        if(usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company)) {
+            List<Receipt> receipts = new ArrayList<>(usersReceipts.get(email).get(company));
+            for(Receipt receipt : receipts){
+                totalPrice += receipt.getTotalPrice();
+            }
+        }
+        return totalPrice;
+    }
+
 
     public List<Receipt> getCompanyReceipts(String email, String company) {
 
@@ -961,4 +1056,18 @@ public class ServerHandler {
 
         return maxPrice;
     }
+
+
+    public List<String> getCompaniesName() {
+        return companies.stream().map(company -> company.getName()).collect(Collectors.toList());
+    }
+
+    public List<Float> getCompaniesTotalPrice(String email) {
+        List<Float> companyTotalPriceList = new ArrayList<>();
+        for(Company company : companies){
+            companyTotalPriceList.add(usersReceipts.get(email).get(company).stream().map(receipt -> receipt.getTotalPrice()).reduce((a,b) -> a+b).get());
+        }
+        return companyTotalPriceList;
+    }
+
 }
