@@ -72,4 +72,6 @@
     <string name="total_purchases">Total price purchases:</string>
     <string name="amount_of_purchases">Amount of purchases:</string>
     <string name="average_purchase">Average price purchase:</string>
+    <string name="most_expensive_purchase">Most expensive purchase:</string>
+    <string name="latest_purchase">Latest purchase:</string>
 </resources>

@@ -105,8 +105,10 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
         navViewBottom = findViewById(R.id.nav_view);
         recyclerView = findViewById(R.id.recyclerView_companyReceipts);
 
-        navViewBottom.setOnNavigationItemSelectedListener(menuItem ->
-                IorUtils.onNavigationItemSelected(this, menuItem));
+        navViewBottom.setOnNavigationItemSelectedListener(menuItem -> {
+            IorUtils.onNavigationItemSelected(this, menuItem);
+            return false;
+        });
 
 
         if (receipts.size() == 0) {
@@ -175,7 +177,6 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
             }
         });
     }
-    
 
     public void scrollReceipt(View view) {
 
