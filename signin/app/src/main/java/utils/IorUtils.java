@@ -183,7 +183,6 @@ public class IorUtils {
                                 Intent intent = new Intent(activity, MyReceiptsActivityNav.class);
                                 activity.startActivity(intent);
                             });
-                    return true;
                 }
                 break;
 
@@ -195,7 +194,6 @@ public class IorUtils {
                                 Intent intent = new Intent(activity, MyPartnersActivityNav.class);
                                 activity.startActivity(intent);
                             });
-                    return true;
                 }
 
                 break;
@@ -205,12 +203,9 @@ public class IorUtils {
                     Intent intent = new Intent(activity, ViewStatisticsActivity.class);
                     intent.putExtra("email",ServerHandler.getInstance().getSignInUser().getEmail());
                     activity.startActivity(intent);
-                    return true;
                 }
 
                 break;
-
-
         }
 
         return false;

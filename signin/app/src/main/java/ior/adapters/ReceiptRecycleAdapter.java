@@ -158,19 +158,13 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
 
         viewHolder.imageViewDownloadFile.setOnClickListener(v -> {
 
-            String url = "https://firebasestorage.googleapis.com/v0/b/iorproject.appspot.com/o/receipts%2Fior46800%40gmail.com%2FInvoice_51706333284.pdf?alt=media&token=a4fb5bbc-ef3c-44a8-a71b-7dd3e17dc2d4";
-
                 //url= URLEncoder.encode(url,"UTF-8");
-                ServerHandler.getInstance().downloadFile(mContex, url, "aaa.pdf", () -> {
+                ServerHandler.getInstance().downloadFile(mContex, currentReceipt.getAttachmentUrl(),
+                        currentReceipt.getFileName(), () -> {
 
                     Toast.makeText(mContex, "File Download Successfully", Toast.LENGTH_SHORT).show();
                 });
-
-
         });
-
-        //viewHolder.imageViewCompany.setImageBitmap(bitmap);
-
     }
 
 
