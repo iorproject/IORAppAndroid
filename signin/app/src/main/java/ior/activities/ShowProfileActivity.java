@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.DrawerLayout;
@@ -29,14 +28,15 @@ import com.google.samples.quickstart.signin.R;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 
+import ior.engine.ServerHandler;
 import utils.IorUtils;
 
-public class ShowProfileActivity extends AppCompatActivity {
+public class ShowProfileActivity extends AppCompatActivity  {
 
     private Dialog mDialog;
-    private static final int IMAGE_PICK_CODE = 1000;
-    private static final int PERMISSION_CODE = 1000;
-    private static final int PERMISSION_CAMERA = 0;
+    private static final int IMAGE_PICK_CODE =1000;
+    private static final int PERMISSION_CODE =1000;
+    private static final int PERMISSION_CAMERA =0;
     private ImageView m_ProfileImage;
     private Button m_UploadImageButton;
     private String m_ProfileImageString;
@@ -48,10 +48,8 @@ public class ShowProfileActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         final LayoutInflater factory = getLayoutInflater();
         final View textEntryView = factory.inflate(R.layout.popupeditprofile, null);
-        m_UploadImageButton = textEntryView.findViewById(R.id.uploadImage);
+        m_UploadImageButton =  textEntryView.findViewById(R.id.uploadImage);
         m_ProfileImage = findViewById(R.id.profilePic);
-
-
         mDialog = new Dialog(this);
         ImageButton edit = findViewById(R.id.imageButton_edit);
         edit.setOnClickListener(new View.OnClickListener() {
@@ -68,73 +66,88 @@ public class ShowProfileActivity extends AppCompatActivity {
             }
         });
 
-        // m_ProfileImage.setImageBitmap(getBitmapFromString());
+       // m_ProfileImage.setImageBitmap(getBitmapFromString());
     }
 
-    public void editProfile() {
+    public void editProfile()
+    {
         mDialog.setContentView(R.layout.popupeditprofile);
         mDialog.show();
     }
 
-    public void uploadPic(View v) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    public void uploadPic(View v)
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_DENIED) {//permission not granted, request it.
+                    == PackageManager.PERMISSION_DENIED){//permission not granted, request it.
                 String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
-                requestPermissions(permissions, PERMISSION_CODE);
-            } else {//permission already grated
+                requestPermissions(permissions,PERMISSION_CODE);
+            }
+            else
+            {//permission already grated
 
                 pickImageFromGallery();
             }
-        } else {//system os is less then marshmellow
+        }
+        else
+        {//system os is less then marshmellow
             pickImageFromGallery();
         }
     }
 
-    private void pickImageFromGallery() {
+    private void pickImageFromGallery()
+    {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        startActivityForResult(intent, IMAGE_PICK_CODE);
+        startActivityForResult(intent,IMAGE_PICK_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Bitmap bitmap = null;
-        if (requestCode == RESULT_OK || requestCode == IMAGE_PICK_CODE) {
+        if (requestCode ==  RESULT_OK || requestCode == IMAGE_PICK_CODE)
+        {
             Uri chosenImage = data.getData();
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), chosenImage);
-            } catch (Exception e) {
-            } finally {
+                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), chosenImage);
+            }
+            catch (Exception e){}
+            finally {
                 m_ProfileImage.setImageURI(chosenImage);
             }
-        } else if (requestCode == PERMISSION_CAMERA) {
-            bitmap = (Bitmap) data.getExtras().get("data");
+        }
+        else if (requestCode == PERMISSION_CAMERA)
+        {
+            bitmap = (Bitmap)data.getExtras().get("data");
             m_ProfileImage.setImageBitmap(bitmap);
         }
 
         setBitmapToString(bitmap);
     }
 
-    private void setBitmapToString(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] imageBytes = baos.toByteArray();
-        m_ProfileImageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+    private void setBitmapToString(Bitmap bitmap)
+    {
+        String image = IorUtils.setBitmapToString(bitmap);
+        m_ProfileImageString =IorUtils.setBitmapToString(bitmap);
+        String email = ServerHandler.getInstance().getSignInUser().getEmail();
+        ServerHandler.getInstance().setUserProfileImage(m_ProfileImageString,email);
+        ServerHandler.getInstance().getSignInUser().setProfileImage(m_ProfileImageString);
     }
 
-    public void takePicture(View v) {
+    public void takePicture(View v)
+    {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, PERMISSION_CAMERA);
+        startActivityForResult(intent,PERMISSION_CAMERA);
     }
 
-    private Bitmap getBitmapFromString() {
-        try {
-            byte[] encodeByte = Base64.decode(m_ProfileImageString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        } catch (Exception e) {
+    private Bitmap getBitmapFromString()
+    {
+        try{
+            return IorUtils.getBitmapFromString(m_ProfileImageString);
+        }
+        catch(Exception e){
             e.getMessage();
             return null;
         }

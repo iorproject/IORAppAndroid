@@ -36,6 +36,12 @@
                 android:layout_height="wrap_content"
                 android:text="Requests" />
 
+            <android.support.design.widget.TabItem
+                android:id="@+id/tabItem_followers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Followers" />
+
         </android.support.design.widget.TabLayout>
 
         <android.support.v4.view.ViewPager
