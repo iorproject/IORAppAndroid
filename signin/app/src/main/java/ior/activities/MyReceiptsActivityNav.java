@@ -29,32 +29,6 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
     private NavigationView navigationView;
 
 
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = item -> {
-//
-//        switch (item.getItemId()) {
-//
-//            case R.id.navigation_myReceipts:
-//                break;
-//
-//            case R.id.navigation_myPartners:
-//                ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail(),
-//                () -> {
-//                    Intent intent2 = new Intent(this, MyPartnersActivityNav.class);
-//                    startActivity(intent2);
-//                });
-//                break;
-//
-//            case R.id.navigation_statInfo:
-//                IorUtils.signOut(this);
-//                return true;
-//
-//
-//        }
-//                //IorUtils.onNavigationItemSelected(getApplicationContext(), item, getSupportFragmentManager());
-//                return false;
-//            };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
