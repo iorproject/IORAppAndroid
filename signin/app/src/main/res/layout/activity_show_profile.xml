@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:background="@drawable/gradientbackground"
+            android:background="@drawable/profile_gradientbackground"
             android:layout_width="match_parent"
             android:layout_height="280dp"
             android:orientation="vertical">

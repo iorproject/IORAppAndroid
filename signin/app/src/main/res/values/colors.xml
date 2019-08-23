@@ -13,7 +13,18 @@
     <color name="startblue_account">#09c6df</color>
     <color name="endblue_account">#0bcce6</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="startcolorparents">#fb8c00</color>
-    <color name="endcolorparents">#d84315</color>
+    <color name="startcolorparents">#536976</color>
+    <color name="endcolorparents">#292E49</color>
+    <color name="card_bg_partner">#f6f6f6</color>
+    <color name="name_partner">#0BFC61</color>
+    <color name="email_partnet">#999da4</color>
+    <color name="search_partner">#E0E0E0</color>
+    <color name="start_color_parent">#283c86</color>
+    <color name="end_color_parent">#45a247</color>
+    <color name="accecpt_partner_request">#45a247</color>
+
+
+
+
 
 </resources>

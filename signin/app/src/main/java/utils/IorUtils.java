@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.samples.quickstart.signin.R;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +46,8 @@ public class IorUtils {
     public final static String CURRENT_USER_FILE_NAME = "current_user.txt";
 
     public static GoogleSignInClient mGoogleSignInClient;
+
+    private static Bitmap defultProfileImage;
 
     public static void writeToFile(String data, Context context) {
         try {
@@ -171,6 +177,44 @@ public class IorUtils {
         }
 
         return result;
+    }
+    public static String setBitmapToString(Bitmap bitmap)
+    {
+        String image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        image = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return image;
+    }
+
+    public static Bitmap getBitmapFromString(String image)
+    {
+        if (image == null)
+        {
+            return null;
+        }
+
+        try {
+            byte [] encodeByte = Base64.decode(image,Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+
+
+    }
+    public static void setDefultBitmapImage(Context context)
+    {
+        defultProfileImage= BitmapFactory.decodeResource(context.getResources(), R.drawable.empty_profile);
+    }
+
+    public static Bitmap getDefultProfileImage()
+    {
+        return defultProfileImage;
     }
 
     public static boolean onNavigationItemSelected(Activity activity, MenuItem item) {
