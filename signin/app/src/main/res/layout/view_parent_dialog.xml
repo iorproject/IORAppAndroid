@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center">
+    
+    <LinearLayout
+        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@drawable/partner_gradient_background">
+        <TextView
+            android:id="@+id/name_partner_view_dialog_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Daniel Okanin"
+            android:textColor="@color/whiteHeader"
+            android:textStyle="bold"
+            android:layout_marginTop="90dp"
+            android:textSize="24dp"
+            />
+        <TextView
+            android:id="@+id/email_partner_view_dialog_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:text="example@gmail.com"
+            android:textColor="@color/whiteHeader"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            />
+    </LinearLayout>
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/partner_pic_dialog"
+        android:padding="10dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/profie"
+        app:civ_border_color="#EEEEEE"
+        app:civ_border_width="4dp"
+        app:civ_shadow="true"
+        app:civ_shadow_color="#8BC34A"
+        app:civ_shadow_radius="4"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="230dp"
+        android:background="@android:color/transparent"
+        android:gravity="center_horizontal"
+
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/accecpt_request_partner_bt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/partners_rounded_button"
+            android:layout_marginBottom="5dp"
+            android:text="accecpt"
+            android:visibility="gone"
+            android:textColor="@color/accecpt_partner_request"></Button>
+
+        <Button
+            android:id="@+id/remove_dialog_partner_bt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/partners_rounded_button"
+            android:text="Remove"
+            android:textColor="@android:color/holo_red_dark"></Button>
+
+        <Button
+            android:id="@+id/cancle_dialog_partner_by"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/partners_rounded_button"
+            android:text="Cancle"></Button>
+
+    </LinearLayout>
+
+</RelativeLayout>

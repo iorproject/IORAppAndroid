@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import com.google.samples.quickstart.signin.R;
 
 import ior.adapters.PageAdapter;
+import utils.IorUtils;
 
 public class MyPartnersActivityNav extends AppCompatActivity {
     private BottomNavigationView navigationView;
@@ -19,24 +20,6 @@ public class MyPartnersActivityNav extends AppCompatActivity {
     private PageAdapter pageAdapter;
     private TabLayout tabLayout;
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_myReceipts:
-                    Intent intent1 = new Intent(getApplicationContext(), MyReceiptsActivityNav.class);
-                    startActivity(intent1);
-                    return true;
-                case R.id.navigation_myPartners:
-                    return true;
-                case R.id.navigation_statInfo:
-                    return true;
-            }
-            return false;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +27,17 @@ public class MyPartnersActivityNav extends AppCompatActivity {
         setContentView(R.layout.activity_my_partners_nav);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setSelectedItemId(R.id.navigation_myPartners);
-        navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        navigationView.setOnNavigationItemSelectedListener(menuItem -> {
+            IorUtils.onNavigationItemSelected(this, menuItem);
+            return false;
+        });
         viewPager = findViewById(R.id.viewPager_myPartners);
         tabLayout = findViewById(R.id.tabLayout_myPartners);
         pageAdapter = new PageAdapter(getSupportFragmentManager());
         pageAdapter.addFragment(new MyPartnersFragment());
-        pageAdapter.addFragment(new ShareRequestsFragment());
+        pageAdapter.addFragment(new RequestFriendshipFragment());
+        pageAdapter.addFragment(new FollowersFragment());
+        //pageAdapter.addFragment(new ShareRequestsFragment());
         viewPager.setAdapter(pageAdapter);
 
 

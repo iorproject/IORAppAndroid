@@ -23,25 +23,19 @@ import ior.engine.ServerHandler;
 import ior.engine.User;
 import ior.engine.ePartner;
 
-public class MyPartnersFragment extends Fragment {
+public class RequestFriendshipFragment extends Fragment {
 
-    //List<String> partners;
     private RecyclerView recyclerView;
-    private List<User> partners;
+    private List<User> requests_partners;
     private PartnerRecyclerAdapter partnerRecyclerAdapter;
-
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.all_partners_fragment, container, false);
-
-        //partners = ServerHandler.getInstance().getPartners();
         recyclerView = view.findViewById(R.id.partners_recyclerview);
-        partners = ServerHandler.getInstance().getSignInUser().getPartners();
-        partnerRecyclerAdapter = new PartnerRecyclerAdapter(getContext(), partners, ePartner.FOLLOWING);
-        List<User> t =  ServerHandler.getInstance().getSignInUser().getPartners();
+        requests_partners = ServerHandler.getInstance().getSignInUser().getUsersRequest();
+        partnerRecyclerAdapter = new PartnerRecyclerAdapter(getContext(), requests_partners, ePartner.REQUEST);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(partnerRecyclerAdapter);
         EditText searchPartner = view.findViewById(R.id.search_partner_ED);
@@ -62,24 +56,24 @@ public class MyPartnersFragment extends Fragment {
             }
         });
 
+
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        partnerRecyclerAdapter.setAdapterDate(ServerHandler.getInstance().getSignInUser().getPartners());
-        int x = 0;
+        partnerRecyclerAdapter.setAdapterDate(ServerHandler.getInstance().getSignInUser().getUsersRequest());
+
     }
 
     private void filterPartners(EditText editText)
     {
-        if (partners != null)
+        if (requests_partners != null)
         {
-            List<User> filterUsers = partners.stream().filter((user) -> user.getName().startsWith(editText.getText().toString())).collect(Collectors.toList());
+            List<User> filterUsers = requests_partners.stream().filter((user) -> user.getName().startsWith(editText.getText().toString())).collect(Collectors.toList());
             partnerRecyclerAdapter.setAdapterDate(filterUsers);
         }
 
     }
-
 }
