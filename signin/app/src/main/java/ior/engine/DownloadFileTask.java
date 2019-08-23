@@ -32,6 +32,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, String> {
         mProgressDialog = new ProgressDialog(activity);
 
         mProgressDialog.setMessage("Downloading File...");
+        mProgressDialog.setMessage(fileName);
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.setCancelable(true);
@@ -71,7 +72,6 @@ public class DownloadFileTask extends AsyncTask<String, Integer, String> {
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             file = new File(path, fileName);
             output = new FileOutputStream(file);
-
             input = connection.getInputStream();
             //output = new FileOutputStream("/sdcard/aaaa.pdf");
 

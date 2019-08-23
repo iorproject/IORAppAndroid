@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import ior.adapters.FilterItem;
@@ -234,7 +235,7 @@ public class AdvancedSearchFragment extends Fragment {
         }
         else if (startDate != null && endDate != null) {
 
-            DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            DateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             try {
                 Date dateEnd = format.parse(endDate);
                 Date dateStart = format.parse(startDate);

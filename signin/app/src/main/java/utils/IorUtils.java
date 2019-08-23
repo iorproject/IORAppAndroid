@@ -26,6 +26,7 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import ior.activities.HomeScreenActivity;
 import ior.activities.MainActivity;
@@ -124,7 +125,7 @@ public class IorUtils {
 
     public static String dateToString(Date date) {
 
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
         String dateStr = dateFormat.format(date);
         return dateStr;
 
@@ -183,7 +184,6 @@ public class IorUtils {
                                 Intent intent = new Intent(activity, MyReceiptsActivityNav.class);
                                 activity.startActivity(intent);
                             });
-                    return true;
                 }
                 break;
 
@@ -195,7 +195,6 @@ public class IorUtils {
                                 Intent intent = new Intent(activity, MyPartnersActivityNav.class);
                                 activity.startActivity(intent);
                             });
-                    return true;
                 }
 
                 break;
@@ -205,12 +204,9 @@ public class IorUtils {
                     Intent intent = new Intent(activity, ViewStatisticsActivity.class);
                     intent.putExtra("email",ServerHandler.getInstance().getSignInUser().getEmail());
                     activity.startActivity(intent);
-                    return true;
                 }
 
                 break;
-
-
         }
 
         return false;

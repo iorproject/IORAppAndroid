@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Optional;
@@ -51,11 +52,6 @@ public class ServerHandler {
     private Date companiesLastFetch = null;
     private Date requestsLastFetch = null;
     private Map<String, Map<String, Date>> companiesReceiptsLastFetch = new LinkedHashMap<>();
-
-    public static ServerHandler getInstance() {
-        return ourInstance;
-    }
-
     private User signInUser;
     private List<String> partners;
     private List<String> requests;
@@ -67,6 +63,11 @@ public class ServerHandler {
 
     private ServerHandler() {
     }
+
+    public static ServerHandler getInstance() {
+        return ourInstance;
+    }
+
 
     public void setOnProgressFetchingData(Runnable onProgressFetchingData) {
         this.onProgressFetchingData = onProgressFetchingData;
@@ -134,7 +135,7 @@ public class ServerHandler {
                     parameters.put("access_token", accessToken);
                     parameters.put("refresh_token", refreshToken);
                     parameters.put("name", name);
-                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
                     Date now = Calendar.getInstance().getTime();
                     String data = dateFormat.format(now);
                     parameters.put("register_date", data);
@@ -166,40 +167,7 @@ public class ServerHandler {
             }
         }.execute();
 
-
-//        try {
-//            URL url = new URL("http://10.0.2.2:8080/ior/registerUser");
-//            //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-//            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//            con.setRequestMethod("GET");
-//
-//            Map<String, String> parameters = new HashMap<>();
-//            parameters.put("email", email);
-//            parameters.put("access_token", accessToken);
-//            parameters.put("refresh_token", refreshToken);
-//            parameters.put("name", name);
-//            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-//            Date now = Calendar.getInstance().getTime();
-//            String data = dateFormat.format(now);
-//            parameters.put("register_date", data);
-//
-//            con.setDoOutput(true);
-//            DataOutputStream out = new DataOutputStream(con.getOutputStream());
-//            out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-//            out.flush();
-//            out.close();
-//            int responseCode = con.getResponseCode();
-//            this.user = new User(email, name, now);
-//
-//        }
-//        catch (ProtocolException e1) {
-//
-//        }
-//        catch (IOException e2) {
-//
-//        }
     }
-
 
     public void fetchUserInfo(String email, Runnable onFinish) {
 
@@ -238,7 +206,7 @@ public class ServerHandler {
                         String email = userMap.get("email");
                         String name = userMap.get("name");
                         String dateStr = userMap.get("registerDate");
-                        Date registerDate = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss").parse(dateStr);
+                        Date registerDate = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss", Locale.ENGLISH).parse(dateStr);
 
                         ServerHandler.getInstance().signInUser = new User(email, name, registerDate);
                         ServerHandler.getInstance().usersInfoMap.put(email, signInUser);
@@ -456,57 +424,6 @@ public class ServerHandler {
                 }
             }.execute();
 
-
-//
-//            Thread thread = new Thread(() -> {
-//
-//                try {
-//                    URL url = new URL("http://10.0.2.2:8080/ior/userCompanies");
-//                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-//                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//                    con.setRequestMethod("GET");
-//
-//                    Map<String, String> parameters = new HashMap<>();
-//                    parameters.put("email", email);
-//
-//                    con.setDoOutput(true);
-//                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
-//                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-//                    out.flush();
-//                    out.close();
-//                    int responseCode = con.getResponseCode();
-//
-//                    BufferedReader in = new BufferedReader(
-//                            new InputStreamReader(con.getInputStream()));
-//                    String inputLine;
-//                    StringBuffer content = new StringBuffer();
-//                    while ((inputLine = in.readLine()) != null) {
-//                        content.append(inputLine);
-//                    }
-//                    in.close();
-//
-//                    Gson gson = new Gson();
-//                    // data: array of : ["companyName" -> "aaa" , "logoUrl" -> "httpdsdsa"] , [...]
-//
-//                    List<LinkedTreeMap<String, String>> companiesDB = gson.fromJson(content.toString(), List.class);
-//                    companies = new ArrayList<>();
-//
-//                    for (LinkedTreeMap<String, String> companyDB : companiesDB) {
-//
-//                        companies.add(new Company(companyDB.get("companyName"), companyDB.get("logoUrl")));
-//                    }
-//                    fetchBitmaps(onFinish);
-//                    //onFinish.run();
-//
-//                } catch (ProtocolException e1) {
-//
-//                } catch (IOException e2) {
-//
-//                }
-//            });
-//
-//            thread.start();
-
         } else
             onFinish.run();
     }
@@ -567,8 +484,8 @@ public class ServerHandler {
     }
 
 
-    public void loadBitmap(Company company)
-    {
+    public void loadBitmap(Company company) {
+
         Bitmap bm = null;
         InputStream is = null;
         BufferedInputStream bis = null;
@@ -679,7 +596,7 @@ public class ServerHandler {
                             String receiptFileName = receiptDB.get("fileName").toString();
                             Date receiptDate = null;
                             eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
-                            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a");
+                            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a", Locale.ENGLISH);
 
                             try {
 
@@ -810,7 +727,6 @@ public class ServerHandler {
         return totalPrice;
     }
 
-
     public List<Receipt> getCompanyReceipts(String email, String company) {
 
         List<Receipt> receipts = !usersReceipts.containsKey(email) ?
@@ -819,19 +735,6 @@ public class ServerHandler {
         return receipts;
 
     }
-
-//    public Company getCompany(String companyName) {
-//
-//        Company company = null;
-//
-//        for (Company c : companies) {
-//            if (c.getName().equals(companyName))
-//                company = c;
-//        }
-//
-//        return company;
-//
-//    }
 
     public void fetchUserAllReceipts(String userEmail, Runnable onFinish) {
 
@@ -892,7 +795,7 @@ public class ServerHandler {
                                 .toString() : "";
                         Date receiptDate = null;
                         eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
-                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a");
+                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a", Locale.ENGLISH);
 
                         try {
 
@@ -935,7 +838,6 @@ public class ServerHandler {
 
     }
 
-
     public  void downloadFile(Activity activity, String url, String fileName, Runnable onFinish) {
 
         if (ContextCompat.checkSelfPermission(activity,
@@ -972,7 +874,6 @@ public class ServerHandler {
 
 
     }
-
 
     public  void reset() {
 
@@ -1033,7 +934,6 @@ public class ServerHandler {
 
         return maxPrice;
     }
-
 
     public List<String> getCompaniesName(String email) {
         return usersReceipts.containsKey(email) ?
