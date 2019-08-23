@@ -26,6 +26,7 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import ior.activities.HomeScreenActivity;
 import ior.activities.MainActivity;
@@ -124,7 +125,7 @@ public class IorUtils {
 
     public static String dateToString(Date date) {
 
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
         String dateStr = dateFormat.format(date);
         return dateStr;
 

@@ -33,6 +33,7 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import ior.activities.ReceiptFileActivity;
 import ior.engine.Receipt;
@@ -109,7 +110,7 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
         String ttt = currentReceipt.getCurrency().toString();
         String price = ppp +" " + ttt;
         viewHolder.textViewTotalPrice.setText(price);
-        DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+        DateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
         String date = format.format(currentReceipt.getCreationDate());
         viewHolder.textViewDate.setText(date);
         if (currentReceipt.getFileName().equals("") || currentReceipt.getAttachmentUrl().equals("")) {

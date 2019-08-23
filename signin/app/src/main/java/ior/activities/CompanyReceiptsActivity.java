@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import ior.adapters.ReceiptRecycleAdapter;
@@ -80,7 +81,7 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
 
             List<String> companies = intent.getStringArrayListExtra("companies");
 
-            DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            DateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             try{
 
                 Date startDate = startDateStr == null ? format.parse("1/1/2019") : format.parse(startDateStr);

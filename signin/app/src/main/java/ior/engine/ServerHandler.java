@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Optional;
@@ -142,7 +143,7 @@ public class ServerHandler {
                     parameters.put("access_token", accessToken);
                     parameters.put("refresh_token", refreshToken);
                     parameters.put("name", name);
-                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
                     Date now = Calendar.getInstance().getTime();
                     String data = dateFormat.format(now);
                     parameters.put("register_date", data);
@@ -246,7 +247,7 @@ public class ServerHandler {
                         String email = userMap.get("email");
                         String name = userMap.get("name");
                         String dateStr = userMap.get("registerDate");
-                        Date registerDate = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss").parse(dateStr);
+                        Date registerDate = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss", Locale.ENGLISH).parse(dateStr);
 
                         ServerHandler.getInstance().signInUser = new User(email, name, registerDate);
                         ServerHandler.getInstance().usersInfoMap.put(email, signInUser);
@@ -687,7 +688,7 @@ public class ServerHandler {
                             String receiptFileName = receiptDB.get("fileName").toString();
                             Date receiptDate = null;
                             eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
-                            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a");
+                            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a", Locale.ENGLISH);
 
                             try {
 
@@ -873,7 +874,7 @@ public class ServerHandler {
                                 .toString() : "";
                         Date receiptDate = null;
                         eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
-                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a");
+                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a", Locale.ENGLISH);
 
                         try {
 
