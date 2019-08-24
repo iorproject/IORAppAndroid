@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ior.activities.MyReceiptsActivityNav">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/about_background"
+    tools:context="ior.activities.AboutActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewAboutAppTitle_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="About The App:"
+                android:textColor="#043DA1"
+                android:textSize="20sp"
+                android:textStyle="bold|italic" />
+
+            <TextView
+                android:id="@+id/textViewAboutApp_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="IOR is an app that allows anyone to store their digital receipts from different businesses in one place.\nThe app is a source of information that contains the receipts and allows customers to calculate and track expenses with the help of an easy and quick search of the app and all without having to do anything.\nThe app scans every email received in your Gmail account and detects emails that contain digital receipts, and forwards them directly to the app, which allows private customers to track their internet spend.\nIn addition, you can set up a group that contains the receipts that the user chooses to share and thus be monitored for total purchases, both personal and group.\nThe advantages of IOR are that the app is simple and intuitive.\nAlso, receipts and information about them are organized in one place and accessible, a receipt can be sought based on the date of creation or business.\nMoreover, you can see a total calculation of your total expenses and that of your family for that purpose of performing analyzes."
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/textViewPrivacyPolicyTitle_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Privacy Policy"
+                android:textColor="#043DA1"
+                android:textSize="20sp"
+                android:textStyle="bold|italic" />
+
+            <TextView
+                android:id="@+id/textViewPrivacyPolicy_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:ems="10"
+                android:gravity="start|top"
+                android:inputType="textMultiLine"
+                android:text="IOR recognizes and respects the importance of protecting the privacy of users of the IOR application you are browsing (the application) and in this document wishes to present its privacy policy to the users of the App. \nThis policy applies equally to both sexes, and the use of male language is for convenience only.
+                \nAs you browse the App, IOR collects and stores information about you (the information) as an App User (as set forth below). \nYour information is collected during your approval to scan your personal Gmail account as well as the information you provided to Gmail.
+                \nThe information collected will only be stored in the IOR database and will not be used by a third party."
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/textViewCreditsTitle_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Credits:"
+                android:textColor="#043DA1"
+                android:textSize="20sp"
+                android:textStyle="bold|italic" />
+
+            <TextView
+                android:id="@+id/textViewCredits_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:ems="10"
+                android:gravity="start|top"
+                android:inputType="textMultiLine"
+                android:text="Barak, Or \nBen Avi, Moshe \nBlechman, Omer \nOkanin, Daniel"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
+
+<android.support.design.widget.NavigationView
+android:layout_width="250dp"
+android:id="@+id/nav_view_top"
+android:layout_height="match_parent"
+android:layout_gravity="start"
+android:background="@color/whiteHeader"
+app:headerLayout="@layout/header"
+app:itemIconTint="@color/blackHeader"
+
+app:itemTextColor="@color/bottom_nav_item_text_color"
+app:menu="@menu/drawermenu"></android.support.design.widget.NavigationView>
+
+    </android.support.v4.widget.DrawerLayout>

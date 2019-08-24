@@ -65,11 +65,13 @@ public class MainActivity extends AppCompatActivity {
             ServerHandler.getInstance().setOnProgressFetchingData(this::updateProgressBar);
             ServerHandler.getInstance().fetchUserInfo(email, () -> {
                         Intent intent = new Intent(this, MyReceiptsActivityNav.class);
+                        intent.putExtra("email", email);
                         startActivity(intent);
                         finish();
                     });
-            IorUtils.setDefultBitmapImage(this);
 
+            ServerHandler.getInstance().fetchUserPartners(email, null);
+            IorUtils.setDefultBitmapImage(this);
 
 
 //            ServerHandler.getInstance().fetchUserAllReceipts(email, null);

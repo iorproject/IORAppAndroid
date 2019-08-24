@@ -4,14 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/rounded_receipt_background"
     tools:context="ior.activities.CalendarActivity">
 
-    <CalendarView
-        android:id="@+id/calendarView"
-        style="@android:style/Widget.Material.Light.CalendarView"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:focusedMonthDateColor="#FF0303"
-        android:weekDayTextAppearance="@style/TextAppearance.AppCompat.Body2" />
+        android:orientation="vertical">
+
+        <CalendarView
+            android:id="@+id/calendarView"
+            style="@android:style/Widget.Material.Light.CalendarView"
+            android:layout_width="wrap_content"
+            android:layout_height="310dp"
+            android:background="@drawable/rounded_receipt_background"
+            android:focusedMonthDateColor="#FF0303"
+            android:weekDayTextAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+        <Button
+            android:id="@+id/buttonResetDate_calendar"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/buttonscamera"
+            android:fontFamily="casual"
+            android:foregroundGravity="center"
+            android:gravity="center_vertical"
+            android:paddingLeft="50dp"
+            android:paddingTop="10dp"
+            android:paddingRight="50dp"
+            android:text="Reset"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+
 </RelativeLayout>

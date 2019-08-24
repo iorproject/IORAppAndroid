@@ -18,8 +18,11 @@
             android:id="@+id/tabLayout_myPartners"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#273EB9"
-            app:tabIndicatorColor="#FF0000"
+            android:layout_margin="3dp"
+            android:background="@drawable/tablayout_background"
+            app:tabIndicatorColor="#FDFDFD"
+            app:tabIndicatorHeight="4dp"
+            app:tabIndicatorFullWidth="false"
             app:tabSelectedTextColor="#FCF7F7F7"
             app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium"
             app:tabTextColor="#46A6F3">
@@ -56,14 +59,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:background="#273EB9"
-        app:itemTextColor="#F7F2F2"
+        android:background="@drawable/navigator_bar_background"
+        app:itemIconTint="@drawable/bottom_navigation_selector"
+        app:itemTextColor="@color/bottom_nav_item_text_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:itemIconTint="@drawable/bottom_navigation_selector"
         app:menu="@menu/bottom_nav_menu" />
 
 </RelativeLayout>

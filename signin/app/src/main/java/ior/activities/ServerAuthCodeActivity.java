@@ -47,6 +47,8 @@ import ior.engine.ServerHandler;
 import utils.IorUtils;
 import utils.ParameterStringBuilder;
 
+import static com.google.android.gms.common.api.CommonStatusCodes.NETWORK_ERROR;
+
 /**
  * Demonstrates retrieving an offline access one-time code for the current Google user, which
  * can be exchanged by your server for an access token and refresh token.
@@ -181,6 +183,10 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
                 // TODO(developer): send code to server and exchange for access/refresh/ID tokens
             } catch (ApiException e) {
                 Log.w(TAG, "Sign-in failed", e);
+                String message = "";
+                if (e.getStatusCode() == NETWORK_ERROR)
+                    message = "The connection to Google has failed. \nPlease try again later.";
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                 updateUI(null);
             }
             // [END get_auth_code]

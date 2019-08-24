@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import ior.activities.AboutActivity;
 import ior.activities.HomeScreenActivity;
 import ior.activities.MainActivity;
 import ior.activities.MyPartnersActivityNav;
@@ -174,6 +175,11 @@ public class IorUtils {
             case R.id.signOut_menu:
                 IorUtils.signOut(activity);
                 result = new Intent(activity, MainActivity.class);
+                break;
+
+            case R.id.about:
+                result = new Intent(activity, AboutActivity.class);
+                break;
         }
 
         return result;
@@ -222,33 +228,27 @@ public class IorUtils {
         switch (item.getItemId()) {
 
             case R.id.navigation_myReceipts:
-                if (activity.getClass() != MyReceiptsActivityNav.class) {
                     ServerHandler.getInstance().fetchUserInfo(ServerHandler.getInstance().getSignInUser().getEmail(),
                             () -> {
                                 Intent intent = new Intent(activity, MyReceiptsActivityNav.class);
+                                intent.putExtra("email", ServerHandler.getInstance().getSignInUser().getEmail());
                                 activity.startActivity(intent);
                             });
-                }
+
                 break;
 
-
             case R.id.navigation_myPartners:
-                if (activity.getClass() != MyPartnersActivityNav.class) {
                     ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail(),
                             () -> {
                                 Intent intent = new Intent(activity, MyPartnersActivityNav.class);
                                 activity.startActivity(intent);
                             });
-                }
-
                 break;
 
             case R.id.navigation_statInfo:
-                if (activity.getClass() != ViewStatisticsActivity.class) {
                     Intent intent = new Intent(activity, ViewStatisticsActivity.class);
                     intent.putExtra("email",ServerHandler.getInstance().getSignInUser().getEmail());
                     activity.startActivity(intent);
-                }
 
                 break;
         }

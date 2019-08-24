@@ -8,12 +8,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.ColorUtils;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -40,6 +45,9 @@ import utils.IorUtils;
 public class ViewStatisticsActivity extends AppCompatActivity {
 
     private BottomNavigationView navViewBottom;
+    private NavigationView navigationViewTop;
+    private DrawerLayout mDraw;
+    private ActionBarDrawerToggle mToggle;
 
 
     private class ColorRGB{
@@ -98,6 +106,15 @@ public class ViewStatisticsActivity extends AppCompatActivity {
             IorUtils.onNavigationItemSelected(this, menuItem);
             return false;
         });
+
+
+        navigationViewTop = findViewById(R.id.nav_view_top);
+        navigationViewTop.setNavigationItemSelectedListener(this::onNavigationItemSelected);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mDraw = findViewById(R.id.drawer);
+        mToggle = IorUtils.setNavigateBar(this);
+
 
 
         //mPieChart.setDrawEntryLabels(true);
@@ -201,6 +218,28 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         mPieChart.setData(piedata);
         mPieChart.invalidate();
     }
+
+
+    public boolean onNavigationItemSelected(MenuItem item) {
+        startActivity(IorUtils.getItemIntent(this, item.getItemId()));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mToggle.onOptionsItemSelected(item))
+        {
+            return  true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mDraw.closeDrawer(Gravity.LEFT);
+    }
+
 
 
 }

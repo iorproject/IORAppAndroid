@@ -251,7 +251,6 @@ public class ServerHandler {
 
         Date date = new Date();
         Date lastFetch = partnersLastFetch;
-        partnersLastFetch = date;
         if (lastFetch == null || isTimeToFetch(date, lastFetch)) {
 
             new AsyncTask<Void, Void, Void>() {
@@ -318,12 +317,15 @@ public class ServerHandler {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    onFinish.run();
+                    partnersLastFetch = date;
+                    if (onFinish != null)
+                        onFinish.run();
 
                 }
             }.execute();
         } else {
-            onFinish.run();
+            if (onFinish != null)
+                onFinish.run();
 
         }
     }
@@ -676,7 +678,7 @@ public class ServerHandler {
 
     public List<Receipt> getCompanyReceipts(String email, String company) {
 
-        List<Receipt> receipts = usersReceipts.containsKey(email) ?
+        List<Receipt> receipts = !usersReceipts.containsKey(email) ?
                 null : usersReceipts.get(email).get(company);
 
         return receipts;

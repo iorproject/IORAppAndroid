@@ -1,13 +1,11 @@
 package ior.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.annotation.NonNull;
-import android.view.MenuItem;
+import android.view.WindowManager;
 
 import com.google.samples.quickstart.signin.R;
 
@@ -15,19 +13,18 @@ import ior.adapters.PageAdapter;
 import utils.IorUtils;
 
 public class MyPartnersActivityNav extends AppCompatActivity {
-    private BottomNavigationView navigationView;
+    private BottomNavigationView navigationViewBottom;
     private ViewPager viewPager;
     private PageAdapter pageAdapter;
     private TabLayout tabLayout;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_partners_nav);
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setSelectedItemId(R.id.navigation_myPartners);
-        navigationView.setOnNavigationItemSelectedListener(menuItem -> {
+        navigationViewBottom = findViewById(R.id.nav_view);
+        navigationViewBottom.setSelectedItemId(R.id.navigation_myPartners);
+        navigationViewBottom.setOnNavigationItemSelectedListener(menuItem -> {
             IorUtils.onNavigationItemSelected(this, menuItem);
             return false;
         });
@@ -39,6 +36,7 @@ public class MyPartnersActivityNav extends AppCompatActivity {
         pageAdapter.addFragment(new FollowersFragment());
         //pageAdapter.addFragment(new ShareRequestsFragment());
         viewPager.setAdapter(pageAdapter);
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -62,5 +60,4 @@ public class MyPartnersActivityNav extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
     }
-
 }
