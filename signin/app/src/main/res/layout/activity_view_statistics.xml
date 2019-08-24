@@ -114,7 +114,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textViewStartDateKey_advancedSearch"
+                    android:id="@+id/textViewStartDateKey_viewStatistics"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -122,7 +122,7 @@
                     android:textSize="12sp" />
 
                 <ImageView
-                    android:id="@+id/imageViewCalendarStart_advancedSearch"
+                    android:id="@+id/imageViewCalendarStart_viewStatistics"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
@@ -131,7 +131,7 @@
 
 
                 <TextView
-                    android:id="@+id/textViewStartDateVal_advancedSearch"
+                    android:id="@+id/textViewStartDateVal_viewStatistics"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -148,7 +148,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textViewEndDateKey_advancedSearch"
+                    android:id="@+id/textViewEndDateKey_viewStatistics"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -157,7 +157,7 @@
 
 
                 <ImageView
-                    android:id="@+id/imageViewCalendarEnd_advancedSearch"
+                    android:id="@+id/imageViewCalendarEnd_viewStatistics"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
@@ -166,7 +166,7 @@
 
 
                 <TextView
-                    android:id="@+id/textViewEndDateVal_advancedSearch"
+                    android:id="@+id/textViewEndDateVal_viewStatistics"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"

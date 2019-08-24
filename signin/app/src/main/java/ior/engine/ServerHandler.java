@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -594,46 +596,59 @@ public class ServerHandler {
 
     }
 
-    public float getAveragePurchase(String email){
-        float totalPrice = 0;
-        if(usersReceipts.containsKey(email)) {
-            List<Receipt> receipts = usersReceipts.get(email).values().stream()
+    public float getAveragePurchase(String email, Optional<Date> startDate, Optional<Date> endDate){
+        if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()) {
+            OptionalDouble averagePurchase =  usersReceipts.get(email).values().stream()
                     .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
-            for(Receipt receipt : receipts){
-                totalPrice += receipt.getTotalPrice();
+                    .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
+                    .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
+                    .mapToDouble(Receipt::getTotalPrice)
+                    .average();
+            if(averagePurchase.isPresent()){
+                return (float)averagePurchase.getAsDouble();
             }
-            return totalPrice / (float)receipts.size();
         }
-        return totalPrice;
+        return 0;
 
     }
 
-    public float getAveragePurchasePerCompany(String email, String company){
-        float totalPrice = 0;
+    public float getAveragePurchasePerCompany(String email, String company, Optional<Date> startDate, Optional<Date> endDate){
         if(usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company)) {
-            List<Receipt> receipts = new ArrayList<>(usersReceipts.get(email).get(company));
-            for(Receipt receipt : receipts){
-                totalPrice += receipt.getTotalPrice();
+            OptionalDouble averagePurchase = usersReceipts.get(email).get(company)
+                    .stream()
+                    .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
+                    .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
+                    .mapToDouble(Receipt::getTotalPrice)
+                    .average();
+            if(averagePurchase.isPresent()){
+                return (float)averagePurchase.getAsDouble();
             }
-            return totalPrice / (float)receipts.size();
         }
-        return totalPrice;
+        return 0;
     }
 
-    public float getMostExpensivePurchase(String email){
-        return usersReceipts.containsKey(email) ?
-                usersReceipts.get(email).values().stream()
-                        .flatMap(Collection::stream)
-                        .map(receipt -> receipt.getTotalPrice())
-                        .max(Comparator.comparingDouble(Float::valueOf))
-                        .get() : 0;
+    public float getMostExpensivePurchase(String email, Optional<Date> startDate, Optional<Date> endDate){
+        if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()){
+            Optional<Float> mostExpensivePurchase = usersReceipts.get(email).values().stream()
+                    .flatMap(Collection::stream)
+                    .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
+                    .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
+                    .map(receipt -> receipt.getTotalPrice())
+                    .max(Comparator.comparingDouble(Float::valueOf));
+            if(mostExpensivePurchase.isPresent()){
+                return mostExpensivePurchase.get();
+            }
+        }
+        return 0;
     }
 
-    public float getLatestPurchase(String email){
-        List<Receipt> receipts = new ArrayList<>();
-        for (List<Receipt> list : usersReceipts.get(email).values())
-            receipts.addAll(list);
+    public float getLatestPurchase(String email, Optional<Date> startDate, Optional<Date> endDate){
+        List<Receipt> receipts = usersReceipts.get(email).values()
+        .stream()
+                .flatMap(List::stream)
+                .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
+                .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
+                .collect(Collectors.toList());
 
         Receipt latestReceipt = !receipts.isEmpty() ? receipts.get(0) : null;
         if(latestReceipt == null){
@@ -649,49 +664,59 @@ public class ServerHandler {
     }
 
 
-    public int getAmountOfPurchases(String email){
-        return usersReceipts.containsKey(email) ?
+    public int getAmountOfPurchases(String email, Optional<Date> startDate, Optional<Date> endDate) {
+        return usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty() ?
                 usersReceipts.get(email).values().stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList()).size() : 0;
+                        .flatMap(Collection::stream)
+                        .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
+                        .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
+                        .collect(Collectors.toList()).size() : 0;
     }
 
-    public int getAmountOfPurchasesPerCompany(String email, String company){
+    public int getAmountOfPurchasesPerCompany(String email, String company, Optional<Date> startDate, Optional<Date> endDate){
         return usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company) ?
-                usersReceipts.get(email).get(company).size() : 0;
+                usersReceipts.get(email).get(company).stream()
+                        .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
+                        .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
+                        .collect(Collectors.toList()).size() : 0;
     }
 
-    public float getTotalPurchases(String email){
-        float totalPrice = 0;
-        if(usersReceipts.containsKey(email)) {
-            List<Receipt> receipts = usersReceipts.get(email).values().stream()
+    public float getTotalPurchases(String email, Optional<Date> startDate, Optional<Date> endDate){
+        if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()) {
+            Optional<Float> totalPurchases =  usersReceipts.get(email).values().stream()
                     .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
-            for(Receipt receipt : receipts){
-                totalPrice += receipt.getTotalPrice();
+                    .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
+                    .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
+                    .map(Receipt::getTotalPrice)
+                    .reduce((a,b) -> a+b);
+            if(totalPurchases.isPresent()){
+                return totalPurchases.get();
             }
         }
-        return totalPrice;
+        return 0;
     }
 
     public List<Receipt> getCompanyReceipts(String email, String company) {
 
-        List<Receipt> receipts = usersReceipts.containsKey(email) ?
-                null : usersReceipts.get(email).get(company);
-
+        List<Receipt> receipts = !usersReceipts.containsKey(email) ?
+                Collections.EMPTY_LIST : usersReceipts.get(email).get(company);
         return receipts;
 
     }
 
-    public float getTotalPurchasesPerCompany(String email, String company){
-        float totalPrice = 0;
-        if(usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company)) {
-            List<Receipt> receipts = new ArrayList<>(usersReceipts.get(email).get(company));
-            for(Receipt receipt : receipts){
-                totalPrice += receipt.getTotalPrice();
+    public float getTotalPurchasesPerCompany(String email, String company,Optional<Date> startDate, Optional<Date> endDate) {
+        if (usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company)) {
+            Optional<Float> totalPurchases = usersReceipts.get(email).get(company)
+                    .stream()
+                    .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
+                    .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
+                    .map(Receipt::getTotalPrice)
+                    .reduce((a, b) -> a + b);
+            if(totalPurchases.isPresent()){
+                return totalPurchases.get();
             }
         }
-        return totalPrice;
+        return 0;
     }
 
     public void fetchUserAllReceipts(String userEmail, Runnable onFinish) {
@@ -1056,16 +1081,35 @@ public class ServerHandler {
         return maxPrice;
     }
 
-    public List<String> getCompaniesName(String email) {
-        return usersReceipts.containsKey(email) ?
-                new ArrayList<String>(usersReceipts.get(email).keySet()) : new ArrayList<>();
+    public List<String> getCompaniesName(String email, Optional<Date> startDate, Optional<Date> endDate) {
+        Map<String,Integer> companyNamesMap = new HashMap<>();
+        if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()){
+            Map<String,List<Receipt>> receiptsMap = usersReceipts.get(email);
+            for(Map.Entry<String,List<Receipt>> receiptEntry : receiptsMap.entrySet()){
+                for(Receipt receipt : receiptEntry.getValue()){
+                    if(((!startDate.isPresent() && !endDate.isPresent()) || (receipt.getCreationDate().after(startDate.get()) && receipt.getCreationDate().before(endDate.get())))
+                            && !companyNamesMap.containsKey(receiptEntry.getKey())){
+                        companyNamesMap.put(receiptEntry.getKey(),1);
+                        break;
+                    }
+                }
+
+            }
+        }
+        return new ArrayList<>(companyNamesMap.keySet());
     }
 
-    public List<Float> getCompaniesTotalPrice(String email) {
+    public List<Float> getCompaniesTotalPrice(String email, Optional<Date> startDate, Optional<Date> endDate) {
         List<Float> companyTotalPriceList = new ArrayList<>();
-        if(usersReceipts.containsKey(email))
+        if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty())
             for(Map.Entry<String,List<Receipt>> companyReceiptsMap : usersReceipts.get(email).entrySet()){
-                companyTotalPriceList.add(companyReceiptsMap.getValue().stream().map(receipt -> receipt.getTotalPrice()).reduce((a,b) -> a+b).get());
+                Optional<Float> companyTotalPrice = companyReceiptsMap.getValue().stream()
+                        .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
+                        .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
+                        .map(Receipt::getTotalPrice).reduce((a, b) -> a+b);
+                if(companyTotalPrice.isPresent()){
+                    companyTotalPriceList.add(companyTotalPrice.get());
+                }
             }
         return companyTotalPriceList;
     }
