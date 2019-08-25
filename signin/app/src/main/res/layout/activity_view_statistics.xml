@@ -258,7 +258,6 @@
         android:background="@color/whiteHeader"
         app:headerLayout="@layout/header"
         app:itemIconTint="@color/blackHeader"
-
         app:itemTextColor="@color/bottom_nav_item_text_color"
         app:menu="@menu/drawermenu"></android.support.design.widget.NavigationView>
 
