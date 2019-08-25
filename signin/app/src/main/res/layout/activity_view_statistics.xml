@@ -6,7 +6,7 @@
     android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ior.activities.MyReceiptsActivityNav">
+    tools:context="ior.activities.ViewStatisticsActivity">
 
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
