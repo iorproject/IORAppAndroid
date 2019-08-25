@@ -259,29 +259,29 @@ public class AdvancedSearchFragment extends Fragment {
             Toast.makeText(getContext(), "You have to choose at least one currency", Toast.LENGTH_SHORT).show();
             return;
         }
-        else if (startDate != null && endDate != null) {
 
-            DateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-            try {
-                Date dateEnd = format.parse(endDate);
-                Date dateStart = format.parse(startDate);
-                if (!dateStart.before(dateEnd)) {
+        Date dateEnd = null;
+        Date dateStart = null;
 
-                    Toast.makeText(getContext(), "Start date is not before end date", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                else {
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        try {
+            dateEnd = format.parse(endDate);
+            dateStart = format.parse(startDate);
+            if (!dateStart.before(dateEnd)) {
 
-                    dateEnd.setTime(dateEnd.getTime() + (1000 * 60 * 60 * 24));
-                    endDate = format.format(dateEnd);
-                    int x = 5;
-                }
+                Toast.makeText(getContext(), "Start date is not before end date", Toast.LENGTH_SHORT).show();
+                return;
             }
-            catch (Exception e) {
-
-            }
+        }
+        catch (Exception e) {
 
         }
+
+        if (endDate != null) {
+            dateEnd.setTime(dateEnd.getTime() + (1000 * 60 * 60 * 24));
+            endDate = format.format(dateEnd);
+        }
+
 
         Intent intent = new Intent(getContext(), CompanyReceiptsActivity.class);
         intent.putExtra("filter", true);
@@ -295,20 +295,6 @@ public class AdvancedSearchFragment extends Fragment {
         intent.putStringArrayListExtra("companies", selectedCompanies);
 
         startActivity(intent);
-
-
-
-//        String startDateStr = intent.getStringExtra("startDate");
-//        String endDateStr = intent.getStringExtra("endDate");
-//        float minPrice = intent.getFloatExtra("minPrice", 0);
-//        float maxPrice = intent.getFloatExtra("maxPrice", 0);
-//        List<String> currenciesStr = intent.getStringArrayListExtra("currencies");
-//        List<eCurrency> currencies = new ArrayList<>();
-//        for (String c : currenciesStr)
-//            currencies.add(eCurrency.createCurrency(c));
-//
-//        List<String> companies = intent.getStringArrayListExtra("companies");
-
     }
 
 }
