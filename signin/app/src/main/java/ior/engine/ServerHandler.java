@@ -988,7 +988,7 @@ public class ServerHandler {
     private void arrangeDataAfterAcceptFriendship(String friendEmail)
     {
         User friendUser = signInUser.getPartners_Followers().get("requestusers").get(friendEmail);
-        signInUser.getPartners_Followers().get("partners").put(friendEmail,friendUser);
+        signInUser.getPartners_Followers().get("followers").put(friendEmail,friendUser);
         signInUser.getPartners_Followers().get("requestusers").remove(friendEmail);
     }
 
