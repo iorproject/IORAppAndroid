@@ -2,9 +2,11 @@ package ior.adapters;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +24,8 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.List;
 
+import ior.activities.AllReceiptsFragment;
+import ior.activities.MyReceiptsActivityNav;
 import ior.engine.ServerHandler;
 import ior.engine.User;
 import ior.engine.ePartner;
@@ -70,33 +74,38 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
         viewHolder.edit_IMB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog(i);
+                showDialog(viewHolder,i);
             }
         });
 
         viewHolder.dynamicButton.setText(buttonMsg);
         viewHolder.partner_card.setOnClickListener(this.typeFragment != ePartner.FOLLOWING ? null :
                 new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext,"Shalom",Toast.LENGTH_SHORT).show();
-            }
-        });
+                    @Override
+                    public void onClick(View v) {
+                        String email = mData.get(i).getEmail();
+                        ServerHandler.getInstance().fetchUserAllReceipts(email,
+                                () -> {
+                                    Intent intent = new Intent(mContext, MyReceiptsActivityNav.class);
+                                    intent.putExtra("email", email);
+                                    mContext.startActivity(intent);
+                                });
+                    }
+                });
 
         Bitmap bitmap = mData.get(i).getProfileImage() != null? mData.get(i).getProfileImage() : IorUtils.getDefultProfileImage();
         viewHolder.partner_pic.setImageBitmap(bitmap);
-        filterActionDialogButton(viewHolder,i);
-
 
     }
 
-    private void showDialog(int position)
+    private void showDialog(PartnerViewHolder viewHolder,int position)
     {
         circularImageViewDialog.setImageBitmap(
                 mData.get(position).getProfileImage()!= null ? mData.get(position).getProfileImage()
-                : IorUtils.getDefultProfileImage());
+                        : IorUtils.getDefultProfileImage());
         nameTvDialog.setText(mData.get(position).getName());
         emailTvDialog.setText(mData.get(position).getEmail());
+        filterActionDialogButton(viewHolder,position);
         mDialog.show();
     }
 

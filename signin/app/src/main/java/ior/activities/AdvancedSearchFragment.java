@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import ior.adapters.FilterItem;
@@ -39,8 +40,10 @@ import ior.engine.eCurrency;
 public class AdvancedSearchFragment extends Fragment {
 
     private static final String UNDEFINED_DATE = "No Limit";
-    private static final int START_DATE_CODE = 1;
-    private static final int END_DATE_CODE = 2;
+    public static final int START_DATE_CODE = 1;
+    public static final int END_DATE_CODE = 2;
+    public static final int RESET_START_DATE_CODE = 3;
+    public static final int RESET_END_DATE_CODE = 4;
 
 
     private View view;
@@ -95,27 +98,12 @@ public class AdvancedSearchFragment extends Fragment {
 
         checkBoxCompany.setOnCheckedChangeListener((buttonView, isChecked) -> {
 
-            for (int i = 0; i < companies.size(); i++) {
-
-                companies.get(i).setSelected(isChecked);
-                adapterCompany.notifyItemChanged(i);
-
-            }
-
-            String text = isChecked ? "remove all" : "select all" ;
-            checkBoxCompany.setText(text);
+            updateCompanies(isChecked);
         });
 
         checkBoxCurrency.setOnCheckedChangeListener((buttonView, isChecked) -> {
 
-            for (int i = 0; i < currencies.size(); i++) {
-
-                currencies.get(i).setSelected(isChecked);
-                adapterCurrency.notifyItemChanged(i);
-            }
-
-            String text = isChecked ? "remove all" : "select all" ;
-            checkBoxCurrency.setText(text);
+            updateCurrencies(isChecked);
         });
 
         recycleLayoutManagerCompany = new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -152,12 +140,40 @@ public class AdvancedSearchFragment extends Fragment {
         return view;
     }
 
+    private void updateCompanies(boolean isChecked) {
+
+        for (int i = 0; i < companies.size(); i++) {
+
+            companies.get(i).setSelected(isChecked);
+            adapterCompany.notifyItemChanged(i);
+
+        }
+
+        String text = isChecked ? "remove all" : "select all" ;
+        checkBoxCompany.setText(text);
+    }
+
+    private void updateCurrencies(boolean isChecked) {
+
+        for (int i = 0; i < currencies.size(); i++) {
+
+            currencies.get(i).setSelected(isChecked);
+            adapterCurrency.notifyItemChanged(i);
+        }
+
+        String text = isChecked ? "remove all" : "select all" ;
+        checkBoxCurrency.setText(text);
+
+    }
+
     private void initPriceRange() {
 
         textViewPriceRange = view.findViewById(R.id.textViewPriceRange_advancedSearch);
         rangeSeekBarPrice = view.findViewById(R.id.rangeSeekbarPrice_advancedSearch);
 
-        int maxReceiptPrice = (int)ServerHandler.getInstance().getUserMaxPriceReceipt(userEmail) + 1;
+        //int maxReceiptPrice = (int)ServerHandler.getInstance().getUserMaxPriceReceipt(userEmail) + 1;
+        float maxReceiptPrice = ServerHandler.getInstance().getMostExpensivePurchase(userEmail, Optional.empty(),Optional.empty());
+        maxReceiptPrice = maxReceiptPrice - (int)maxReceiptPrice == 0 ? maxReceiptPrice : maxReceiptPrice + 1;
         rangeSeekBarPrice.setMinValue(0);
         rangeSeekBarPrice.setMaxValue(maxReceiptPrice);
         rangeSeekBarPrice.setMinStartValue(0);
@@ -189,18 +205,29 @@ public class AdvancedSearchFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         view.setAlpha(1.0f);
-        if (resultCode == START_DATE_CODE) {
+        String date;
 
-            String date = data.getStringExtra("date");
-            textViewStartDate.setText(date);
+        switch (resultCode) {
+
+            case START_DATE_CODE:
+                date = data.getStringExtra("date");
+                textViewStartDate.setText(date);
+                break;
+
+            case END_DATE_CODE:
+                date = data.getStringExtra("date");
+                textViewEndDate.setText(date);
+                break;
+
+            case RESET_START_DATE_CODE:
+                textViewStartDate.setText(UNDEFINED_DATE);
+                break;
+
+            case RESET_END_DATE_CODE:
+                textViewEndDate.setText(UNDEFINED_DATE);
+                break;
 
         }
-        else if (resultCode == END_DATE_CODE) {
-
-            String date = data.getStringExtra("date");
-            textViewEndDate.setText(date);
-        }
-
     }
 
     public void applySearch(View v) {
@@ -233,29 +260,29 @@ public class AdvancedSearchFragment extends Fragment {
             Toast.makeText(getContext(), "You have to choose at least one currency", Toast.LENGTH_SHORT).show();
             return;
         }
-        else if (startDate != null && endDate != null) {
 
-            DateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-            try {
-                Date dateEnd = format.parse(endDate);
-                Date dateStart = format.parse(startDate);
-                if (!dateStart.before(dateEnd)) {
+        Date dateEnd = null;
+        Date dateStart = null;
 
-                    Toast.makeText(getContext(), "Start date is not before end date", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                else {
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        try {
+            dateEnd = format.parse(endDate);
+            dateStart = format.parse(startDate);
+            if (!dateStart.before(dateEnd)) {
 
-                    dateEnd.setTime(dateEnd.getTime() + (1000 * 60 * 60 * 24));
-                    endDate = format.format(dateEnd);
-                    int x = 5;
-                }
+                Toast.makeText(getContext(), "Start date is not before end date", Toast.LENGTH_SHORT).show();
+                return;
             }
-            catch (Exception e) {
-
-            }
+        }
+        catch (Exception e) {
 
         }
+
+        if (endDate != null) {
+            dateEnd.setTime(dateEnd.getTime() + (1000 * 60 * 60 * 24));
+            endDate = format.format(dateEnd);
+        }
+
 
         Intent intent = new Intent(getContext(), CompanyReceiptsActivity.class);
         intent.putExtra("filter", true);
@@ -269,20 +296,6 @@ public class AdvancedSearchFragment extends Fragment {
         intent.putStringArrayListExtra("companies", selectedCompanies);
 
         startActivity(intent);
-
-
-
-//        String startDateStr = intent.getStringExtra("startDate");
-//        String endDateStr = intent.getStringExtra("endDate");
-//        float minPrice = intent.getFloatExtra("minPrice", 0);
-//        float maxPrice = intent.getFloatExtra("maxPrice", 0);
-//        List<String> currenciesStr = intent.getStringArrayListExtra("currencies");
-//        List<eCurrency> currencies = new ArrayList<>();
-//        for (String c : currenciesStr)
-//            currencies.add(eCurrency.createCurrency(c));
-//
-//        List<String> companies = intent.getStringArrayListExtra("companies");
-
     }
 
 }

@@ -12,15 +12,13 @@
         android:icon="@mipmap/ic_app_logo"
         android:label="@string/app_name"
         android:supportsRtl="false"
-        tools:replace="android:supportsRtl"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:replace="android:supportsRtl">
+        <activity android:name="ior.activities.AboutActivity"></activity>
         <activity
             android:name="ior.activities.CalendarActivity"
-            android:theme="@style/AppTheme.Calendar">
-
-
-        </activity>
+            android:theme="@style/AppTheme.Calendar"></activity>
         <activity android:name="ior.activities.ShowProfileActivity" />
         <activity
             android:name="ior.activities.ReceiptFileActivity"
@@ -30,6 +28,7 @@
             android:label="@string/title_activity_company_receipts" />
         <activity
             android:name="ior.activities.MyPartnersActivityNav"
+            android:windowSoftInputMode="adjustResize"
             android:label="@string/title_activity_mypartners_nav" />
         <activity
             android:name="ior.activities.ViewStatisticsActivity"

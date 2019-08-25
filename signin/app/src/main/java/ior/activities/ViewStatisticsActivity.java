@@ -11,8 +11,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -53,6 +63,8 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         }
     }
 
+    private static final int START_DATE_CODE = 1;
+    private static final int END_DATE_CODE = 2;
     private static final String UNDEFINED_DATE = "No Limit";
     private static String TAG = "ViewStatisticsActivity";
     private Context context;
@@ -64,10 +76,14 @@ public class ViewStatisticsActivity extends AppCompatActivity {
     private String email;
     private ImageView imageViewStartDate;
     private ImageView imageViewEndDate;
+    private RelativeLayout relativeLayout;
 
     private TextView textViewStartDate;
     private TextView textViewEndDate;
     private Button submitButton;
+    private NavigationView navigationViewTop;
+    private DrawerLayout mDraw;
+    private ActionBarDrawerToggle mToggle;
 
     private List<String> xData;
     private List<Float> yData;
@@ -90,6 +106,13 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         submitButton = findViewById(R.id.buttonSubmit_viewStatistics);
         latestPurchase = findViewById(R.id.latest_purchase_value);
         mPieChart = findViewById(R.id.companyPieChart);
+        relativeLayout = findViewById(R.id.relative_viewStatistics);
+        navigationViewTop = findViewById(R.id.nav_view_top);
+        navigationViewTop.setNavigationItemSelectedListener(this::onNavigationItemSelected);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mDraw = findViewById(R.id.drawer);
+        mToggle = IorUtils.setNavigateBar(this);
+
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
         Description description = new Description();
@@ -214,7 +237,7 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         return hue;
     }
 
-        private void addDataSet(){
+    private void addDataSet(){
         List<PieEntry> yEntry = new ArrayList<>();
         List<String> xEntry = new ArrayList<>();
 
@@ -235,13 +258,13 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         double baseHue = getHue(baseColor.red,baseColor.green,baseColor.blue);
         colors.add(Color.rgb(baseColor.red,baseColor.green,baseColor.blue));
 
-            double step = (240.0 / (double)xData.size());
+        double step = (240.0 / (double)xData.size());
 
-            for (int i = 1; i < xData.size(); ++i)
-            {
-                double nextColorHue = (baseHue + step * ((double)i)) % 240.0;
-                colors.add(ColorUtils.HSLToColor(new float[]{(float)nextColorHue,saturaion,brightness}));
-            }
+        for (int i = 1; i < xData.size(); ++i)
+        {
+            double nextColorHue = (baseHue + step * ((double)i)) % 240.0;
+            colors.add(ColorUtils.HSLToColor(new float[]{(float)nextColorHue,saturaion,brightness}));
+        }
 
 
         pieDataSet.setColors(colors);
@@ -258,7 +281,7 @@ public class ViewStatisticsActivity extends AppCompatActivity {
 
     public void chooseDate(View v) {
 
-        //TODO :set the brightness
+        relativeLayout.setAlpha(0.5f);
         Intent intent = new Intent(context, CalendarActivity.class);
         int code = v.getId() == imageViewStartDate.getId() ? START_DATE_CODE : END_DATE_CODE;
         intent.putExtra("code", code);
@@ -268,7 +291,7 @@ public class ViewStatisticsActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //TODO : set the brightness
+        relativeLayout.setAlpha(1f);
         if (resultCode == START_DATE_CODE) {
 
             String date = data.getStringExtra("date");
@@ -283,9 +306,24 @@ public class ViewStatisticsActivity extends AppCompatActivity {
 
     }
 
+    public boolean onNavigationItemSelected(MenuItem item) {
+        startActivity(IorUtils.getItemIntent(this, item.getItemId()));
+        return true;
+    }
 
-    private static final int START_DATE_CODE = 1;
-    private static final int END_DATE_CODE = 2;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mToggle.onOptionsItemSelected(item))
+        {
+            return  true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mDraw.closeDrawer(Gravity.LEFT);
+    }
 
 }

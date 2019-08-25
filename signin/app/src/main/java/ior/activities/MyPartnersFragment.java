@@ -1,8 +1,10 @@
 package ior.activities;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,13 +31,15 @@ public class MyPartnersFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<User> partners;
     private PartnerRecyclerAdapter partnerRecyclerAdapter;
+    private View view;
+
 
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.all_partners_fragment, container, false);
+        view = inflater.inflate(R.layout.all_partners_fragment, container, false);
 
         //partners = ServerHandler.getInstance().getPartners();
         recyclerView = view.findViewById(R.id.partners_recyclerview);
@@ -45,6 +49,8 @@ public class MyPartnersFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(partnerRecyclerAdapter);
         EditText searchPartner = view.findViewById(R.id.search_partner_ED);
+
+
         searchPartner.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -81,5 +87,4 @@ public class MyPartnersFragment extends Fragment {
         }
 
     }
-
 }

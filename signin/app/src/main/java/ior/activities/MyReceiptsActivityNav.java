@@ -6,6 +6,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -14,8 +15,12 @@ import android.view.View;
 
 import com.google.samples.quickstart.signin.R;
 
+import java.util.stream.Collectors;
+
 import ior.adapters.NavigatorAdapter;
 import ior.adapters.PageAdapter;
+import ior.engine.ServerHandler;
+import ior.engine.User;
 import utils.IorUtils;
 
 public class MyReceiptsActivityNav extends AppCompatActivity {
@@ -27,37 +32,14 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
     private BottomNavigationView navViewBottom;
     private NavigatorAdapter navigatorAdapter;
     private NavigationView navigationView;
+    private String email;
 
-
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = item -> {
-//
-//        switch (item.getItemId()) {
-//
-//            case R.id.navigation_myReceipts:
-//                break;
-//
-//            case R.id.navigation_myPartners:
-//                ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail(),
-//                () -> {
-//                    Intent intent2 = new Intent(this, MyPartnersActivityNav.class);
-//                    startActivity(intent2);
-//                });
-//                break;
-//
-//            case R.id.navigation_statInfo:
-//                IorUtils.signOut(this);
-//                return true;
-//
-//
-//        }
-//                //IorUtils.onNavigationItemSelected(getApplicationContext(), item, getSupportFragmentManager());
-//                return false;
-//            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        email = getIntent().getStringExtra("email");
         initActivity();
     }
 
@@ -82,7 +64,6 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
         return true;
     }
 
-
     private void initActivity() {
 
         setContentView(R.layout.activity_my_receipts_nav);
@@ -96,9 +77,28 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager_myReceipts);
         tabLayout = findViewById(R.id.tabLayout_receipts);
         pageAdapter = new PageAdapter(getSupportFragmentManager());
-        pageAdapter.addFragment(new AllReceiptsFragment());
-        pageAdapter.addFragment(new AdvancedSearchFragment());
+        AllReceiptsFragment allReceiptsFragment = new AllReceiptsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("email", email);
+        allReceiptsFragment.setArguments(bundle);
+        pageAdapter.addFragment(allReceiptsFragment);
+        AdvancedSearchFragment advancedSearchFragment = new AdvancedSearchFragment();
+        advancedSearchFragment.setArguments(bundle);
+        pageAdapter.addFragment(advancedSearchFragment);
         viewPager.setAdapter(pageAdapter);
+
+
+        String actionBarTitle = "My Receipts";
+        User signInUser = ServerHandler.getInstance().getSignInUser();
+        if (!email.equals(signInUser.getEmail())) {
+
+            actionBarTitle = signInUser.getPartners().stream().
+                    filter(p -> p.getEmail().equals(email)).collect(Collectors.toList()).get(0).getName() + "'s Receipts";
+
+        }
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(actionBarTitle);
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

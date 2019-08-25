@@ -1,238 +1,264 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ior.activities.ViewStatisticsActivity">
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/titles">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingRight="15dp"
-                android:text="@string/total_purchases"
-                android:textColor="#090000" />
-
-            <TextView
-                android:id="@+id/total_purchases_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#090000" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingRight="10dp"
-                android:text="@string/average_purchase"
-                android:textColor="#090000" />
-
-            <TextView
-                android:id="@+id/average_purchase_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#090000" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingRight="5dp"
-                android:text="@string/amount_of_purchases"
-                android:textColor="#090000" />
-
-            <TextView
-                android:id="@+id/amount_of_purchases_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#090000" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingRight="5dp"
-                android:text="@string/most_expensive_purchase"
-                android:textColor="#090000" />
-
-            <TextView
-                android:id="@+id/most_expensive_purchase_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#090000" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingRight="5dp"
-                android:text="@string/latest_purchase"
-                android:textColor="#090000" />
-
-            <TextView
-                android:id="@+id/latest_purchase_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#090000" />
-        </TableRow>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textViewStartDateKey_viewStatistics"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Start Date"
-                    android:textSize="12sp" />
-
-                <ImageView
-                    android:id="@+id/imageViewCalendarStart_viewStatistics"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    app:srcCompat="@drawable/calendar" />
-
-
-                <TextView
-                    android:id="@+id/textViewStartDateVal_viewStatistics"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="No Limit"
-                    android:textSize="10sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textViewEndDateKey_viewStatistics"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="End Date"
-                    android:textSize="12sp" />
-
-
-                <ImageView
-                    android:id="@+id/imageViewCalendarEnd_viewStatistics"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    app:srcCompat="@drawable/calendar" />
-
-
-                <TextView
-                    android:id="@+id/textViewEndDateVal_viewStatistics"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="No Limit"
-                    android:textSize="10sp" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/buttonSubmit_viewStatistics"
-
-                    android:layout_width="90dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/submit_button_view_statistics"
-                    android:fontFamily="sans-serif-thin"
-                    android:shadowColor="#A8A8A8"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="1"
-                    android:text="Submit"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
-
-    </TableLayout>
-
-
-
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/companyPieChart"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/relative_viewStatistics"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/titles"
-        android:layout_alignBottom="@+id/titles"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="1dp"
-        android:layout_marginBottom="56dp"></com.github.mikephil.charting.charts.PieChart>
+        tools:context="ior.activities.ViewStatisticsActivity">
+
+        <TableLayout
+            android:id="@+id/titles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingRight="15dp"
+                    android:text="@string/total_purchases"
+                    android:textColor="#090000" />
+
+                <TextView
+                    android:id="@+id/total_purchases_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#090000" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingRight="10dp"
+                    android:text="@string/average_purchase"
+                    android:textColor="#090000" />
+
+                <TextView
+                    android:id="@+id/average_purchase_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#090000" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingRight="5dp"
+                    android:text="@string/amount_of_purchases"
+                    android:textColor="#090000" />
+
+                <TextView
+                    android:id="@+id/amount_of_purchases_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#090000" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingRight="5dp"
+                    android:text="@string/most_expensive_purchase"
+                    android:textColor="#090000" />
+
+                <TextView
+                    android:id="@+id/most_expensive_purchase_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#090000" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingRight="5dp"
+                    android:text="@string/latest_purchase"
+                    android:textColor="#090000" />
+
+                <TextView
+                    android:id="@+id/latest_purchase_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#090000" />
+            </TableRow>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textViewStartDateKey_viewStatistics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Start Date"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:id="@+id/imageViewCalendarStart_viewStatistics"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        app:srcCompat="@drawable/calendar" />
 
 
+                    <TextView
+                        android:id="@+id/textViewStartDateVal_viewStatistics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="No Limit"
+                        android:textSize="10sp" />
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:background="@drawable/navigator_bar_background"
-        app:itemIconTint="@drawable/bottom_navigation_selector"
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textViewEndDateKey_viewStatistics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="End Date"
+                        android:textSize="12sp" />
+
+
+                    <ImageView
+                        android:id="@+id/imageViewCalendarEnd_viewStatistics"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        app:srcCompat="@drawable/calendar" />
+
+
+                    <TextView
+                        android:id="@+id/textViewEndDateVal_viewStatistics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="No Limit"
+                        android:textSize="10sp" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/buttonSubmit_viewStatistics"
+
+                        android:layout_width="90dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/submit_button_view_statistics"
+                        android:fontFamily="sans-serif-thin"
+                        android:shadowColor="#A8A8A8"
+                        android:shadowDx="0"
+                        android:shadowDy="0"
+                        android:shadowRadius="1"
+                        android:text="Submit"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </TableLayout>
+
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/companyPieChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/titles"
+            android:layout_alignBottom="@+id/titles"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="56dp"></com.github.mikephil.charting.charts.PieChart>
+
+
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/navigator_bar_background"
+            app:itemIconTint="@drawable/bottom_navigation_selector"
+            app:itemTextColor="@color/bottom_nav_item_text_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:menu="@menu/bottom_nav_menu" />
+
+    </RelativeLayout>
+
+
+    <android.support.design.widget.NavigationView
+        android:layout_width="250dp"
+        android:id="@+id/nav_view_top"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/whiteHeader"
+        app:headerLayout="@layout/header"
+        app:itemIconTint="@color/blackHeader"
         app:itemTextColor="@color/bottom_nav_item_text_color"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/drawermenu"></android.support.design.widget.NavigationView>
 
-</RelativeLayout>
+</android.support.v4.widget.DrawerLayout>
