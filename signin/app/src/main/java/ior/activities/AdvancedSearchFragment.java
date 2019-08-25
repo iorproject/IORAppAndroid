@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import ior.adapters.FilterItem;
@@ -171,7 +172,7 @@ public class AdvancedSearchFragment extends Fragment {
         rangeSeekBarPrice = view.findViewById(R.id.rangeSeekbarPrice_advancedSearch);
 
         //int maxReceiptPrice = (int)ServerHandler.getInstance().getUserMaxPriceReceipt(userEmail) + 1;
-        float maxReceiptPrice = ServerHandler.getInstance().getMostExpensivePurchase(userEmail);
+        float maxReceiptPrice = ServerHandler.getInstance().getMostExpensivePurchase(userEmail, Optional.empty(),Optional.empty());
         maxReceiptPrice = maxReceiptPrice - (int)maxReceiptPrice == 0 ? maxReceiptPrice : maxReceiptPrice + 1;
         rangeSeekBarPrice.setMinValue(0);
         rangeSeekBarPrice.setMaxValue(maxReceiptPrice);
