@@ -73,16 +73,6 @@ public class MainActivity extends AppCompatActivity {
             ServerHandler.getInstance().fetchUserPartners(email, null);
             IorUtils.setDefultBitmapImage(this);
 
-
-//            ServerHandler.getInstance().fetchUserAllReceipts(email, null);
-//            ServerHandler.getInstance().fetchUserInfo(email, () -> {
-//
-//                ServerHandler.getInstance().fetchCompanies(email, () -> {
-//                    Intent intent = new Intent(this, MyReceiptsActivityNav.class);
-//                    startActivity(intent);
-//                });
-//            });
-
             progressBar.getIndeterminateDrawable().setColorFilter(0xFF303F9F, android.graphics.PorterDuff.Mode.MULTIPLY);
 
             //countDownTimer.start();
@@ -90,35 +80,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
-
-//        String email = "";
-//        try{
-//
-//            InputStream inputStream = getAssets().open(CURRENT_USER_FILE_NAME);
-//            int size = inputStream.available();
-//            byte[] buffer = new byte[size];
-//            inputStream.read(buffer);
-//            inputStream.close();
-//            email = new String(buffer);
-//            if (email.equals("")) {
-//
-//                startActivity(new Intent(this, ServerAuthCodeActivity.class));
-//            }
-//            else {
-//
-//
-//                Intent intent = new Intent(this, HomeScreenActivity.class);
-//                intent.putExtra("email", email);
-//                startActivity(intent);
-//
-//            }
-//        }
-//        catch (Exception e){
-//
-//            int x = 4;
-//        }
-
-
     }
 
     private void initProgressBar() {
@@ -151,15 +112,12 @@ public class MainActivity extends AppCompatActivity {
         fadingOut.setRepeatCount(AlphaAnimation.INFINITE);
         fadingOut.start();
 
-
     }
 
     private void updateProgressBar() {
 
-        int updateProg = progressBarFetchingData.getProgress() + 25;
+        int updateProg = progressBarFetchingData.getProgress() + 20;
         progressBarFetchingData.setProgress(updateProg);
         textViewProgress.setText(updateProg + " %");
     }
-
-
 }

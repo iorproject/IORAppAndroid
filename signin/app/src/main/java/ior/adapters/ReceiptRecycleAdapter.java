@@ -141,7 +141,7 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
         textViewFileName.setText(fileName);
         Bitmap bitmap = ServerHandler.getInstance().getCompany(currentReceipt.getCompany()).getBitmap();
         if (bitmap == null)
-            bitmap = BitmapFactory.decodeResource(mContex.getResources(), R.mipmap.ic_error_loading);
+            bitmap = BitmapFactory.decodeResource(mContex.getResources(), R.drawable.no_image_logo);
 
         viewHolder.imageViewCompany.setImageBitmap(bitmap);
         viewHolder.imageViewPreviewFile.setOnClickListener(v -> {

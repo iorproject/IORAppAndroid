@@ -318,6 +318,8 @@ public class ServerHandler {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     partnersLastFetch = date;
+                    if (onProgressFetchingData != null)
+                        onProgressFetchingData.run();
                     if (onFinish != null)
                         onFinish.run();
 
@@ -426,6 +428,8 @@ public class ServerHandler {
             protected void onPostExecute(Void aVoid) {
                 if (onProgressFetchingData != null)
                     onProgressFetchingData.run();
+
+                ServerHandler.getInstance().setOnProgressFetchingData(null);
 
                 onFinish.run();
             }
@@ -1004,6 +1008,7 @@ public class ServerHandler {
         this.usersReceipts.clear();
         this.signInUser = null;
         this.companiesLastFetch = null;
+        this.partnersLastFetch = null;
     }
 
 
