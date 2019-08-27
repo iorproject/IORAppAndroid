@@ -2,6 +2,7 @@ package ior.activities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -46,7 +47,10 @@ public class CompanyStatisticsDialog extends Dialog {
         totalPurchases = findViewById(R.id.totalPricePurchase);
         averagePurchases = findViewById(R.id.averagePricePurchase);
 
-        companyImage.setImageBitmap(ServerHandler.getInstance().getCompany(companyName).getBitmap());
+        Bitmap companyImageBitmap =ServerHandler.getInstance().getCompany(companyName).getBitmap();
+        if(companyImageBitmap != null){
+            companyImage.setImageBitmap(companyImageBitmap);
+        }
         companyNameTextView.setText(companyName);
         totalPurchases.setText(Double.toString(Math.round(ServerHandler.getInstance().getTotalPurchasesPerCompany(userEmail, companyName, startDate, endDate) * 100.0) / 100.0));
         averagePurchases.setText(Double.toString((Math.round(ServerHandler.getInstance().getAveragePurchasePerCompany(userEmail, companyName, startDate, endDate) * 100.0) / 100.0)));

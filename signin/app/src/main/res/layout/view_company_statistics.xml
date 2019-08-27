@@ -18,14 +18,16 @@
 
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/CompanyPic"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="center_horizontal"
                     app:civ_border_color="#EEEEEE"
                     app:civ_border_width="4dp"
                     app:civ_shadow="true"
                     app:civ_shadow_color="#8BC34A"
                     app:civ_shadow_radius="4"
-                    android:layout_width="130dp"
-                    android:layout_height="130dp"
-                    android:layout_gravity="center_horizontal">
+                    app:srcCompat="@drawable/no_image_logo"
+                    tools:srcCompat="@drawable/no_image_logo">
 
                 </com.mikhaellopez.circularimageview.CircularImageView>
 

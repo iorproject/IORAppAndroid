@@ -12,6 +12,7 @@ public class Receipt {
     private final eCurrency currency;
     private final String fileName;
     private final String attachmentUrl;
+    private float totalPriceInILS;
 
     public Receipt(String email, String company, String number, Date date,
                    float totalPrice, eCurrency currency,
@@ -59,5 +60,13 @@ public class Receipt {
 
     public String getAttachmentUrl() {
         return attachmentUrl;
+    }
+
+    public void setTotalPriceInILS(float totalPriceInILS){
+        this.totalPriceInILS = totalPriceInILS;
+    }
+
+    public float getTotalPriceInILS(){
+        return totalPriceInILS;
     }
 }

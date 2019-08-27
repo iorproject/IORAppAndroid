@@ -15,12 +15,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 
 
@@ -65,6 +62,8 @@ public class ViewStatisticsActivity extends AppCompatActivity {
 
     private static final int START_DATE_CODE = 1;
     private static final int END_DATE_CODE = 2;
+    private static final int RESET_START_DATE_CODE = 3;
+    private static final int RESET_END_DATE_CODE = 4;
     private static final String UNDEFINED_DATE = "No Limit";
     private static String TAG = "ViewStatisticsActivity";
     private Context context;
@@ -161,7 +160,7 @@ public class ViewStatisticsActivity extends AppCompatActivity {
                 dateEnd = format.parse(endDate);
                 dateStart = format.parse(startDate);
                 if (!dateStart.before(dateEnd)) {
-                    Toast.makeText(context, "Start date is not before end date", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Start date can't be before end date", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else {
@@ -194,12 +193,18 @@ public class ViewStatisticsActivity extends AppCompatActivity {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
 
-                int pos = h.toString().indexOf("x: ");
-                pos =Integer.parseInt(h.toString().substring(pos +3,pos +4));
-                String company = xData.get(pos);
+                if(xData.isEmpty()){
+                   Toast.makeText(context,"You don't have any receipts", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    int pos = h.toString().indexOf("x: ");
+                    String posString = h.toString().substring(pos +3,pos +5);
+                    pos =Integer.parseInt(posString.replace('.',' ').trim());
+                    String company = xData.get(pos);
 
-                CompanyStatisticsDialog companyStatisticsDialog = new CompanyStatisticsDialog(context,email,startDate,endDate,company);
-                companyStatisticsDialog.show();
+                    CompanyStatisticsDialog companyStatisticsDialog = new CompanyStatisticsDialog(context,email,startDate,endDate,company);
+                    companyStatisticsDialog.show();
+                }
             }
 
             @Override
@@ -248,7 +253,7 @@ public class ViewStatisticsActivity extends AppCompatActivity {
 
         //create data set
         PieDataSet pieDataSet = new PieDataSet(yEntry, "Companies");
-        pieDataSet.setSliceSpace(3);
+        pieDataSet.setSliceSpace(2);
         pieDataSet.setValueTextSize(12);
 
         //add colors to dataset
@@ -292,18 +297,29 @@ public class ViewStatisticsActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         relativeLayout.setAlpha(1f);
-        if (resultCode == START_DATE_CODE) {
+        String date;
+        switch (resultCode) {
 
-            String date = data.getStringExtra("date");
-            textViewStartDate.setText(date);
+            case START_DATE_CODE:
+                date = data.getStringExtra("date");
+                textViewStartDate.setText(date);
+                break;
+
+            case END_DATE_CODE:
+
+                date = data.getStringExtra("date");
+                textViewEndDate.setText(date);
+                break;
+
+            case RESET_START_DATE_CODE:
+                textViewStartDate.setText(UNDEFINED_DATE);
+                break;
+
+            case RESET_END_DATE_CODE:
+                textViewEndDate.setText(UNDEFINED_DATE);
+                break;
 
         }
-        else if (resultCode == END_DATE_CODE) {
-
-            String date = data.getStringExtra("date");
-            textViewEndDate.setText(date);
-        }
-
     }
 
     public boolean onNavigationItemSelected(MenuItem item) {
