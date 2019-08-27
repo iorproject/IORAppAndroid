@@ -1,20 +1,16 @@
 package ior.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,12 +19,10 @@ import com.google.samples.quickstart.signin.R;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Stream;
 
 import ior.adapters.ReceiptRecycleAdapter;
 import ior.engine.Receipt;
@@ -86,8 +80,8 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
 
                 Date startDate = startDateStr == null ? format.parse("1/1/2019") : format.parse(startDateStr);
                 Date endDate = endDateStr == null ? Calendar.getInstance().getTime() : format.parse(endDateStr);
-                receipts = ServerHandler.getInstance().getReceiptsFiltered(userEmail,
-                        companies, startDate, endDate, minPrice, maxPrice, currencies);
+                receipts = ServerHandler.getInstance().getReceiptsFiltered(userEmail, companies, startDate, endDate,
+                        minPrice, maxPrice, currencies);
             }
             catch (Exception e) {
 

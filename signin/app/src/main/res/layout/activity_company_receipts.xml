@@ -61,7 +61,7 @@
             android:scrollbarAlwaysDrawVerticalTrack="false"
             android:scrollbarSize="0dp"
             android:scrollbarStyle="outsideInset"
-            android:scrollbars="horizontal" />
+            android:scrollbars="none" />
     </LinearLayout>
 
     <android.support.design.widget.BottomNavigationView

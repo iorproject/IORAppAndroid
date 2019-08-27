@@ -8,12 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.google.samples.quickstart.signin.R;
 
+import java.util.ArrayList;
 import java.util.List;
-
 import ior.adapters.GridAdapter;
 import ior.engine.Company;
 import ior.engine.ServerHandler;
@@ -21,12 +21,13 @@ import ior.engine.ServerHandler;
 public class AllReceiptsFragment extends Fragment {
 
     private View view;
-    private TextView textViewEmail;
     private GridView gridView;
     private String userEmail;
     private List<Company> companies;
     private GridAdapter adapter;
-
+    private LinearLayout linearLayout;
+    private TextView textViewMessage;
+    private List<String> usersEmail;
 
     @Nullable
     @Override
@@ -34,37 +35,34 @@ public class AllReceiptsFragment extends Fragment {
 
         view = inflater.inflate(R.layout.all_receipts_fragment, container, false);
         gridView = view.findViewById(R.id.gridView_allReceipts);
-        textViewEmail = view.findViewById(R.id.textViewEmail_allreceipts);
         Bundle bundle = this.getArguments();
 
         userEmail = bundle != null ?
                 bundle.getString("email", ServerHandler.getInstance().getSignInUser().getEmail())
                 : ServerHandler.getInstance().getSignInUser().getEmail();
 
-        textViewEmail.setText(ServerHandler.getInstance().getSignInUser().getEmail());
+
+        linearLayout = view.findViewById(R.id.linear_allReceipts);
+        textViewMessage = view.findViewById(R.id.textView_message_allReceipts);
         companies = ServerHandler.getInstance().getUserCompanies(userEmail);
-        initGrid();
-        //companies = ServerHandler.getInstance().getCompanies();
+
+        if (companies.size() == 0) {
+            linearLayout.setVisibility(View.GONE);
+            textViewMessage.setVisibility(View.VISIBLE);
+        }
+
+        else {
+            linearLayout.setVisibility(View.VISIBLE);
+            textViewMessage.setVisibility(View.GONE);
+            initGrid();
+        }
+
         return view;
     }
-
 
     private void initGrid() {
 
         adapter = new GridAdapter(getContext(), R.layout.companies_grid_adapter, companies, userEmail);
         gridView.setAdapter(adapter);
-
-//        gridView.setOnItemClickListener((parent, view, position, id) -> {
-//
-//            ServerHandler.getInstance().fetchCompanyReceipts(userEmail, view.getTag().toString(), () -> {
-//
-//
-//                Intent intent = new Intent(getContext(), CompanyReceiptsActivity.class);
-//                intent.putExtra("email", userEmail);
-//                intent.putExtra("company",view.getTag().toString());
-//                startActivity(intent);
-//            });
-//            startActivity(new Intent(getContext(), CompanyReceiptsActivity.class));
-//        });
     }
 }
