@@ -1,18 +1,23 @@
 package ior.adapters;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -84,8 +89,28 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
                     @Override
                     public void onClick(View v) {
                         String email = mData.get(i).getEmail();
+                        ProgressDialog dialog = new ProgressDialog(mContext); // this = YourActivity
+                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        //dialog.setTitle("Loading");
+                        //dialog.setMessage("Loading. Please wait...");
+                        dialog.setIndeterminate(true);
+                        dialog.setIndeterminateDrawable(mContext.getResources().getDrawable(R.drawable.progress_bar_loading_data));
+                        //dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialog.setCanceledOnTouchOutside(false);
+                        ColorDrawable back = new ColorDrawable(Color.TRANSPARENT);
+
+
+                        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+                        Display display = wm.getDefaultDisplay();
+                        int wid = display.getWidth();
+
+                        InsetDrawable inset = new InsetDrawable(back, wid / 3);
+                        dialog.getWindow().setBackgroundDrawable(inset);
+
+                        dialog.show();
                         ServerHandler.getInstance().fetchUserAllReceipts(email,
                                 () -> {
+                                    dialog.dismiss();
                                     Intent intent = new Intent(mContext, MyReceiptsActivityNav.class);
                                     intent.putExtra("email", email);
                                     mContext.startActivity(intent);

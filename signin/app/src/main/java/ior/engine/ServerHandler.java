@@ -108,10 +108,10 @@ public class ServerHandler {
         List<Company> result = new ArrayList<>();
 
         for (String name : usersReceipts.get(userEmail).keySet()) {
-
             result.add(companyMap.get(name));
 
         }
+
 
         return result;
 
@@ -154,6 +154,10 @@ public class ServerHandler {
                     out.flush();
                     out.close();
                     int responseCode = con.getResponseCode();
+                    if (responseCode == 500) {
+
+
+                    }
 
                 }
                 catch (ProtocolException e1) {
@@ -199,6 +203,11 @@ public class ServerHandler {
                         out.flush();
                         out.close();
                         int responseCode = con.getResponseCode();
+
+                        if (responseCode == 500) {
+
+
+                        }
 
                         BufferedReader in = new BufferedReader(
                                 new InputStreamReader(con.getInputStream()));
@@ -273,6 +282,11 @@ public class ServerHandler {
                         out.flush();
                         out.close();
                         int responseCode = con.getResponseCode();
+
+                        if (responseCode == 500) {
+
+
+                        }
 
                         BufferedReader in = new BufferedReader(
                                 new InputStreamReader(con.getInputStream()));
@@ -358,6 +372,11 @@ public class ServerHandler {
                         out.flush();
                         out.close();
                         int responseCode = con.getResponseCode();
+
+                        if (responseCode == 500) {
+
+
+                        }
                         BufferedReader in = new BufferedReader(
                                 new InputStreamReader(con.getInputStream()));
                         String inputLine;
@@ -527,6 +546,11 @@ public class ServerHandler {
                         out.flush();
                         out.close();
                         int responseCode = con.getResponseCode();
+
+                        if (responseCode == 500) {
+
+
+                        }
 
                         BufferedReader in = new BufferedReader(
                                 new InputStreamReader(con.getInputStream()));
@@ -703,9 +727,12 @@ public class ServerHandler {
 
     public List<Receipt> getCompanyReceipts(String email, String company) {
 
-        List<Receipt> receipts = !usersReceipts.containsKey(email) ?
-                Collections.EMPTY_LIST : usersReceipts.get(email).get(company);
-        return receipts;
+        List<Receipt> result = new ArrayList<>();
+
+        if (usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company))
+            result.addAll(usersReceipts.get(email).get(company));
+
+        return result;
 
     }
 
@@ -726,6 +753,8 @@ public class ServerHandler {
 
     public void fetchUserAllReceipts(String userEmail, Runnable onFinish) {
 
+        if (usersReceipts.containsKey(userEmail))
+            usersReceipts.remove(userEmail);
 
         new AsyncTask<Void, Void, Void>() {
 
@@ -749,6 +778,11 @@ public class ServerHandler {
                     out.close();
                     int responseCode = con.getResponseCode();
 
+                    if (responseCode == 500) {
+
+
+                    }
+
                     BufferedReader in = new BufferedReader(
                             new InputStreamReader(con.getInputStream()));
                     String inputLine;
@@ -759,10 +793,7 @@ public class ServerHandler {
                     in.close();
 
                     Gson gson = new Gson();
-                    // data: array of : ["companyName" -> "aaa" , "logoUrl" -> "httpdsdsa"] , [...]
-
                     List<LinkedTreeMap<String, Object>> receiptsDb = gson.fromJson(content.toString(), List.class);
-                    //companies = new ArrayList<>();
 
                     signInUser.setAmountReceipts(receiptsDb.size());
                     if (!usersReceipts.containsKey(userEmail)) {
@@ -847,6 +878,11 @@ public class ServerHandler {
 
                     int responseCode = con.getResponseCode();
 
+                    if (responseCode == 500) {
+
+
+                    }
+
                 } catch (ProtocolException e1) {
 
                 } catch (IOException e2) {
@@ -915,6 +951,11 @@ public class ServerHandler {
                     out.close();
                     int responseCode = con.getResponseCode();
 
+                    if (responseCode == 500) {
+
+
+                    }
+
                 } catch (ProtocolException e1) {
 
                 } catch (IOException e2) {
@@ -955,6 +996,11 @@ public class ServerHandler {
                     out.flush();
                     out.close();
                     int responseCode = con.getResponseCode();
+
+                    if (responseCode == 500) {
+
+
+                    }
 
                 } catch (ProtocolException e1) {
 
@@ -997,6 +1043,11 @@ public class ServerHandler {
 
                     int responseCode = con.getResponseCode();
 
+                    if (responseCode == 500) {
+
+
+                    }
+
                 } catch (ProtocolException e1) {
 
                 } catch (IOException e2) {
@@ -1037,31 +1088,37 @@ public class ServerHandler {
 
 
     public List<Receipt> getReceiptsFiltered(
-            String userEmail, List<String> companies, Date startDate, Date endDate,
+            String email, List<String> companies, Date startDate, Date endDate,
             float minPrice, float maxPrice, List<eCurrency> currencies) {
 
-        List<Receipt> receipts = new ArrayList<>();
-        for (List<Receipt> list : usersReceipts.get(userEmail).values())
-            receipts.addAll(list);
+        List<Receipt> receipts =
+            usersReceipts.get(email).values().stream().flatMap(List::stream)
+                    .filter(receipt -> companies.contains(receipt.getCompany()))
+                    .filter(receipt -> !receipt.getCreationDate().before(startDate) && !receipt.getCreationDate().after(endDate))
+                    .filter(receipt -> currencies.contains(receipt.getCurrency()))
+                    .filter(receipt -> receipt.getTotalPrice() >= minPrice && receipt.getTotalPrice() <= maxPrice)
+                    .collect(Collectors.toList());
 
-        receipts = usersReceipts.get(userEmail).values().stream().flatMap(List::stream).collect(Collectors.toList())
-                .stream()
-                .filter(receipt -> companies.contains(receipt.getCompany()))
-                .filter(receipt -> !receipt.getCreationDate().before(startDate) && !receipt.getCreationDate().after(endDate))
-                .filter(receipt -> currencies.contains(receipt.getCurrency()))
-                .filter(receipt -> receipt.getTotalPrice() >= minPrice && receipt.getTotalPrice() <= maxPrice)
-                .collect(Collectors.toList());
+
+//        receipts = usersReceipts.get(userEmail).values().stream().flatMap(List::stream).collect(Collectors.toList())
+//                .stream()
+//                .filter(receipt -> companies.contains(receipt.getCompany()))
+//                .filter(receipt -> !receipt.getCreationDate().before(startDate) && !receipt.getCreationDate().after(endDate))
+//                .filter(receipt -> currencies.contains(receipt.getCurrency()))
+//                .filter(receipt -> receipt.getTotalPrice() >= minPrice && receipt.getTotalPrice() <= maxPrice)
+//                .collect(Collectors.toList());
 
 
         return receipts;
     }
 
 
-    public List<eCurrency> getUserCurrencies(String userEmail) {
+    public List<eCurrency> getUserCurrencies(String email) {
 
         Set<eCurrency> set = new HashSet<>();
         List<eCurrency> res = new ArrayList<>();
-        for (List<Receipt> list : usersReceipts.get(userEmail).values()) {
+
+        for (List<Receipt> list : usersReceipts.get(email).values()) {
 
             for (Receipt r : list)
                 set.add(r.getCurrency());
@@ -1069,7 +1126,6 @@ public class ServerHandler {
         }
 
         res.addAll(set);
-
         return res;
 
     }

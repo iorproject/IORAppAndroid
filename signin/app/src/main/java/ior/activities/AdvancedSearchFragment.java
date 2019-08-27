@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +66,7 @@ public class AdvancedSearchFragment extends Fragment {
     private ImageView imageViewEndDate;
     private TextView textViewPriceRange;
     private CrystalRangeSeekbar rangeSeekBarPrice;
+    private ScrollView scrollView;
     private Button buttonApply;
 
 
@@ -79,6 +81,20 @@ public class AdvancedSearchFragment extends Fragment {
                 bundle.getString("email", ServerHandler.getInstance().getSignInUser().getEmail())
                 : ServerHandler.getInstance().getSignInUser().getEmail();
 
+        scrollView = view.findViewById(R.id.scrollView_advancedSearch);
+        int amountOfReceipts = ServerHandler.getInstance().getAmountOfPurchases(userEmail, Optional.empty(), Optional.empty());
+        if (amountOfReceipts == 0) {
+
+            scrollView.setVisibility(View.GONE);
+        }
+        else
+            initActivity();
+
+        return view;
+    }
+
+    private void initActivity() {
+
         recyclerViewCompany = view.findViewById(R.id.recycleViewCompany_advancedSearch);
         recyclerViewCurrency = view.findViewById(R.id.recycleViewCurrency_advancedSearch);
         checkBoxCompany = view.findViewById(R.id.checkBoxCompany_advancedSearch);
@@ -89,7 +105,7 @@ public class AdvancedSearchFragment extends Fragment {
         imageViewEndDate = view.findViewById(R.id.imageViewCalendarEnd_advancedSearch);
         buttonApply = view.findViewById(R.id.buttonApply_advancedSearch);
         buttonApply.setOnClickListener(this::applySearch);
-
+        scrollView.setVisibility(View.VISIBLE);
         initPriceRange();
 
 
@@ -137,7 +153,8 @@ public class AdvancedSearchFragment extends Fragment {
             startActivity(intent);
 
         });
-        return view;
+
+
     }
 
     private void updateCompanies(boolean isChecked) {
