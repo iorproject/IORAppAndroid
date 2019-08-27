@@ -287,7 +287,7 @@ public class AdvancedSearchFragment extends Fragment {
             dateStart = format.parse(startDate);
             if (!dateStart.before(dateEnd)) {
 
-                Toast.makeText(getContext(), "Start date is not before end date", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Start date can't be before end date", Toast.LENGTH_SHORT).show();
                 return;
             }
         }

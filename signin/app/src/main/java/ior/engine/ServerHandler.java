@@ -641,7 +641,7 @@ public class ServerHandler {
                     .flatMap(Collection::stream)
                     .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                     .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
-                    .mapToDouble(Receipt::getTotalPrice)
+                    .mapToDouble(Receipt::getTotalPriceInILS)
                     .average();
             if(averagePurchase.isPresent()){
                 return (float)averagePurchase.getAsDouble();
@@ -657,7 +657,7 @@ public class ServerHandler {
                     .stream()
                     .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                     .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
-                    .mapToDouble(Receipt::getTotalPrice)
+                    .mapToDouble(Receipt::getTotalPriceInILS)
                     .average();
             if(averagePurchase.isPresent()){
                 return (float)averagePurchase.getAsDouble();
@@ -726,7 +726,7 @@ public class ServerHandler {
                     .flatMap(Collection::stream)
                     .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                     .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
-                    .map(Receipt::getTotalPrice)
+                    .map(Receipt::getTotalPriceInILS)
                     .reduce((a,b) -> a+b);
             if(totalPurchases.isPresent()){
                 return totalPurchases.get();
@@ -752,7 +752,7 @@ public class ServerHandler {
                     .stream()
                     .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                     .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
-                    .map(Receipt::getTotalPrice)
+                    .map(Receipt::getTotalPriceInILS)
                     .reduce((a, b) -> a + b);
             if(totalPurchases.isPresent()){
                 return totalPurchases.get();
@@ -835,6 +835,7 @@ public class ServerHandler {
                                     receiptNumber, receiptDate,
                                     receiptPrice, receiptCurrency
                                     ,receiptFileName, attUrl);
+                            temp.setTotalPriceInILS(getTotalPriceInILS(temp.getCurrency(),temp.getTotalPrice()));
 
 
                             if (!usersReceipts.get(userEmail).containsKey(company))
@@ -867,6 +868,15 @@ public class ServerHandler {
         }.execute();
 
     }
+
+    private float getTotalPriceInILS(eCurrency currency, float totalPrice) {
+        switch (currency){
+            case EURO: return totalPrice*4.0f;
+            case DOLLAR: return totalPrice*3.5f;
+            default: return totalPrice;
+        }
+    }
+
     public void setUserProfileImage(String profileImage, String email)
     {
         new AsyncTask<Void, Void, Void>() {
@@ -1161,21 +1171,20 @@ public class ServerHandler {
     }
 
     public List<String> getCompaniesName(String email, Optional<Date> startDate, Optional<Date> endDate) {
-        Map<String,Integer> companyNamesMap = new HashMap<>();
+        List<String> companyNames = new ArrayList<>();
         if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()){
             Map<String,List<Receipt>> receiptsMap = usersReceipts.get(email);
             for(Map.Entry<String,List<Receipt>> receiptEntry : receiptsMap.entrySet()){
                 for(Receipt receipt : receiptEntry.getValue()){
-                    if(((!startDate.isPresent() && !endDate.isPresent()) || (receipt.getCreationDate().after(startDate.get()) && receipt.getCreationDate().before(endDate.get())))
-                            && !companyNamesMap.containsKey(receiptEntry.getKey())){
-                        companyNamesMap.put(receiptEntry.getKey(),1);
+                    if(((!startDate.isPresent() && !endDate.isPresent()) || (receipt.getCreationDate().after(startDate.get()) && receipt.getCreationDate().before(endDate.get())))){
+                        companyNames.add(receiptEntry.getKey());
                         break;
                     }
                 }
 
             }
         }
-        return new ArrayList<>(companyNamesMap.keySet());
+        return companyNames;
     }
 
     public List<Float> getCompaniesTotalPrice(String email, Optional<Date> startDate, Optional<Date> endDate) {
@@ -1185,7 +1194,7 @@ public class ServerHandler {
                 Optional<Float> companyTotalPrice = companyReceiptsMap.getValue().stream()
                         .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                         .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
-                        .map(Receipt::getTotalPrice).reduce((a, b) -> a+b);
+                        .map(Receipt::getTotalPriceInILS).reduce((a, b) -> a+b);
                 if(companyTotalPrice.isPresent()){
                     companyTotalPriceList.add(companyTotalPrice.get());
                 }
