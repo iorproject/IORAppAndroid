@@ -1169,4 +1169,40 @@ public class ServerHandler {
         }
     }
 
+    public void removeFollower(String friendEmail)
+    {
+        arrangeDataAfterRemoveFollower(friendEmail);
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                try {
+                    URL url = new URL("http://10.0.2.2:8080/ior/removeFollower/remove");
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put("requesterEmail", signInUser.getEmail());
+                    parameters.put("recieverEmail", friendEmail);
+
+                    con.setDoOutput(true);
+                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
+                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+                    out.flush();
+                    out.close();
+                    con.setRequestMethod("POST");
+
+                    int responseCode = con.getResponseCode();
+
+                } catch (ProtocolException e1) {
+
+                } catch (IOException e2) {
+
+                }
+                return null;
+            }
+        }.execute();
+
+    }
+
 }
