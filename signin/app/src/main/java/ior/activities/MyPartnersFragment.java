@@ -1,10 +1,9 @@
 package ior.activities;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.samples.quickstart.signin.R;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ior.adapters.AddingPartnerFBAdapter;
 import ior.adapters.PartnerRecyclerAdapter;
 import ior.engine.ServerHandler;
 import ior.engine.User;
@@ -31,26 +32,30 @@ public class MyPartnersFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<User> partners;
     private PartnerRecyclerAdapter partnerRecyclerAdapter;
-    private View view;
-
-
+    private AddingPartnerFBAdapter mAddingPartnerFBAdapter;
+    private FloatingActionButton mfloatingActionButton;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.all_partners_fragment, container, false);
+        View view = inflater.inflate(R.layout.all_partners_fragment, container, false);
 
         //partners = ServerHandler.getInstance().getPartners();
         recyclerView = view.findViewById(R.id.partners_recyclerview);
         partners = ServerHandler.getInstance().getSignInUser().getPartners();
+        mAddingPartnerFBAdapter = new AddingPartnerFBAdapter(getContext());
+        mfloatingActionButton = view.findViewById(R.id.floatingActionButton);
+        mfloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floatingActionButtonWasClicked();
+            }
+        });
         partnerRecyclerAdapter = new PartnerRecyclerAdapter(getContext(), partners, ePartner.FOLLOWING);
-        List<User> t =  ServerHandler.getInstance().getSignInUser().getPartners();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(partnerRecyclerAdapter);
         EditText searchPartner = view.findViewById(R.id.search_partner_ED);
-
-
         searchPartner.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -72,12 +77,13 @@ public class MyPartnersFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        partnerRecyclerAdapter.setAdapterDate(ServerHandler.getInstance().getSignInUser().getPartners());
-        int x = 0;
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && partnerRecyclerAdapter!=null)
+        {
+            partnerRecyclerAdapter.setAdapterDate((ServerHandler.getInstance().getSignInUser().getPartners()));
+        }
     }
-
     private void filterPartners(EditText editText)
     {
         if (partners != null)
@@ -87,4 +93,10 @@ public class MyPartnersFragment extends Fragment {
         }
 
     }
+
+    private void floatingActionButtonWasClicked()
+    {
+        mAddingPartnerFBAdapter.showDialog();
+    }
+
 }

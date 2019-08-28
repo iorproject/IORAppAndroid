@@ -3,6 +3,7 @@ package ior.activities;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,12 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.samples.quickstart.signin.R;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ior.adapters.AddingPartnerFBAdapter;
 import ior.adapters.PartnerRecyclerAdapter;
 import ior.engine.ServerHandler;
 import ior.engine.User;
@@ -28,12 +31,24 @@ public class RequestFriendshipFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<User> requests_partners;
     private PartnerRecyclerAdapter partnerRecyclerAdapter;
+    private AddingPartnerFBAdapter mAddingPartnerFBAdapter;
+    private FloatingActionButton mfloatingActionButton;
+
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.all_partners_fragment, container, false);
         recyclerView = view.findViewById(R.id.partners_recyclerview);
+        mAddingPartnerFBAdapter = new AddingPartnerFBAdapter(getContext());
+        mfloatingActionButton = view.findViewById(R.id.floatingActionButton);
+        mfloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floatingActionButtonWasClicked();
+            }
+        });
         requests_partners = ServerHandler.getInstance().getSignInUser().getUsersRequest();
         partnerRecyclerAdapter = new PartnerRecyclerAdapter(getContext(), requests_partners, ePartner.REQUEST);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -57,15 +72,26 @@ public class RequestFriendshipFragment extends Fragment {
         });
 
 
+
         return view;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        partnerRecyclerAdapter.setAdapterDate(ServerHandler.getInstance().getSignInUser().getUsersRequest());
-
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && partnerRecyclerAdapter!=null)
+        {
+            partnerRecyclerAdapter.setAdapterDate((ServerHandler.getInstance().getSignInUser().getUsersRequest()));
+        }
     }
+
+    //    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        partnerRecyclerAdapter.setAdapterDate(ServerHandler.getInstance().getSignInUser().getUsersRequest());
+//
+//
+//    }
 
     private void filterPartners(EditText editText)
     {
@@ -75,5 +101,10 @@ public class RequestFriendshipFragment extends Fragment {
             partnerRecyclerAdapter.setAdapterDate(filterUsers);
         }
 
+    }
+
+    private void floatingActionButtonWasClicked()
+    {
+        mAddingPartnerFBAdapter.showDialog();
     }
 }

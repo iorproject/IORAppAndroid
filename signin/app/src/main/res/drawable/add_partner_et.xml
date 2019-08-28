@@ -10,8 +10,5 @@
         android:left="15dp"
         android:top="15dp"/>
 
-    <stroke android:width="2dp" android:color="#FFFF" />
-
-
 
 </shape>

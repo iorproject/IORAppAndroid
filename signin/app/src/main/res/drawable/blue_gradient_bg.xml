@@ -4,14 +4,10 @@
         android:startColor="@color/startblue_account"
         android:endColor="@color/design_default_color_primary"/>
 
-    <corners android:radius="45dp"/>
     <padding android:bottom="15dp"
         android:right="15dp"
         android:left="15dp"
         android:top="15dp"/>
-
-    <stroke android:width="2dp" android:color="#FFFF" />
-
 
 
 </shape>

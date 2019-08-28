@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="310dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/profile_card_partner_dialog">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/profile_card_partner_dialog"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/name_partner_view_dialog_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Request Friendship"
+            android:textColor="@color/blackHeader"
+            android:textSize="24dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/email_request_partner"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:drawableLeft="@drawable/ic_email_add_partner_24dp"
+            android:hint="Enter user email..."
+            android:drawablePadding="10dp"
+            android:padding="5dp" />
+
+        <include layout="@layout/circle_prograss_bar"
+            android:id="@+id/circle_progress"
+            android:visibility="visible"></include>
+
+        <include layout="@layout/done_icon"
+            android:id="@+id/done_layout"
+            android:visibility="gone"></include>
+        <include layout="@layout/error_icon"
+            android:id="@+id/eroor_layout"
+            android:visibility="gone">
+        </include>
+        <TextView
+            android:id="@+id/error_message_add_partner_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/red_error"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/sent_request_partner_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SEND"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/whiteHeader"
+            android:background="@drawable/buttonscamera"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

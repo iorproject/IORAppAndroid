@@ -7,18 +7,23 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.samples.quickstart.signin.R;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -41,6 +46,9 @@ import ior.activities.ServerAuthCodeActivity;
 import ior.activities.ViewStatisticsActivity;
 import ior.engine.ServerHandler;
 import ior.activities.ShowProfileActivity;
+import ior.engine.User;
+
+import static android.support.v4.content.ContextCompat.getSystemService;
 
 public class IorUtils {
 
@@ -162,8 +170,23 @@ public class IorUtils {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(activity, drawerLayout, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+        initNavigateDataHeader(activity);
         return toggle;
     }
+
+    private static void initNavigateDataHeader(Activity activity)
+    {
+        NavigationView navigationView = activity.findViewById(R.id.nav_view_top);
+        View header=navigationView.getHeaderView(0);
+        User signInuser = ServerHandler.getInstance().getSignInUser();
+        CircularImageView profileImage = header.findViewById(R.id.profile_image_header);
+        profileImage.setImageBitmap(signInuser.getProfileImage());
+        TextView name = header.findViewById(R.id.profile_name_header);
+        name.setText(signInuser.getName());
+        TextView email = header.findViewById(R.id.profile_email_header);
+        email.setText(signInuser.getEmail());
+    }
+
 
     public static Intent getItemIntent(Activity activity, int itemId) {
         Intent result = null;
@@ -184,7 +207,7 @@ public class IorUtils {
 
         return result;
     }
-    public static String setBitmapToString(Bitmap bitmap)
+    public static String getStringFromBitmap(Bitmap bitmap)
     {
         String image;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

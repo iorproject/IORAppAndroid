@@ -10,6 +10,7 @@
     android:padding="20dp">
 
     <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/profile_image_header"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/profie"
@@ -20,17 +21,20 @@
         app:civ_shadow_radius="4" />
 
     <TextView
+        android:id="@+id/profile_name_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Daniel Okanin"
         android:textColor="@color/whiteHeader"
         android:textStyle="bold"
+        android:textSize="18dp"
         android:layout_marginTop="5dp"></TextView>
     <TextView
+        android:id="@+id/profile_email_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="danielOkanin@gmail.com"
         android:textColor="@color/whiteHeader"
         android:textStyle="bold"
-        android:layout_marginTop="5dp"></TextView>
+        android:layout_marginTop="3dp"></TextView>
 </LinearLayout>

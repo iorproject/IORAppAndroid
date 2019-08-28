@@ -47,9 +47,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
 import utils.IorUtils;
 import utils.ParameterStringBuilder;
 
@@ -86,22 +85,8 @@ public class ServerHandler {
         return signInUser;
     }
 
-    public List<String> getPartners() {
-        return partners;
-    }
-
     public List<String> getRequests() {
         return requests;
-    }
-
-    public List<Company> getCompanies() {
-        return companies;
-    }
-
-    public Optional<Company> getCompanyByName(String companyName){
-        return companies.stream()
-                .filter(company -> company.getName().equals(companyName))
-                .findFirst();
     }
 
     public List<Company> getUserCompanies(String userEmail) {
@@ -116,11 +101,9 @@ public class ServerHandler {
                 result.add(new Company(name, ""));
         }
 
-
         return result;
 
     }
-
 
     public Company getCompany(String name) {
 
@@ -139,8 +122,8 @@ public class ServerHandler {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/registerUser");
-                    URL url = new URL( "http://10.0.2.2:8080/ior/registerUser");
+                    URL url = new URL("http://10.0.2.2:8080/ior/registerUser");
+                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("GET");
 
@@ -160,10 +143,6 @@ public class ServerHandler {
                     out.flush();
                     out.close();
                     int responseCode = con.getResponseCode();
-                    if (responseCode == 500) {
-
-
-                    }
 
                 }
                 catch (ProtocolException e1) {
@@ -195,8 +174,7 @@ public class ServerHandler {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/userInfo");
-                        URL url = new URL( "http://10.0.2.2:8080/ior/userInfo");
+                        URL url = new URL("http://10.0.2.2:8080/ior/userInfo");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
 
@@ -209,11 +187,6 @@ public class ServerHandler {
                         out.flush();
                         out.close();
                         int responseCode = con.getResponseCode();
-
-                        if (responseCode == 500) {
-
-
-                        }
 
                         BufferedReader in = new BufferedReader(
                                 new InputStreamReader(con.getInputStream()));
@@ -234,7 +207,8 @@ public class ServerHandler {
 
                         ServerHandler.getInstance().signInUser = new User(email, name, registerDate,profileImage);
                         ServerHandler.getInstance().usersInfoMap.put(email, signInUser);
-                        int x = 5;
+                        fetchProfileDetails();
+
 
                     } catch (ProtocolException e1) {
                         int fff = 4;
@@ -274,8 +248,7 @@ public class ServerHandler {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/userPartners");
-                        URL url = new URL( "http://10.0.2.2:8080/ior/userPartners");
+                        URL url = new URL("http://10.0.2.2:8080/ior/userPartners");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
 
@@ -288,11 +261,6 @@ public class ServerHandler {
                         out.flush();
                         out.close();
                         int responseCode = con.getResponseCode();
-
-                        if (responseCode == 500) {
-
-
-                        }
 
                         BufferedReader in = new BufferedReader(
                                 new InputStreamReader(con.getInputStream()));
@@ -326,8 +294,6 @@ public class ServerHandler {
                         }
 
                         signInUser.setPartners_Followers(partners_Followers);
-                        // fetchRequests(email, onFinish);
-                        int x = 0;
 
                     } catch (ProtocolException e1) {
 
@@ -344,6 +310,7 @@ public class ServerHandler {
                         onProgressFetchingData.run();
                     if (onFinish != null)
                         onFinish.run();
+
 
                 }
             }.execute();
@@ -366,7 +333,6 @@ public class ServerHandler {
                 protected Void doInBackground(Void... voids) {
                     try {
                         URL url = new URL("http://10.0.2.2:8080/ior/userCompanies");
-                        //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/userCompanies");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
 
@@ -379,11 +345,6 @@ public class ServerHandler {
                         out.flush();
                         out.close();
                         int responseCode = con.getResponseCode();
-
-                        if (responseCode == 500) {
-
-
-                        }
                         BufferedReader in = new BufferedReader(
                                 new InputStreamReader(con.getInputStream()));
                         String inputLine;
@@ -404,10 +365,8 @@ public class ServerHandler {
                             String name = companyDB.get("companyName");
                             name = IorUtils.firstUpperCase(name);
                             String logoUrl = companyDB.get("logoUrl");
-                            companyMap.put(name, new Company(name, logoUrl));
-                            //companies.add(new Company(companyDB.get("companyName"), companyDB.get("logoUrl")));
+                            companyMap.put(name, new Company(name, logoUrl));                            //companies.add(new Company(companyDB.get("companyName"), companyDB.get("logoUrl")));
                         }
-                        //onFinish.run();
 
                     } catch (ProtocolException e1) {
 
@@ -458,7 +417,6 @@ public class ServerHandler {
             protected void onPostExecute(Void aVoid) {
                 if (onProgressFetchingData != null)
                     onProgressFetchingData.run();
-
                 ServerHandler.getInstance().setOnProgressFetchingData(null);
 
                 onFinish.run();
@@ -523,118 +481,6 @@ public class ServerHandler {
         company.setBitmap(bm);
     }
 
-    public void fetchCompanyReceipts(String userEmail, String company, Runnable onFinish) {
-
-        Date now = new Date();
-        if (companiesReceiptsLastFetch.get(userEmail) == null) {
-            companiesReceiptsLastFetch.put(userEmail, new HashMap<>());
-        }
-
-        Date lastFetch = companiesReceiptsLastFetch.get(userEmail).get(company);
-        companiesReceiptsLastFetch.get(userEmail).put(company, now);
-        if (lastFetch == null || isTimeToFetch(now, lastFetch)) {
-
-            new AsyncTask<Void, Void, Void>() {
-
-                @Override
-                protected Void doInBackground(Void... voids) {
-
-
-                    try {
-                        //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/companyReceiptsByUser");
-                        URL url = new URL( "http://10.0.2.2:8080/ior/companyReceiptsByUser");
-                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                        con.setRequestMethod("GET");
-
-                        Map<String, String> parameters = new HashMap<>();
-                        parameters.put("email", userEmail);
-                        parameters.put("company", company);
-
-                        con.setDoOutput(true);
-                        DataOutputStream out = new DataOutputStream(con.getOutputStream());
-                        out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-                        out.flush();
-                        out.close();
-                        int responseCode = con.getResponseCode();
-
-                        if (responseCode == 500) {
-
-
-                        }
-
-                        BufferedReader in = new BufferedReader(
-                                new InputStreamReader(con.getInputStream()));
-                        String inputLine;
-                        StringBuffer content = new StringBuffer();
-                        while ((inputLine = in.readLine()) != null) {
-                            content.append(inputLine);
-                        }
-                        in.close();
-
-                        Gson gson = new Gson();
-                        // data: array of : ["companyName" -> "aaa" , "logoUrl" -> "httpdsdsa"] , [...]
-
-                        List<LinkedTreeMap<String, Object>> receiptsDb = gson.fromJson(content.toString(), List.class);
-                        //companies = new ArrayList<>();
-
-                        if (!usersReceipts.containsKey(userEmail)) {
-                            usersReceipts.put(userEmail, new HashMap<>());
-                        }
-
-                        List<Receipt> receipts = new ArrayList<>();
-
-                        for (LinkedTreeMap<String, Object> receiptDB : receiptsDb) {
-
-                            String receiptsEmail = userEmail;
-                            String receiptCompany = company;
-                            String receiptNumber = receiptDB.get("receiptNumber").toString();
-                            String receiptDateStr = receiptDB.get("creationDate").toString();
-                            String receiptCurrencyStr = receiptDB.get("currency").toString();
-                            float receiptPrice = (float)((double)(receiptDB.get("totalPrice")));
-                            String receiptFileName = receiptDB.get("fileName").toString();
-                            Date receiptDate = null;
-                            eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
-                            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a", Locale.ENGLISH);
-
-                            try {
-
-                                receiptDate = formatter.parse(receiptDateStr);
-                                Receipt temp = new Receipt(receiptsEmail, receiptCompany,
-                                        receiptNumber, receiptDate,
-                                        receiptPrice, receiptCurrency
-                                        ,receiptFileName, "");
-
-                                receipts.add(temp);
-
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-
-
-                        }
-
-                        usersReceipts.get(userEmail).put(company, receipts);
-
-                    } catch (ProtocolException e1) {
-
-                    } catch (IOException e2) {
-
-                    }
-
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    onFinish.run();
-                }
-            }.execute();
-        }
-        else
-            onFinish.run();
-
-    }
-
     public float getAveragePurchase(String email, Optional<Date> startDate, Optional<Date> endDate){
         if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()) {
             OptionalDouble averagePurchase =  usersReceipts.get(email).values().stream()
@@ -648,7 +494,6 @@ public class ServerHandler {
             }
         }
         return 0;
-
     }
 
     public float getAveragePurchasePerCompany(String email, String company, Optional<Date> startDate, Optional<Date> endDate){
@@ -683,7 +528,7 @@ public class ServerHandler {
 
     public float getLatestPurchase(String email, Optional<Date> startDate, Optional<Date> endDate){
         List<Receipt> receipts = usersReceipts.get(email).values()
-        .stream()
+                .stream()
                 .flatMap(List::stream)
                 .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                 .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
@@ -761,6 +606,7 @@ public class ServerHandler {
         return 0;
     }
 
+
     public void fetchUserAllReceipts(String userEmail, Runnable onFinish) {
 
         if (usersReceipts.containsKey(userEmail))
@@ -773,8 +619,6 @@ public class ServerHandler {
 
 
                 try {
-                    //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/userAllReceipts");
-                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                     URL url = new URL("http://10.0.2.2:8080/ior/userAllReceipts");
 
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -807,7 +651,6 @@ public class ServerHandler {
                     Gson gson = new Gson();
                     List<LinkedTreeMap<String, Object>> receiptsDb = gson.fromJson(content.toString(), List.class);
 
-                    signInUser.setAmountReceipts(receiptsDb.size());
                     if (!usersReceipts.containsKey(userEmail)) {
                         usersReceipts.put(userEmail, new LinkedHashMap<>());
                     }
@@ -886,7 +729,6 @@ public class ServerHandler {
 
                 try {
                     URL url = new URL("http://10.0.2.2:8080/ior/setUserProfileImage");
-                    //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/setUserProfileImage");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
                     Map<String, String> parameters = new HashMap<>();
@@ -901,11 +743,6 @@ public class ServerHandler {
                     con.setRequestMethod("POST");
 
                     int responseCode = con.getResponseCode();
-
-                    if (responseCode == 500) {
-
-
-                    }
 
                 } catch (ProtocolException e1) {
 
@@ -959,8 +796,6 @@ public class ServerHandler {
 
 
                 try {
-                    //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/acceptFriendship");
-                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
                     URL url = new URL("http://10.0.2.2:8080/ior/acceptFriendship");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("POST");
@@ -975,11 +810,6 @@ public class ServerHandler {
                     out.flush();
                     out.close();
                     int responseCode = con.getResponseCode();
-
-                    if (responseCode == 500) {
-
-
-                    }
 
                 } catch (ProtocolException e1) {
 
@@ -1007,14 +837,13 @@ public class ServerHandler {
 
 
                 try {
-                    URL url = new URL("http://10.0.2.2:8080/ior/unfollowRequest");
-                    //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/unfollowRequest");
+                    URL url = new URL("http://10.0.2.2:8080/ior/removeFollower/remove");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("POST");
 
                     Map<String, String> parameters = new HashMap<>();
-                    parameters.put("useremail", signInUser.getEmail());
-                    parameters.put("friendemail",friendEmail);
+                    parameters.put("requesterEmail", friendEmail);
+                    parameters.put("recieverEmail",signInUser.getEmail());
 
                     con.setDoOutput(true);
                     DataOutputStream out = new DataOutputStream(con.getOutputStream());
@@ -1022,11 +851,6 @@ public class ServerHandler {
                     out.flush();
                     out.close();
                     int responseCode = con.getResponseCode();
-
-                    if (responseCode == 500) {
-
-
-                    }
 
                 } catch (ProtocolException e1) {
 
@@ -1054,7 +878,6 @@ public class ServerHandler {
 
                 try {
                     URL url = new URL("http://10.0.2.2:8080/ior/rejectFriendshipRequest/reject");
-                    //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/rejectFriendshipRequest/reject");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
                     Map<String, String> parameters = new HashMap<>();
@@ -1070,10 +893,41 @@ public class ServerHandler {
 
                     int responseCode = con.getResponseCode();
 
-                    if (responseCode == 500) {
+                } catch (ProtocolException e1) {
 
+                } catch (IOException e2) {
 
-                    }
+                }
+                return null;
+            }
+        }.execute();
+
+    }
+
+    public void removeFollower(String friendEmail)
+    {
+        arrangeDataAfterRemoveFollower(friendEmail);
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                try {
+                    URL url = new URL("http://10.0.2.2:8080/ior/removeFollower/remove");
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put("requesterEmail", signInUser.getEmail());
+                    parameters.put("recieverEmail", friendEmail);
+
+                    con.setDoOutput(true);
+                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
+                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+                    out.flush();
+                    out.close();
+                    con.setRequestMethod("POST");
+
+                    int responseCode = con.getResponseCode();
 
                 } catch (ProtocolException e1) {
 
@@ -1086,9 +940,59 @@ public class ServerHandler {
 
     }
 
-    private void arrangeDataAfterRejectFriendship(String friendEmail)
+    public void sendRequestFriendship(String friendEmail, Consumer<String> onFinish)
     {
-        signInUser.getPartners_Followers().get("requestusers").remove(friendEmail);
+        String[] msg = new String[1];
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                try {
+                    URL url = new URL("http://10.0.2.2:8080/ior/userShareRequests/send");
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put("requesterEmail", signInUser.getEmail());
+                    parameters.put("receiverEmail", friendEmail);
+
+                    con.setDoOutput(true);
+                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
+                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+                    out.flush();
+                    out.close();
+                    con.setRequestMethod("GET");
+
+                    int responseCode = con.getResponseCode();
+                    if (responseCode == 500)
+                    {
+                        msg[0] = "send request failed!";
+                    }
+                    else if (responseCode == 501)
+                    {
+                        msg[0]="There is no user with this mail!";
+                    }
+
+
+                } catch (ProtocolException e1) {
+
+                } catch (IOException e2) {
+
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                if (onProgressFetchingData != null)
+                    onProgressFetchingData.run();
+                onFinish.accept(msg[0]);
+            }
+        }.execute();
+    }
+
+    private void arrangeDataAfterRemoveFollower(String friendEmail)
+    {
+        signInUser.getPartners_Followers().get("followers").remove(friendEmail);
     }
 
     private void arrangeDataAfterAcceptFriendship(String friendEmail)
@@ -1101,6 +1005,11 @@ public class ServerHandler {
     private void arrangeDataAfterUnfollowRequest(String friendEmail)
     {
         signInUser.getPartners_Followers().get("partners").remove(friendEmail);
+    }
+
+    private void arrangeDataAfterRejectFriendship(String friendEmail)
+    {
+        signInUser.getPartners_Followers().get("requestusers").remove(friendEmail);
     }
 
     public  void reset() {
@@ -1119,22 +1028,12 @@ public class ServerHandler {
             float minPrice, float maxPrice, List<eCurrency> currencies) {
 
         List<Receipt> receipts =
-            usersReceipts.get(email).values().stream().flatMap(List::stream)
-                    .filter(receipt -> companies.contains(receipt.getCompany()))
-                    .filter(receipt -> !receipt.getCreationDate().before(startDate) && !receipt.getCreationDate().after(endDate))
-                    .filter(receipt -> currencies.contains(receipt.getCurrency()))
-                    .filter(receipt -> receipt.getTotalPrice() >= minPrice && receipt.getTotalPrice() <= maxPrice)
-                    .collect(Collectors.toList());
-
-
-//        receipts = usersReceipts.get(userEmail).values().stream().flatMap(List::stream).collect(Collectors.toList())
-//                .stream()
-//                .filter(receipt -> companies.contains(receipt.getCompany()))
-//                .filter(receipt -> !receipt.getCreationDate().before(startDate) && !receipt.getCreationDate().after(endDate))
-//                .filter(receipt -> currencies.contains(receipt.getCurrency()))
-//                .filter(receipt -> receipt.getTotalPrice() >= minPrice && receipt.getTotalPrice() <= maxPrice)
-//                .collect(Collectors.toList());
-
+                usersReceipts.get(email).values().stream().flatMap(List::stream)
+                        .filter(receipt -> companies.contains(receipt.getCompany()))
+                        .filter(receipt -> !receipt.getCreationDate().before(startDate) && !receipt.getCreationDate().after(endDate))
+                        .filter(receipt -> currencies.contains(receipt.getCurrency()))
+                        .filter(receipt -> receipt.getTotalPrice() >= minPrice && receipt.getTotalPrice() <= maxPrice)
+                        .collect(Collectors.toList());
 
         return receipts;
     }
@@ -1144,7 +1043,6 @@ public class ServerHandler {
 
         Set<eCurrency> set = new HashSet<>();
         List<eCurrency> res = new ArrayList<>();
-
         for (List<Receipt> list : usersReceipts.get(email).values()) {
 
             for (Receipt r : list)
@@ -1200,6 +1098,50 @@ public class ServerHandler {
                 }
             }
         return companyTotalPriceList;
+    }
+
+    private void fetchProfileDetails()
+    {
+        try {
+            URL url = new URL("http://10.0.2.2:8080/ior/profileInfo");
+            //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("email", signInUser.getEmail());
+
+            con.setDoOutput(true);
+            DataOutputStream out = new DataOutputStream(con.getOutputStream());
+            out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+            out.flush();
+            out.close();
+            int responseCode = con.getResponseCode();
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            Gson gson = new Gson();
+            Map<String, Double> userMap = gson.fromJson(content.toString(), Map.class);
+            int receiptNum = (int)Math.round(userMap.get("reciepts"));
+            int partnersNum = (int)Math.round(userMap.get("partners"));
+            int followersNum = (int)Math.round(userMap.get("followers"));
+            ServerHandler.getInstance().signInUser.setProfileDetails(receiptNum,partnersNum,followersNum);
+            int x = 5;
+
+        } catch (ProtocolException e1) {
+            int fff = 4;
+
+        } catch (IOException e2) {
+            int ssss = 3;
+        } catch (Exception e) {
+            int sadsada = 4;
+        }
     }
 
 }
