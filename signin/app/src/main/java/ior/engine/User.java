@@ -57,9 +57,6 @@ public class User {
        return this.profileDetails.get("reciepts");
     }
 
-//    public void setAmountReceipts(int amountReceipts) {
-//        this.amountReceipts = amountReceipts;
-//    }
 
     public String getName() { return name; }
 
