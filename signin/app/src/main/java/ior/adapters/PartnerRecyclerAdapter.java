@@ -89,25 +89,8 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
                     @Override
                     public void onClick(View v) {
                         String email = mData.get(i).getEmail();
-                        ProgressDialog dialog = new ProgressDialog(mContext); // this = YourActivity
-                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        //dialog.setTitle("Loading");
-                        //dialog.setMessage("Loading. Please wait...");
-                        dialog.setIndeterminate(true);
-                        dialog.setIndeterminateDrawable(mContext.getResources().getDrawable(R.drawable.progress_bar_loading_data));
-                        //dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        dialog.setCanceledOnTouchOutside(false);
-                        ColorDrawable back = new ColorDrawable(Color.TRANSPARENT);
-
-
-                        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-                        Display display = wm.getDefaultDisplay();
-                        int wid = display.getWidth();
-
-                        InsetDrawable inset = new InsetDrawable(back, wid / 3);
-                        dialog.getWindow().setBackgroundDrawable(inset);
-
-                        dialog.show();
+                        ProgressDialog dialog = new ProgressDialog(mContext);
+                        IorUtils.showProgressDialog(dialog, mContext);
                         ServerHandler.getInstance().fetchUserAllReceipts(email,
                                 () -> {
                                     dialog.dismiss();

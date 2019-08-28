@@ -24,12 +24,13 @@
             android:id="@+id/tabLayout_receipts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:background="@drawable/tablayout_background"
+            android:layout_margin="0dp"
+            android:background="@drawable/tab2_background"
             app:tabIndicatorColor="#FDFDFD"
-            app:tabIndicatorHeight="4dp"
             app:tabIndicatorFullWidth="false"
+            app:tabIndicatorHeight="5dp"
             app:tabSelectedTextColor="#FCF7F7F7"
+            android:paddingBottom="5dp"
             app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium"
             app:tabTextColor="#46A6F3">
 

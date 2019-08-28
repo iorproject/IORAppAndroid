@@ -10,6 +10,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -68,7 +69,9 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra("email", email);
                         startActivity(intent);
                         finish();
-                    });
+                    },
+
+                    (msg) ->  runOnUiThread(() -> Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show()));
 
             ServerHandler.getInstance().fetchUserPartners(email, null);
             IorUtils.setDefultBitmapImage(this);
