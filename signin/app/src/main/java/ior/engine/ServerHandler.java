@@ -115,7 +115,8 @@ public class ServerHandler {
         this.signInUser = signInUser;
     }
 
-    public void registerUser(String email, String name, String accessToken, String refreshToken, Runnable onFinish) {
+    public void registerUser(String email, String name, String accessToken, String refreshToken,
+                             Date startTimeScanning, Runnable onFinish) {
 
 
         new AsyncTask<Void, Void, Void>() {
@@ -136,6 +137,9 @@ public class ServerHandler {
                     Date now = Calendar.getInstance().getTime();
                     String data = dateFormat.format(now);
                     parameters.put("register_date", data);
+
+                    String startTime = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(startTimeScanning);
+                    parameters.put("start_time_scanning", startTime);
 
                     con.setDoOutput(true);
                     DataOutputStream out = new DataOutputStream(con.getOutputStream());

@@ -1,14 +1,19 @@
 package ior.activities;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,8 +45,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.Inflater;
 
 import ior.engine.ServerHandler;
 import utils.IorUtils;
@@ -65,6 +73,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
     private String name = "";
     private String access_token = null;
     private String refresh_token = null;
+    private Dialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +87,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.disconnect_button).setOnClickListener(this);
+        initStartTimeDialog();
 
         // For sample only: make sure there is a valid server client ID.
         validateServerClientID();
@@ -170,7 +180,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
                     public void onResponse(Response response) throws IOException {
                         try {
                             JSONObject jsonObject = new JSONObject(response.body().string());
-                            registerUser(jsonObject);
+                            runOnUiThread(() -> registerUser(jsonObject));
                             final String message = jsonObject.toString();
                             Log.i("Omerr", message);
                         } catch (JSONException e) {
@@ -195,47 +205,45 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
 
     private void registerUser(JSONObject jsonObject) {
 
-        String accessToken = "";
-        String refreshToken = "";
         IorUtils.writeToSharePreference(this, "email", email);
 
         try {
-            accessToken = jsonObject.getString("access_token");
-            refreshToken = jsonObject.getString("refresh_token");
+            access_token = jsonObject.getString("access_token");
+            refresh_token = jsonObject.getString("refresh_token");
+            dialog.show();
 
-            ServerHandler.getInstance().registerUser(email, name,  accessToken, refreshToken,
-                    () -> startActivity(new Intent(this, MainActivity.class)));
         }
         catch (JSONException e) {
 
-
-            if (refreshToken.equals(""))
+            if (refresh_token == null)
                 startActivity(new Intent(this, MainActivity.class));
         }
+    }
 
-//        IorUtils.writeToSharePreference(this, "email", email);
-//        Intent intent = new Intent(this, HomeScreenActivity.class);
-//        intent.putExtra("email", email);
-//        startActivity(intent);
+    private void updateDialogResult(View v) {
+
+        dialog.dismiss();
+
+        Calendar cal = Calendar.getInstance();
+
+        switch (((Button)v).getText().toString()) {
+
+            case "Month":
+                cal.add(Calendar.MONTH, -1);
+                break;
+
+            case "Week":
+                cal.add(Calendar.DAY_OF_WEEK, -7);
+                break;
+        }
+
+        ServerHandler.getInstance().registerUser(email, name,  access_token, refresh_token, cal.getTime(),
+                () -> startActivity(new Intent(this, MainActivity.class)));
 
     }
 
     private void updateUI(@Nullable GoogleSignInAccount account) {
-//        if (account != null) {
-//            ((TextView) findViewById(R.id.status)).setText(R.string.signed_in);
-//
-//            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-//            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
-//
-//            String authCode = account.getServerAuthCode();
-//            mAuthCodeTextView.setText(getString(R.string.auth_code_fmt, authCode));
-//        } else {
-//            ((TextView) findViewById(R.id.status)).setText(R.string.signed_out);
-//            mAuthCodeTextView.setText(getString(R.string.auth_code_fmt, "null"));
-//
-//            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-//            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
-//        }
+
     }
 
     /**
@@ -266,6 +274,22 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
                 revokeAccess();
                 break;
         }
+    }
+
+    private void initStartTimeDialog() {
+
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.scanning_email_permission);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCanceledOnTouchOutside(false);
+
+        Button bt_month = dialog.findViewById(R.id.bt_month_scanningPermission);
+        Button bt_week = dialog.findViewById(R.id.bt_week_scanningPermission);
+        Button bt_now = dialog.findViewById(R.id.bt_now_scanningPermission);
+
+        bt_month.setOnClickListener(this::updateDialogResult);
+        bt_week.setOnClickListener(this::updateDialogResult);
+        bt_now.setOnClickListener(this::updateDialogResult);
     }
 
     @Override
