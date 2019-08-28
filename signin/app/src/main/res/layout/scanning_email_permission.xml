@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/partners_rounded_button"
+            android:background="@drawable/scanning_permission_rounded_button"
             android:tag="month"
             android:text="Month"
             android:textColor="#000000"></Button>
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/partners_rounded_button"
+            android:background="@drawable/scanning_permission_rounded_button"
             android:tag="week"
             android:text="Week"
             android:textColor="#000000"></Button>
@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/partners_rounded_button"
+            android:background="@drawable/scanning_permission_rounded_button"
             android:tag="now"
             android:text="From now"
             android:textColor="#000000"></Button>
