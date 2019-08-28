@@ -5,74 +5,102 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.samples.quickstart.signin.R;
 
-import java.io.ByteArrayOutputStream;
-import java.net.URI;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import ior.engine.ServerHandler;
 import utils.IorUtils;
 
 public class ShowProfileActivity extends AppCompatActivity  {
 
-    private Dialog mDialog;
+    private  BottomDialog mDialog;
     private static final int IMAGE_PICK_CODE =1000;
     private static final int PERMISSION_CODE =1000;
     private static final int PERMISSION_CAMERA =0;
     private ImageView m_ProfileImage;
+    private ImageButton mEditBT;
     private Button m_UploadImageButton;
-    private String m_ProfileImageString;
+    private TextView mProfileNameTV;
+    private TextView mProfileEmailTV;
+    private TextView mRegiserDateTV;
+    private TextView mParentsAmountTV;
+    private TextView mRecieptsAmountTV;
+    private TextView mFollowersAmountTV;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_profile);
         getSupportActionBar().hide();
-        final LayoutInflater factory = getLayoutInflater();
-        final View textEntryView = factory.inflate(R.layout.popupeditprofile, null);
-        m_UploadImageButton =  textEntryView.findViewById(R.id.uploadImage);
-        m_ProfileImage = findViewById(R.id.profilePic);
-        mDialog = new Dialog(this);
-        ImageButton edit = findViewById(R.id.imageButton_edit);
-        edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editProfile();
-            }
-        });
-        m_UploadImageButton.setText("wdfwfewf");
-        m_UploadImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadPic(v);
-            }
-        });
-
-       // m_ProfileImage.setImageBitmap(getBitmapFromString());
+        initProfileComponentsActivity();
     }
 
-    public void editProfile()
+    private void initChangeProfilePic()
     {
-        mDialog.setContentView(R.layout.popupeditprofile);
-        mDialog.show();
+//        mDialog = new Dialog(this);
+//        mDialog.setContentView(R.layout.popup_edit_profile);
+//        mDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+//        m_UploadImageButton =  mDialog.findViewById(R.id.uploadImage);
+//        mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+//        m_UploadImageButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                uploadPic(v);
+//            }
+//        });
+
+    }
+
+    private void initProfileComponentsActivity()
+    {
+        mParentsAmountTV = findViewById(R.id.numberOfPartnersTV);
+        mFollowersAmountTV = findViewById(R.id.numberOffollowersTV);
+        mRecieptsAmountTV = findViewById(R.id.numberOfRecieptsTV);
+        mRecieptsAmountTV.setText(getShortNumber(ServerHandler.getInstance().getSignInUser().getRecieptsAmount()));
+        mFollowersAmountTV.setText(getShortNumber(ServerHandler.getInstance().getSignInUser().getFollowersAmount()));
+        mParentsAmountTV.setText(getShortNumber(ServerHandler.getInstance().getSignInUser().getPartnersAmount()));
+        m_ProfileImage = findViewById(R.id.profilePic);
+        m_ProfileImage.setImageBitmap(ServerHandler.getInstance().getSignInUser().getProfileImage());
+        mProfileNameTV = findViewById(R.id.profile_name);
+        mProfileNameTV.setText(ServerHandler.getInstance().getSignInUser().getName());
+        mEditBT = findViewById(R.id.imageButton_edit);
+        mEditBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editPicProfile();
+            }
+        });
+        mProfileEmailTV = findViewById(R.id.email_profile);
+        mProfileEmailTV.setText(ServerHandler.getInstance().getSignInUser().getEmail());
+        mRegiserDateTV = findViewById(R.id.registerDate_profile);
+        Date date = ServerHandler.getInstance().getSignInUser().getRegisterDate();
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm a");
+        mRegiserDateTV.setText(dateFormat.format(date));
+        mDialog = new BottomDialog();
+
+    }
+
+    public void editPicProfile()
+    {
+        mDialog.show(getSupportFragmentManager(),"example");
     }
 
     public void uploadPic(View v)
@@ -107,33 +135,30 @@ public class ShowProfileActivity extends AppCompatActivity  {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Bitmap bitmap = null;
-        if (requestCode ==  RESULT_OK || requestCode == IMAGE_PICK_CODE)
+        if (data != null)
         {
-            Uri chosenImage = data.getData();
-            try {
-                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), chosenImage);
+            if (requestCode ==  RESULT_OK || requestCode == IMAGE_PICK_CODE)
+            {
+                Uri chosenImage = data.getData();
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), chosenImage);
+                }
+                catch (Exception e){}
+                finally {
+                    m_ProfileImage.setImageURI(chosenImage);
+                }
             }
-            catch (Exception e){}
-            finally {
-                m_ProfileImage.setImageURI(chosenImage);
-            }
-        }
-        else if (requestCode == PERMISSION_CAMERA)
-        {
-            bitmap = (Bitmap)data.getExtras().get("data");
-            m_ProfileImage.setImageBitmap(bitmap);
+            else if (requestCode == PERMISSION_CAMERA)
+            {
+                bitmap = (Bitmap)data.getExtras().get("data");
+                m_ProfileImage.setImageBitmap(bitmap);
+            };
+            ServerHandler.getInstance().getSignInUser().setProfileImage(bitmap);
+            ServerHandler.getInstance().setUserProfileImage(IorUtils.getStringFromBitmap(bitmap),
+                    ServerHandler.getInstance().getSignInUser().getEmail());
         }
 
-        setBitmapToString(bitmap);
-    }
-
-    private void setBitmapToString(Bitmap bitmap)
-    {
-        String image = IorUtils.setBitmapToString(bitmap);
-        m_ProfileImageString =IorUtils.setBitmapToString(bitmap);
-        String email = ServerHandler.getInstance().getSignInUser().getEmail();
-        ServerHandler.getInstance().setUserProfileImage(m_ProfileImageString,email);
-        ServerHandler.getInstance().getSignInUser().setProfileImage(m_ProfileImageString);
+        mDialog.dismiss();
     }
 
     public void takePicture(View v)
@@ -142,14 +167,22 @@ public class ShowProfileActivity extends AppCompatActivity  {
         startActivityForResult(intent,PERMISSION_CAMERA);
     }
 
-    private Bitmap getBitmapFromString()
+    private String getShortNumber(int number)
     {
-        try{
-            return IorUtils.getBitmapFromString(m_ProfileImageString);
+        String result ="";
+        if (number/ 1000000 > 0)
+        {
+            result = String.format("%.1fM", number/ 10000000.0);
         }
-        catch(Exception e){
-            e.getMessage();
-            return null;
+        else if (number/ 10000 > 0)
+        {
+            result = String.format("%dK", number/ 1000);
         }
+        else
+        {
+            result = String.valueOf(number);
+        }
+
+        return result;
     }
 }

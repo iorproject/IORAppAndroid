@@ -14,7 +14,7 @@
         <LinearLayout
             android:background="@drawable/profile_gradientbackground"
             android:layout_width="match_parent"
-            android:layout_height="280dp"
+            android:layout_height="260dp"
             android:orientation="vertical">
 
             <ImageButton
@@ -24,7 +24,7 @@
                 android:layout_gravity="right|center_horizontal"
                 android:backgroundTint="@android:color/transparent"
                 android:onClick="uploadPic"
-                app:srcCompat="@drawable/ic_edit_black_24dp" />
+                app:srcCompat="@drawable/ic_photo_camera_black_24dp" />
 
             <com.mikhaellopez.circularimageview.CircularImageView
                 android:layout_width="130dp"
@@ -40,6 +40,7 @@
 
 
             <TextView
+                android:id="@+id/profile_name"
                 android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
@@ -51,10 +52,16 @@
         </LinearLayout>
 
         <android.support.v7.widget.CardView
+            android:dividerHeight="0.0px"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:elevation="10dp"
             android:layout_width="330dp"
             android:layout_height="110dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="220dp">
+            app:cardElevation="10dp"
+            app:cardPreventCornerOverlap="false"
+            android:layout_marginTop="210dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -70,17 +77,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Reciepts"
+                        android:textColor="@color/start_color_parent"
+                        android:textStyle="bold"
                         android:textSize="20sp" />
                     <TextView
+                        android:id="@+id/numberOfRecieptsTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="150"
-                        android:textStyle="bold"
                         android:textSize="20sp"
                         android:paddingTop="10dp"
-                        android:textColor="@color/startblue_account"/>
+                        android:textColor="@color/start_color_parent"/>
                 </LinearLayout>
                 <LinearLayout
+
                     android:gravity="center"
                     android:orientation="vertical"
                     android:layout_width="0dp"
@@ -90,15 +100,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Followers"
+                        android:textColor="@color/start_color_parent"
+                        android:textStyle="bold"
                         android:textSize="20sp" />
                     <TextView
+                        android:id="@+id/numberOffollowersTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="150"
-                        android:textStyle="bold"
                         android:textSize="20sp"
                         android:paddingTop="10dp"
-                        android:textColor="@color/startblue_account"/>
+                        android:textColor="@color/start_color_parent"/>
                 </LinearLayout>
                 <LinearLayout
                     android:gravity="center"
@@ -110,15 +122,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Following"
+                        android:textColor="@color/start_color_parent"
+                        android:textStyle="bold"
                         android:textSize="20sp" />
                     <TextView
+                        android:id="@+id/numberOfPartnersTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="150"
-                        android:textStyle="bold"
                         android:textSize="20sp"
                         android:paddingTop="10dp"
-                        android:textColor="@color/startblue_account"/>
+                        android:textColor="@color/start_color_parent"/>
                 </LinearLayout>
             </LinearLayout>
         </android.support.v7.widget.CardView>
@@ -140,11 +154,13 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_email_black_24dp"/>
             <TextView
+                android:id="@+id/email_profile"
                 android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
                 android:textSize="18dp"
+                android:textColor="@color/blue_grey_600"
                 android:text="example@gmail.com"/>
         </LinearLayout>
         <LinearLayout
@@ -156,13 +172,16 @@
                 android:layout_width="36dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_access_time_black_24dp"/>
+
             <TextView
-                android:layout_gravity="center_vertical"
+                android:id="@+id/registerDate_profile"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
                 android:paddingLeft="20dp"
-                android:textSize="18dp"
-                android:text="01/01/2019"/>
+                android:text="01/01/2019"
+                android:textColor="@color/blue_grey_600"
+                android:textSize="18dp" />
         </LinearLayout>
         <LinearLayout
             android:layout_marginTop="25dp"
@@ -179,6 +198,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
                 android:textSize="18dp"
+                android:textColor="@color/blue_grey_600"
                 android:text="15,000 NIS"/>
         </LinearLayout>
     </LinearLayout>

@@ -51,7 +51,6 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
     private String removeDialogMsg;
     private Button acceptDialogBT;
 
-
     public PartnerRecyclerAdapter(Context context, List<User> data, ePartner ePartner)
     {
       this.mContext = context;
@@ -74,6 +73,7 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
 
     public void onBindViewHolder(@NonNull PartnerViewHolder viewHolder, int i) {
 
+        viewHolder.partner_card.setBackgroundResource(R.drawable.card_partners_bg_befor_edit);
         viewHolder.nameTV.setText(mData.get(i).getName());
         viewHolder.emailTV.setText(mData.get(i).getEmail());
         viewHolder.edit_IMB.setOnClickListener(new View.OnClickListener() {
@@ -137,13 +137,13 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
     private void initDialogComponents()
     {
         mDialog.setContentView(R.layout.view_parent_dialog);
-        Button cancleButton = mDialog.findViewById(R.id.cancle_dialog_partner_by);
-        cancleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDialog.cancel();
-            }
-        });
+//        Button cancleButton = mDialog.findViewById(R.id.cancle_dialog_partner_by);
+//        cancleButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mDialog.cancel();
+//            }
+//        });
         mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         circularImageViewDialog = mDialog.findViewById(R.id.partner_pic_dialog);
         nameTvDialog = mDialog.findViewById(R.id.name_partner_view_dialog_tv);
@@ -225,6 +225,12 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
                 break;
 
             case FOLLOWER:
+                actionRemoveDialogBT.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        removeFollower(viewHolder,position);
+                    }
+                });
                 break;
 
             case REQUEST:
@@ -246,16 +252,26 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
 
     }
 
+    private void removeFollower(PartnerViewHolder viewHolder ,int position)
+    {
+        viewHolder.dynamicButton.setText("removed!");
+        setViewHolderAfterDialogButton(viewHolder);
+        ServerHandler.getInstance().removeFollower(mData.get(position).getEmail());
+        mDialog.cancel();
+    }
+
     private void acceptButtonWasClicked(PartnerViewHolder viewHolder ,int position)
     {
         viewHolder.dynamicButton.setText("accepted!");
         setViewHolderAfterDialogButton(viewHolder);
         ServerHandler.getInstance().accecptFriendship(mData.get(position).getEmail());
+        mDialog.cancel();
     }
 
     private void rejectFriendship(PartnerViewHolder viewHolder,int position)
     {
         viewHolder.dynamicButton.setText("rejected!");
+        mDialog.cancel();
         setViewHolderAfterDialogButton(viewHolder);
         ServerHandler.getInstance().rejectFriendshipRequest(mData.get(position).getEmail());
 
@@ -265,12 +281,13 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
     {
         viewHolder.dynamicButton.setText("unfollow");
      setViewHolderAfterDialogButton(viewHolder);
+     mDialog.cancel();
         ServerHandler.getInstance().unfolloweRequest(mData.get(position).getEmail());
     }
 
     private void setViewHolderAfterDialogButton(PartnerViewHolder viewHolder)
     {
-        viewHolder.partner_card.setBackground(ContextCompat.getDrawable(mContext,R.drawable.card_partners_bg_after));
+        viewHolder.partner_card.setBackground(ContextCompat.getDrawable(mContext,R.drawable.card_partners_bg_after_edit));
         viewHolder.edit_IMB.setOnClickListener(null);
     }
 }

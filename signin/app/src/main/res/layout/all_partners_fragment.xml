@@ -4,7 +4,9 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/whiteHeader">
+    android:background="@color/whiteHeader"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <EditText
         android:id="@+id/search_partner_ED"
@@ -20,11 +22,20 @@
         android:ems="10"
         android:hint="Search"
         android:textColorHint="@android:color/tertiary_text_dark" />
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/partners_recyclerview">
 
-    </android.support.v7.widget.RecyclerView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/partners_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="288dp"></android.support.v7.widget.RecyclerView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="98dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="10dp"
+        android:clickable="true"
+        app:backgroundTint="@android:color/black"
+        app:srcCompat="@drawable/ic_group_add_black_24dp" />
 
 </LinearLayout>

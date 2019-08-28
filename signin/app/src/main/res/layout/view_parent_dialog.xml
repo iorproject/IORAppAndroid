@@ -11,13 +11,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:background="@drawable/partner_gradient_background">
+        android:background="@drawable/profile_card_partner_dialog">
         <TextView
             android:id="@+id/name_partner_view_dialog_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Daniel Okanin"
-            android:textColor="@color/whiteHeader"
+            android:textColor="@color/blackHeader"
             android:textStyle="bold"
             android:layout_marginTop="90dp"
             android:textSize="24dp"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:textSize="18dp"
             android:text="example@gmail.com"
-            android:textColor="@color/whiteHeader"
+            android:textColor="@color/blackHeader"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
             />
@@ -42,11 +42,8 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:src="@drawable/profie"
-        app:civ_border_color="#EEEEEE"
+        app:civ_border_color="#C2C2C2"
         app:civ_border_width="4dp"
-        app:civ_shadow="true"
-        app:civ_shadow_color="#8BC34A"
-        app:civ_shadow_radius="4"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"/>
 
@@ -63,27 +60,28 @@
             android:id="@+id/accecpt_request_partner_bt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/partners_rounded_button"
-            android:layout_marginBottom="5dp"
+            android:background="@drawable/partners_accecpt_rounded_button"
+            android:layout_marginBottom="10dp"
             android:text="accecpt"
             android:visibility="gone"
-            android:textColor="@color/accecpt_partner_request"></Button>
+            android:textColor="@color/whiteHeader"></Button>
 
         <Button
             android:id="@+id/remove_dialog_partner_bt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/partners_rounded_button"
+            android:background="@drawable/partners_remove_rounded_button"
             android:text="Remove"
-            android:textColor="@android:color/holo_red_dark"></Button>
+            android:textColor="@android:color/white"></Button>
 
-        <Button
-            android:id="@+id/cancle_dialog_partner_by"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/partners_rounded_button"
-            android:text="Cancle"></Button>
+        <!--<Button-->
+            <!--android:id="@+id/cancle_dialog_partner_by"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:textColor="@color/whiteHeader"-->
+            <!--android:background="@drawable/partners_remove_rounded_button"-->
+            <!--android:text="Close"></Button>-->
 
     </LinearLayout>
 

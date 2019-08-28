@@ -11,17 +11,12 @@ import java.util.Map;
 import utils.IorUtils;
 
 public class User {
-
-
     private String email;
     private Date registerDate;
     private String name;
-    private int amountPartners;
-    private int amountFollowing;
-    private int amountReceipts;
-
     private Bitmap profileImageBitmap;
     private Map<String, Map<String,User>> partners_Followers;
+    private Map<String, Integer> profileDetails;
 
     public User(String email, String name, Date registerDate,String profileImage) {
         this.email = email;
@@ -29,6 +24,7 @@ public class User {
         this.registerDate = registerDate;
         this.partners_Followers = new HashMap<>();
         this.profileImageBitmap = IorUtils.getBitmapFromString(profileImage);
+        this.profileDetails = new HashMap<>();
     }
 
     public String getEmail() {
@@ -40,36 +36,38 @@ public class User {
         return registerDate;
     }
 
-    public void setAmountPartners(int amountPartners) {
-        this.amountPartners = amountPartners;
+//    public void setAmountPartners(int amountPartners) {
+//        this.partners = amountPartners;
+//    }
+
+//    public void setFollowersAmount(int followersAmount) {
+//        this.followersAmount = followersAmount;
+//    }
+
+    public int getPartnersAmount() {
+        return this.profileDetails.get("partners");
     }
 
-    public void setAmountFollowing(int amountFollowing) {
-        this.amountFollowing = amountFollowing;
+    public int getFollowersAmount() {
+        return this.profileDetails.get("followers");
     }
 
-    public int getAmountPartners() {
-        return amountPartners;
+    public int getRecieptsAmount()
+    {
+       return this.profileDetails.get("reciepts");
     }
 
-    public int getAmountFollowing() {
-        return amountFollowing;
-    }
-
-    public void setAmountReceipts(int amountReceipts) {
-        this.amountReceipts = amountReceipts;
-    }
-
-    public int getAmountReceipts() {
-        return amountReceipts;
-    }
+//    public void setAmountReceipts(int amountReceipts) {
+//        this.amountReceipts = amountReceipts;
+//    }
 
     public String getName() { return name; }
 
-    public void setProfileImage(String profileImage) {
+    public void setProfileImage(Bitmap profileImage) {
 
-        this.profileImageBitmap = IorUtils.getBitmapFromString(profileImage);
+        this.profileImageBitmap = profileImage;
     }
+
 
     public Bitmap getProfileImage(){return this.profileImageBitmap;}
 
@@ -109,4 +107,11 @@ public class User {
     public  Map<String, Map<String, User>> getPartners_Followers(){return this.partners_Followers;}
 
     public void setPartners_Followers(Map<String, Map<String,User>> partners_Followers){this.partners_Followers = partners_Followers;}
+
+    public void setProfileDetails(int receiptsNum, int partnersNum, int followersNum)
+    {
+        this.profileDetails.put("reciepts",receiptsNum);
+        this.profileDetails.put("partners",partnersNum);
+        this.profileDetails.put("followers",followersNum);
+    }
 }
