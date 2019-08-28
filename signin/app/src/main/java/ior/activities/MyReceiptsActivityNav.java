@@ -1,5 +1,6 @@
 package ior.activities;
 
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -99,6 +100,7 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(actionBarTitle);
+        actionBar.setBackgroundDrawable(getDrawable(R.drawable.actionbar_background));
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

@@ -1,11 +1,15 @@
 package utils;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.InsetDrawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -13,18 +17,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
-
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.samples.quickstart.signin.R;
 import com.mikhaellopez.circularimageview.CircularImageView;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -36,7 +40,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
 import ior.activities.AboutActivity;
 import ior.activities.HomeScreenActivity;
 import ior.activities.MainActivity;
@@ -187,7 +190,6 @@ public class IorUtils {
         email.setText(signInuser.getEmail());
     }
 
-
     public static Intent getItemIntent(Activity activity, int itemId) {
         Intent result = null;
         switch (itemId) {
@@ -207,6 +209,7 @@ public class IorUtils {
 
         return result;
     }
+
     public static String getStringFromBitmap(Bitmap bitmap)
     {
         String image;
@@ -251,27 +254,30 @@ public class IorUtils {
         switch (item.getItemId()) {
 
             case R.id.navigation_myReceipts:
-                    ServerHandler.getInstance().fetchUserInfo(ServerHandler.getInstance().getSignInUser().getEmail(),
-                            () -> {
-                                Intent intent = new Intent(activity, MyReceiptsActivityNav.class);
-                                intent.putExtra("email", ServerHandler.getInstance().getSignInUser().getEmail());
-                                activity.startActivity(intent);
-                            });
+                ProgressDialog dialog = new ProgressDialog(activity);
+                IorUtils.showProgressDialog(dialog, activity);
+                ServerHandler.getInstance().fetchUserAllReceipts(ServerHandler.getInstance().getSignInUser().getEmail(),
+                        () -> {
+                            dialog.dismiss();
+                            Intent intent = new Intent(activity, MyReceiptsActivityNav.class);
+                            intent.putExtra("email", ServerHandler.getInstance().getSignInUser().getEmail());
+                            activity.startActivity(intent);
+                        });
 
                 break;
 
             case R.id.navigation_myPartners:
-                    ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail(),
-                            () -> {
-                                Intent intent = new Intent(activity, MyPartnersActivityNav.class);
-                                activity.startActivity(intent);
-                            });
+                ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail(),
+                        () -> {
+                            Intent intent = new Intent(activity, MyPartnersActivityNav.class);
+                            activity.startActivity(intent);
+                        });
                 break;
 
             case R.id.navigation_statInfo:
-                    Intent intent = new Intent(activity, ViewStatisticsActivity.class);
-                    intent.putExtra("email",ServerHandler.getInstance().getSignInUser().getEmail());
-                    activity.startActivity(intent);
+                Intent intent = new Intent(activity, ViewStatisticsActivity.class);
+                intent.putExtra("email",ServerHandler.getInstance().getSignInUser().getEmail());
+                activity.startActivity(intent);
 
                 break;
         }
@@ -283,4 +289,27 @@ public class IorUtils {
 
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
+
+    public static void showProgressDialog(ProgressDialog dialog, Context context) {
+
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setIndeterminate(true);
+        dialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.progress_bar_loading_data));
+        dialog.setCanceledOnTouchOutside(false);
+        ColorDrawable back = new ColorDrawable(Color.TRANSPARENT);
+        dialog.setCanceledOnTouchOutside(false);
+
+
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        int wid = display.getWidth();
+
+        InsetDrawable inset = new InsetDrawable(back, wid / 3);
+        dialog.getWindow().setBackgroundDrawable(inset);
+
+        dialog.show();
+    }
+
+
 }
