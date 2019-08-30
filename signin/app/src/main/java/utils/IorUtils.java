@@ -1,6 +1,8 @@
 package utils;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -251,6 +254,8 @@ public class IorUtils {
 
     public static boolean onNavigationItemSelected(Activity activity, MenuItem item) {
 
+        Dialog dialogError = getServerErrorDialog(activity);
+
         switch (item.getItemId()) {
 
             case R.id.navigation_myReceipts:
@@ -262,16 +267,32 @@ public class IorUtils {
                             Intent intent = new Intent(activity, MyReceiptsActivityNav.class);
                             intent.putExtra("email", ServerHandler.getInstance().getSignInUser().getEmail());
                             activity.startActivity(intent);
-                        });
+                        }, (msg) ->  activity.runOnUiThread(() -> {
+
+                TextView tvMsg = dialogError.findViewById(R.id.tv_message_serverErrorDialog);
+                tvMsg.setText(msg + "Please try again later.");
+                dialogError.show();
+
+            }));
 
                 break;
 
             case R.id.navigation_myPartners:
+                ProgressDialog dialog2 = new ProgressDialog(activity);
+                IorUtils.showProgressDialog(dialog2, activity);
                 ServerHandler.getInstance().fetchUserPartners(ServerHandler.getInstance().getSignInUser().getEmail(),
                         () -> {
+                            dialog2.dismiss();
                             Intent intent = new Intent(activity, MyPartnersActivityNav.class);
                             activity.startActivity(intent);
-                        });
+                        },
+                        (msg) ->  activity.runOnUiThread(() -> {
+
+                            TextView tvMsg = dialogError.findViewById(R.id.tv_message_serverErrorDialog);
+                            tvMsg.setText(msg + "Please try again later.");
+                            dialogError.show();
+
+                        }));
                 break;
 
             case R.id.navigation_statInfo:
@@ -311,5 +332,23 @@ public class IorUtils {
         dialog.show();
     }
 
+
+    public static Dialog getServerErrorDialog(Context context) {
+
+        Dialog dialogError = new Dialog(context);
+        dialogError.setContentView(R.layout.server_error_dialog);
+        dialogError.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogError.setCanceledOnTouchOutside(false);
+
+        Button bt_ok = dialogError.findViewById(R.id.bt_Ok_serverErrorDialog);
+
+        bt_ok.setOnClickListener(v -> {
+
+            dialogError.dismiss();
+        });
+
+        return  dialogError;
+
+    }
 
 }

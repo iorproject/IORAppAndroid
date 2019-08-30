@@ -97,7 +97,7 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
                                     Intent intent = new Intent(mContext, MyReceiptsActivityNav.class);
                                     intent.putExtra("email", email);
                                     mContext.startActivity(intent);
-                                });
+                                }, null);
                     }
                 });
 

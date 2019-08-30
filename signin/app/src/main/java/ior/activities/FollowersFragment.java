@@ -48,7 +48,7 @@ public class FollowersFragment extends Fragment {
             }
         });
         mAddingPartnerFBAdapter = new AddingPartnerFBAdapter(getContext());
-        followers = ServerHandler.getInstance().getSignInUser().getFollowers();
+        followers = ServerHandler.getInstance().getUserFollowers();
         partnerRecyclerAdapter = new PartnerRecyclerAdapter(getContext(), followers, ePartner.FOLLOWER);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(partnerRecyclerAdapter);
@@ -79,7 +79,7 @@ public class FollowersFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && partnerRecyclerAdapter!=null)
         {
-            partnerRecyclerAdapter.setAdapterDate(ServerHandler.getInstance().getSignInUser().getFollowers());
+            partnerRecyclerAdapter.setAdapterDate(ServerHandler.getInstance().getUserFollowers());
         }
     }
 

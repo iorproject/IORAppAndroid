@@ -87,14 +87,10 @@ public class MainActivity extends AppCompatActivity {
 
                     }));
 
-            ServerHandler.getInstance().fetchUserPartners(email, null);
+            ServerHandler.getInstance().fetchUserPartners(email, null, null);
             IorUtils.setDefultBitmapImage(this);
 
             progressBar.getIndeterminateDrawable().setColorFilter(0xFF303F9F, android.graphics.PorterDuff.Mode.MULTIPLY);
-
-            //countDownTimer.start();
-
-
 
         }
     }
@@ -152,6 +148,5 @@ public class MainActivity extends AppCompatActivity {
             finish();
             System.exit(0);
         });
-
     }
 }

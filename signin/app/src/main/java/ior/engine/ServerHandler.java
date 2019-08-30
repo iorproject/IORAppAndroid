@@ -2,10 +2,12 @@ package ior.engine;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -60,16 +62,11 @@ public class ServerHandler {
     private Runnable onProgressFetchingData = null;
     private Date partnersLastFetch = null;
     private Date companiesLastFetch = null;
-    private Date requestsLastFetch = null;
-    private Map<String, Map<String, Date>> companiesReceiptsLastFetch = new HashMap<>();
+    private Map<String, Date> lastFetchUsersReceipts = new HashMap<>();
     private User signInUser;
-    private List<String> partners;
-    private List<String> requests;
-    private List<Company> companies;
     private Map<String, Company> companyMap = new HashMap<>();
     private Map<String, Map<String, List<Receipt>>> usersReceipts = new HashMap<>();
     private Map<String, User> usersInfoMap = new HashMap<>();
-
 
     private ServerHandler() {
     }
@@ -83,12 +80,25 @@ public class ServerHandler {
         this.onProgressFetchingData = onProgressFetchingData;
     }
 
+
+    public List<User> getUserPartners() {
+
+        return signInUser.getPartners();
+    }
+
+    public List<User> getUserRequests() {
+
+        return signInUser.getUsersRequest();
+
+    }
+
     public User getSignInUser() {
         return signInUser;
     }
 
-    public List<String> getRequests() {
-        return requests;
+    public List<User> getUserFollowers() {
+
+        return signInUser.getFollowers();
     }
 
     public List<Company> getUserCompanies(String userEmail) {
@@ -154,11 +164,9 @@ public class ServerHandler {
 
                     }
 
-                }
-                catch (ProtocolException e1) {
+                } catch (ProtocolException e1) {
 
-                }
-                catch (IOException e2) {
+                } catch (IOException e2) {
 
                 }
                 return null;
@@ -170,7 +178,7 @@ public class ServerHandler {
 
                     onFinish.run();
 
-                });
+                }, null);
             }
         }.execute();
 
@@ -218,17 +226,15 @@ public class ServerHandler {
                         String email = userMap.get("email");
                         String name = userMap.get("name");
                         String dateStr = userMap.get("registerDate");
-                        String profileImage = userMap.containsKey("profileImage") ? userMap.get("profileImage"):"";
+                        String profileImage = userMap.containsKey("profileImage") ? userMap.get("profileImage") : "";
                         Date registerDate = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss", Locale.ENGLISH).parse(dateStr);
 
-                        ServerHandler.getInstance().signInUser = new User(email, name, registerDate,profileImage);
+                        ServerHandler.getInstance().signInUser = new User(email, name, registerDate, profileImage);
                         ServerHandler.getInstance().usersInfoMap.put(email, signInUser);
                         fetchProfileDetails();
 
 
-                    }
-
-                    catch (Exception e1) {
+                    } catch (Exception e1) {
 
                         this.cancel(true);
                     }
@@ -241,7 +247,8 @@ public class ServerHandler {
                 protected void onCancelled() {
                     super.onCancelled();
                     ServerHandler.this.onProgressFetchingData = null;
-                    onFailure.accept("Connection to server has failed.");
+                    if(onFailure != null)
+                        onFailure.accept("Connection to server has failed.");
 
                 }
 
@@ -249,11 +256,12 @@ public class ServerHandler {
                 protected void onPostExecute(Void aVoid) {
                     if (onProgressFetchingData != null)
                         onProgressFetchingData.run();
+
                     fetchCompanies(email, () -> {
 
                         onFinish.run();
 
-                    });
+                    }, onFailure);
                 }
             }.execute();
         } else {
@@ -262,11 +270,11 @@ public class ServerHandler {
         }
     }
 
-    public void fetchUserPartners(String email, Runnable onFinish) {
+    public void fetchUserPartners(String email, Runnable onFinish, Consumer<String> onFailure) {
 
         Date date = new Date();
         Date lastFetch = partnersLastFetch;
-        if (lastFetch == null || isTimeToFetch(date, lastFetch)) {
+        if (isTimeToFetch(date, lastFetch)) {
 
             new AsyncTask<Void, Void, Void>() {
                 @Override
@@ -303,20 +311,18 @@ public class ServerHandler {
 
                         Gson gson = new Gson();
                         Map<String, ArrayList<LinkedTreeMap<String, Object>>> resultMapDB = gson.fromJson(content.toString(), Map.class);
-                        Map<String, Map<String,User>> partners_Followers = new HashMap<>();
-                        partners_Followers.put("partners",new HashMap<>());
-                        partners_Followers.put("followers",new HashMap<>());
-                        partners_Followers.put("requestusers",new HashMap<>());
-                        for(Map.Entry<String, ArrayList<LinkedTreeMap<String,Object>>> entry: resultMapDB.entrySet())
-                        {
-                            Map <String,User> tempUsers = new HashMap<>();
-                            ArrayList<LinkedTreeMap<String, Object>> arrayList =  entry.getValue();
-                            for (LinkedTreeMap<String, Object> objectLinkedTreeMap: arrayList)
-                            {
+                        Map<String, Map<String, User>> partners_Followers = new HashMap<>();
+                        partners_Followers.put("partners", new HashMap<>());
+                        partners_Followers.put("followers", new HashMap<>());
+                        partners_Followers.put("requestusers", new HashMap<>());
+                        for (Map.Entry<String, ArrayList<LinkedTreeMap<String, Object>>> entry : resultMapDB.entrySet()) {
+                            Map<String, User> tempUsers = new HashMap<>();
+                            ArrayList<LinkedTreeMap<String, Object>> arrayList = entry.getValue();
+                            for (LinkedTreeMap<String, Object> objectLinkedTreeMap : arrayList) {
                                 String email = objectLinkedTreeMap.get("email").toString();
-                                String name= objectLinkedTreeMap.get("name").toString();
-                                String profileImage= objectLinkedTreeMap.get("profileImage") != null ?  objectLinkedTreeMap.get("profileImage") .toString(): null;
-                                tempUsers.put(email, new User(email, name, null,profileImage));
+                                String name = objectLinkedTreeMap.get("name").toString();
+                                String profileImage = objectLinkedTreeMap.get("profileImage") != null ? objectLinkedTreeMap.get("profileImage").toString() : null;
+                                tempUsers.put(email, new User(email, name, null, profileImage));
                             }
 
                             partners_Followers.put(entry.getKey(), tempUsers);
@@ -343,19 +349,19 @@ public class ServerHandler {
 
                 }
             }.execute();
-        } else if (onFinish != null){
+        } else if (onFinish != null) {
             onFinish.run();
 
         }
     }
 
 
-    public void fetchCompanies(String email, Runnable onFinish) {
+    public void fetchCompanies(String email, Runnable onFinish, Consumer<String> onFailure) {
 
         Date date = new Date();
         Date lastFetch = companiesLastFetch;
         companiesLastFetch = date;
-        if (lastFetch == null || isTimeToFetch(date, lastFetch)) {
+        if (isTimeToFetch(date, lastFetch)) {
 
             new AsyncTask<Void, Void, Void>() {
                 @Override
@@ -377,7 +383,7 @@ public class ServerHandler {
                         int responseCode = con.getResponseCode();
 
                         if (responseCode == 500) {
-
+                            this.cancel(true);
 
                         }
                         BufferedReader in = new BufferedReader(
@@ -393,7 +399,6 @@ public class ServerHandler {
                         // data: array of : ["companyName" -> "aaa" , "oUrl" -> "httpdsdsa"] , [...]
 
                         List<LinkedTreeMap<String, String>> companiesDB = gson.fromJson(content.toString(), List.class);
-                        companies = new ArrayList<>();
 
                         for (LinkedTreeMap<String, String> companyDB : companiesDB) {
 
@@ -403,22 +408,28 @@ public class ServerHandler {
                             companyMap.put(name, new Company(name, logoUrl));
                         }
 
-                    } catch (ProtocolException e1) {
+                    } catch (Exception e) {
 
-                    } catch (IOException e2) {
-
+                        this.cancel(true);
                     }
 
                     return null;
                 }
 
                 @Override
-                protected void onPostExecute(Void aVoid)
-                {
+                protected void onCancelled() {
+                    super.onCancelled();
+                    ServerHandler.this.onProgressFetchingData = null;
+                    if (onFailure != null)
+                        onFailure.accept("Connection to server has failed.");
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
                     if (onProgressFetchingData != null)
                         onProgressFetchingData.run();
 
-                    fetchUserAllReceipts(email, onFinish);
+                    fetchUserAllReceipts(email, onFinish, onFailure);
                 }
             }.execute();
 
@@ -460,7 +471,6 @@ public class ServerHandler {
             }
 
 
-
             @Override
             protected void onPostExecute(Void aVoid) {
                 if (onProgressFetchingData != null)
@@ -475,6 +485,9 @@ public class ServerHandler {
 
     private boolean isTimeToFetch(Date now, Date lastTimeFetch) {
 
+        if (lastTimeFetch == null)
+            return true;
+
         long diff = now.getTime() - lastTimeFetch.getTime();
         long diffInMinutes = diff / (60 * 1000) % 60;
 
@@ -483,46 +496,33 @@ public class ServerHandler {
     }
 
 
-    public void loadBitmap(Company company)
-    {
+    public void loadBitmap(Company company) {
         Bitmap bm = null;
         InputStream is = null;
         BufferedInputStream bis = null;
         String url = company.getUrl();
 
-        try
-        {
+        try {
             URLConnection conn = new URL(url).openConnection();
             conn.setConnectTimeout(2000);
             conn.connect();
             is = conn.getInputStream();
             bis = new BufferedInputStream(is, 8192);
             bm = BitmapFactory.decodeStream(bis);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
-            if (bis != null)
-            {
-                try
-                {
+        } finally {
+            if (bis != null) {
+                try {
                     bis.close();
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if (is != null)
-            {
-                try
-                {
+            if (is != null) {
+                try {
                     is.close();
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -530,66 +530,66 @@ public class ServerHandler {
         company.setBitmap(bm);
     }
 
-    public float getAveragePurchase(String email, Optional<Date> startDate, Optional<Date> endDate){
-        if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()) {
-            OptionalDouble averagePurchase =  usersReceipts.get(email).values().stream()
+    public float getAveragePurchase(String email, Optional<Date> startDate, Optional<Date> endDate) {
+        if (usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()) {
+            OptionalDouble averagePurchase = usersReceipts.get(email).values().stream()
                     .flatMap(Collection::stream)
                     .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                     .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
                     .mapToDouble(Receipt::getTotalPriceInILS)
                     .average();
-            if(averagePurchase.isPresent()){
-                return (float)averagePurchase.getAsDouble();
+            if (averagePurchase.isPresent()) {
+                return (float) averagePurchase.getAsDouble();
             }
         }
         return 0;
     }
 
-    public float getAveragePurchasePerCompany(String email, String company, Optional<Date> startDate, Optional<Date> endDate){
-        if(usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company)) {
+    public float getAveragePurchasePerCompany(String email, String company, Optional<Date> startDate, Optional<Date> endDate) {
+        if (usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company)) {
             OptionalDouble averagePurchase = usersReceipts.get(email).get(company)
                     .stream()
                     .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                     .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
                     .mapToDouble(Receipt::getTotalPriceInILS)
                     .average();
-            if(averagePurchase.isPresent()){
-                return (float)averagePurchase.getAsDouble();
+            if (averagePurchase.isPresent()) {
+                return (float) averagePurchase.getAsDouble();
             }
         }
         return 0;
     }
 
-    public float getMostExpensivePurchase(String email, Optional<Date> startDate, Optional<Date> endDate){
-        if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()){
+    public float getMostExpensivePurchase(String email, Optional<Date> startDate, Optional<Date> endDate) {
+        if (usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()) {
             Optional<Float> mostExpensivePurchase = usersReceipts.get(email).values().stream()
                     .flatMap(Collection::stream)
                     .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                     .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
                     .map(receipt -> receipt.getTotalPrice())
                     .max(Comparator.comparingDouble(Float::valueOf));
-            if(mostExpensivePurchase.isPresent()){
+            if (mostExpensivePurchase.isPresent()) {
                 return mostExpensivePurchase.get();
             }
         }
         return 0;
     }
 
-    public float getLatestPurchase(String email, Optional<Date> startDate, Optional<Date> endDate){
+    public float getLatestPurchase(String email, Optional<Date> startDate, Optional<Date> endDate) {
         List<Receipt> receipts = usersReceipts.get(email).values()
-        .stream()
+                .stream()
                 .flatMap(List::stream)
                 .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                 .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
                 .collect(Collectors.toList());
 
         Receipt latestReceipt = !receipts.isEmpty() ? receipts.get(0) : null;
-        if(latestReceipt == null){
+        if (latestReceipt == null) {
             return 0;
         }
 
-        for(Receipt receipt : receipts){
-            if(receipt.getCreationDate().after(latestReceipt.getCreationDate())){
+        for (Receipt receipt : receipts) {
+            if (receipt.getCreationDate().after(latestReceipt.getCreationDate())) {
                 latestReceipt = receipt;
             }
         }
@@ -606,7 +606,7 @@ public class ServerHandler {
                         .collect(Collectors.toList()).size() : 0;
     }
 
-    public int getAmountOfPurchasesPerCompany(String email, String company, Optional<Date> startDate, Optional<Date> endDate){
+    public int getAmountOfPurchasesPerCompany(String email, String company, Optional<Date> startDate, Optional<Date> endDate) {
         return usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company) ?
                 usersReceipts.get(email).get(company).stream()
                         .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
@@ -614,15 +614,15 @@ public class ServerHandler {
                         .collect(Collectors.toList()).size() : 0;
     }
 
-    public float getTotalPurchases(String email, Optional<Date> startDate, Optional<Date> endDate){
-        if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()) {
-            Optional<Float> totalPurchases =  usersReceipts.get(email).values().stream()
+    public float getTotalPurchases(String email, Optional<Date> startDate, Optional<Date> endDate) {
+        if (usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()) {
+            Optional<Float> totalPurchases = usersReceipts.get(email).values().stream()
                     .flatMap(Collection::stream)
                     .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                     .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
                     .map(Receipt::getTotalPriceInILS)
-                    .reduce((a,b) -> a+b);
-            if(totalPurchases.isPresent()){
+                    .reduce((a, b) -> a + b);
+            if (totalPurchases.isPresent()) {
                 return totalPurchases.get();
             }
         }
@@ -640,7 +640,7 @@ public class ServerHandler {
 
     }
 
-    public float getTotalPurchasesPerCompany(String email, String company,Optional<Date> startDate, Optional<Date> endDate) {
+    public float getTotalPurchasesPerCompany(String email, String company, Optional<Date> startDate, Optional<Date> endDate) {
         if (usersReceipts.containsKey(email) && usersReceipts.get(email).containsKey(company)) {
             Optional<Float> totalPurchases = usersReceipts.get(email).get(company)
                     .stream()
@@ -648,130 +648,149 @@ public class ServerHandler {
                     .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
                     .map(Receipt::getTotalPriceInILS)
                     .reduce((a, b) -> a + b);
-            if(totalPurchases.isPresent()){
+            if (totalPurchases.isPresent()) {
                 return totalPurchases.get();
             }
         }
         return 0;
     }
 
-    public void fetchUserAllReceipts(String userEmail, Runnable onFinish) {
+    public void fetchUserAllReceipts(String userEmail, Runnable onFinish, Consumer<String> onFailure) {
 
-        if (usersReceipts.containsKey(userEmail))
+        Date date = new Date();
+        Date lastFetch = lastFetchUsersReceipts.containsKey(userEmail) ? lastFetchUsersReceipts.get(userEmail) : null;
+
+        if (isTimeToFetch(date, lastFetch)) {
+
             usersReceipts.remove(userEmail);
 
+            new AsyncTask<Void, Void, Void>() {
 
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-
-                try {
-                    URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userAllReceipts");
-                    //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-                    //URL url = new URL("http://10.0.2.2:8080/ior/userAllReceipts");
-
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestMethod("GET");
-
-                    Map<String, String> parameters = new HashMap<>();
-                    parameters.put("email", userEmail);
-
-                    con.setDoOutput(true);
-                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
-                    out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-                    out.flush();
-                    out.close();
-                    int responseCode = con.getResponseCode();
-
-                    if (responseCode == 500) {
+                @Override
+                protected Void doInBackground(Void... voids) {
 
 
-                    }
+                    try {
+                        URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userAllReceipts");
+                        //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
+                        //URL url = new URL("http://10.0.2.2:8080/ior/userAllReceipts");
 
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(con.getInputStream()));
-                    String inputLine;
-                    StringBuffer content = new StringBuffer();
-                    while ((inputLine = in.readLine()) != null) {
-                        content.append(inputLine);
-                    }
-                    in.close();
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        con.setRequestMethod("GET");
 
-                    Gson gson = new Gson();
-                    List<LinkedTreeMap<String, Object>> receiptsDb = gson.fromJson(content.toString(), List.class);
+                        Map<String, String> parameters = new HashMap<>();
+                        parameters.put("email", userEmail);
 
-                    if (!usersReceipts.containsKey(userEmail)) {
-                        usersReceipts.put(userEmail, new LinkedHashMap<>());
-                    }
+                        con.setDoOutput(true);
+                        DataOutputStream out = new DataOutputStream(con.getOutputStream());
+                        out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+                        out.flush();
+                        out.close();
+                        int responseCode = con.getResponseCode();
 
-                    for (LinkedTreeMap<String, Object> receiptDB : receiptsDb) {
-
-                        String receiptsEmail = userEmail;
-                        String company = receiptDB.get("companyName").toString();
-                        company = IorUtils.firstUpperCase(company);
-                        String receiptNumber = receiptDB.get("receiptNumber").toString();
-                        String receiptDateStr = receiptDB.get("creationDate").toString();
-                        String receiptCurrencyStr = receiptDB.get("currency").toString();
-                        float receiptPrice = (float)((double)(receiptDB.get("totalPrice")));
-                        String receiptFileName = receiptDB.containsKey("fileName") ? receiptDB.get("fileName").toString() : "";
-                        String attUrl = receiptDB.containsKey("attachmentURL") ? receiptDB.get("attachmentURL")
-                                .toString() : "";
-                        Date receiptDate = null;
-                        eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
-                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a", Locale.ENGLISH);
-
-                        try {
-
-                            receiptDate = formatter.parse(receiptDateStr);
-                            Receipt temp = new Receipt(receiptsEmail, company,
-                                    receiptNumber, receiptDate,
-                                    receiptPrice, receiptCurrency
-                                    ,receiptFileName, attUrl);
-
-                            temp.setTotalPriceInILS(getTotalPriceInILS(temp.getCurrency(),temp.getTotalPrice()));
-                            if (!usersReceipts.get(userEmail).containsKey(company))
-                                usersReceipts.get(userEmail).put(company, new ArrayList<>());
-
-
-                            usersReceipts.get(userEmail).get(company).add(temp);
-
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                        if (responseCode == 500) {
+                            this.cancel(true);
                         }
 
+                        BufferedReader in = new BufferedReader(
+                                new InputStreamReader(con.getInputStream()));
+                        String inputLine;
+                        StringBuffer content = new StringBuffer();
+                        while ((inputLine = in.readLine()) != null) {
+                            content.append(inputLine);
+                        }
+                        in.close();
+
+                        Gson gson = new Gson();
+                        List<LinkedTreeMap<String, Object>> receiptsDb = gson.fromJson(content.toString(), List.class);
+
+                        if (!usersReceipts.containsKey(userEmail)) {
+                            usersReceipts.put(userEmail, new LinkedHashMap<>());
+                        }
+
+                        for (LinkedTreeMap<String, Object> receiptDB : receiptsDb) {
+
+                            String receiptsEmail = userEmail;
+                            String company = receiptDB.get("companyName").toString();
+                            company = IorUtils.firstUpperCase(company);
+                            String receiptNumber = receiptDB.get("receiptNumber").toString();
+                            String receiptDateStr = receiptDB.get("creationDate").toString();
+                            String receiptCurrencyStr = receiptDB.get("currency").toString();
+                            float receiptPrice = (float) ((double) (receiptDB.get("totalPrice")));
+                            String receiptFileName = receiptDB.containsKey("fileName") ? receiptDB.get("fileName").toString() : "";
+                            String attUrl = receiptDB.containsKey("attachmentURL") ? receiptDB.get("attachmentURL")
+                                    .toString() : "";
+                            Date receiptDate = null;
+                            eCurrency receiptCurrency = eCurrency.createCurrency(receiptCurrencyStr);
+                            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a", Locale.ENGLISH);
+
+                            try {
+
+                                receiptDate = formatter.parse(receiptDateStr);
+                                Receipt temp = new Receipt(receiptsEmail, company,
+                                        receiptNumber, receiptDate,
+                                        receiptPrice, receiptCurrency
+                                        , receiptFileName, attUrl);
+
+                                temp.setTotalPriceInILS(getTotalPriceInILS(temp.getCurrency(), temp.getTotalPrice()));
+                                if (!usersReceipts.get(userEmail).containsKey(company))
+                                    usersReceipts.get(userEmail).put(company, new ArrayList<>());
+
+
+                                usersReceipts.get(userEmail).get(company).add(temp);
+
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                    } catch (Exception e) {
+
+                        this.cancel(true);
                     }
 
-                } catch (ProtocolException e1) {
-
-                } catch (IOException e2) {
-
+                    return null;
                 }
 
-                return null;
-            }
+                @Override
+                protected void onCancelled() {
+                    super.onCancelled();
+                    ServerHandler.this.onProgressFetchingData = null;
+                    if (onFailure != null)
+                        onFailure.accept("Connection to server has failed.");
+                }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                if (onProgressFetchingData != null)
-                    onProgressFetchingData.run();
-                fetchBitmaps(userEmail, onFinish);
-            }
-        }.execute();
+                @Override
+                protected void onPostExecute(Void aVoid) {
+
+                    lastFetchUsersReceipts.put(userEmail, date);
+
+                    if (onProgressFetchingData != null)
+                        onProgressFetchingData.run();
+                    fetchBitmaps(userEmail, onFinish);
+                }
+            }.execute();
+        }
+
+        else {
+            onFinish.run();
+        }
 
     }
 
     private float getTotalPriceInILS(eCurrency currency, float totalPrice) {
-        switch (currency){
-            case EURO: return totalPrice*4.0f;
-            case DOLLAR: return totalPrice*3.5f;
-            default: return totalPrice;
+        switch (currency) {
+            case EURO:
+                return totalPrice * 4.0f;
+            case DOLLAR:
+                return totalPrice * 3.5f;
+            default:
+                return totalPrice;
         }
     }
 
-    public void setUserProfileImage(String profileImage, String email)
-    {
+    public void setUserProfileImage(String profileImage, String email) {
         new AsyncTask<Void, Void, Void>() {
 
             @Override
@@ -812,7 +831,7 @@ public class ServerHandler {
 
     }
 
-    public  void downloadFile(Activity activity, String url, String fileName, Runnable onFinish) {
+    public void downloadFile(Activity activity, String url, String fileName, Runnable onFinish) {
 
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -842,8 +861,7 @@ public class ServerHandler {
         }
     }
 
-    public void accecptFriendship(String friendEmail)
-    {
+    public void accecptFriendship(String friendEmail) {
         arrangeDataAfterAcceptFriendship(friendEmail);
         new AsyncTask<Void, Void, Void>() {
 
@@ -860,7 +878,7 @@ public class ServerHandler {
 
                     Map<String, String> parameters = new HashMap<>();
                     parameters.put("useremail", signInUser.getEmail());
-                    parameters.put("friendemail",friendEmail);
+                    parameters.put("friendemail", friendEmail);
 
                     con.setDoOutput(true);
                     DataOutputStream out = new DataOutputStream(con.getOutputStream());
@@ -890,8 +908,7 @@ public class ServerHandler {
 
     }
 
-    public void unfolloweRequest(String friendEmail)
-    {
+    public void unfolloweRequest(String friendEmail) {
         arrangeDataAfterUnfollowRequest(friendEmail);
         new AsyncTask<Void, Void, Void>() {
 
@@ -907,7 +924,7 @@ public class ServerHandler {
 
                     Map<String, String> parameters = new HashMap<>();
                     parameters.put("requesterEmail", friendEmail);
-                    parameters.put("recieverEmail",signInUser.getEmail());
+                    parameters.put("recieverEmail", signInUser.getEmail());
 
                     con.setDoOutput(true);
                     DataOutputStream out = new DataOutputStream(con.getOutputStream());
@@ -932,8 +949,7 @@ public class ServerHandler {
 
     }
 
-    public void rejectFriendshipRequest(String friendEmail)
-    {
+    public void rejectFriendshipRequest(String friendEmail) {
         arrangeDataAfterRejectFriendship(friendEmail);
         new AsyncTask<Void, Void, Void>() {
 
@@ -974,8 +990,7 @@ public class ServerHandler {
 
     }
 
-    public void sendRequestFriendship(String friendEmail, Consumer<String> onFinish)
-    {
+    public void sendRequestFriendship(String friendEmail, Consumer<String> onFinish) {
         String[] msg = new String[1];
         new AsyncTask<Void, Void, Void>() {
 
@@ -999,15 +1014,11 @@ public class ServerHandler {
                     con.setRequestMethod("GET");
 
                     int responseCode = con.getResponseCode();
-                    if (responseCode == 500)
-                    {
+                    if (responseCode == 500) {
                         msg[0] = "send request failed!";
+                    } else if (responseCode == 501) {
+                        msg[0] = "There is no user with this mail!";
                     }
-                    else if (responseCode == 501)
-                    {
-                        msg[0]="There is no user with this mail!";
-                    }
-
 
                 } catch (ProtocolException e1) {
 
@@ -1016,6 +1027,7 @@ public class ServerHandler {
                 }
                 return null;
             }
+
             @Override
             protected void onPostExecute(Void aVoid) {
                 if (onProgressFetchingData != null)
@@ -1025,29 +1037,29 @@ public class ServerHandler {
         }.execute();
     }
 
-    private void arrangeDataAfterRemoveFollower(String friendEmail)
-    {
+    private void arrangeDataAfterRemoveFollower(String friendEmail) {
         signInUser.getPartners_Followers().get("followers").remove(friendEmail);
     }
 
-    private void arrangeDataAfterAcceptFriendship(String friendEmail)
-    {
+    private void arrangeDataAfterAcceptFriendship(String friendEmail) {
+
         User friendUser = signInUser.getPartners_Followers().get("requestusers").get(friendEmail);
-        signInUser.getPartners_Followers().get("followers").put(friendEmail,friendUser);
+        signInUser.getPartners_Followers().get("followers").put(friendEmail, friendUser);
         signInUser.getPartners_Followers().get("requestusers").remove(friendEmail);
+
     }
 
-    private void arrangeDataAfterUnfollowRequest(String friendEmail)
-    {
+    private void arrangeDataAfterUnfollowRequest(String friendEmail) {
+
         signInUser.getPartners_Followers().get("partners").remove(friendEmail);
     }
 
-    private void arrangeDataAfterRejectFriendship(String friendEmail)
-    {
+    private void arrangeDataAfterRejectFriendship(String friendEmail) {
         signInUser.getPartners_Followers().get("requestusers").remove(friendEmail);
+
     }
 
-    public  void reset() {
+    public void reset() {
 
         this.usersInfoMap.clear();
         this.companyMap.clear();
@@ -1055,6 +1067,7 @@ public class ServerHandler {
         this.signInUser = null;
         this.companiesLastFetch = null;
         this.partnersLastFetch = null;
+        this.lastFetchUsersReceipts = new HashMap<>();
     }
 
 
@@ -1063,12 +1076,12 @@ public class ServerHandler {
             float minPrice, float maxPrice, List<eCurrency> currencies) {
 
         List<Receipt> receipts =
-            usersReceipts.get(email).values().stream().flatMap(List::stream)
-                    .filter(receipt -> companies.contains(receipt.getCompany()))
-                    .filter(receipt -> !receipt.getCreationDate().before(startDate) && !receipt.getCreationDate().after(endDate))
-                    .filter(receipt -> currencies.contains(receipt.getCurrency()))
-                    .filter(receipt -> receipt.getTotalPrice() >= minPrice && receipt.getTotalPrice() <= maxPrice)
-                    .collect(Collectors.toList());
+                usersReceipts.get(email).values().stream().flatMap(List::stream)
+                        .filter(receipt -> companies.contains(receipt.getCompany()))
+                        .filter(receipt -> !receipt.getCreationDate().before(startDate) && !receipt.getCreationDate().after(endDate))
+                        .filter(receipt -> currencies.contains(receipt.getCurrency()))
+                        .filter(receipt -> receipt.getTotalPrice() >= minPrice && receipt.getTotalPrice() <= maxPrice)
+                        .collect(Collectors.toList());
 
         return receipts;
     }
@@ -1106,11 +1119,11 @@ public class ServerHandler {
 
     public List<String> getCompaniesName(String email, Optional<Date> startDate, Optional<Date> endDate) {
         List<String> companyNames = new ArrayList<>();
-        if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()){
-            Map<String,List<Receipt>> receiptsMap = usersReceipts.get(email);
-            for(Map.Entry<String,List<Receipt>> receiptEntry : receiptsMap.entrySet()){
-                for(Receipt receipt : receiptEntry.getValue()){
-                    if(((!startDate.isPresent() && !endDate.isPresent()) || (receipt.getCreationDate().after(startDate.get()) && receipt.getCreationDate().before(endDate.get())))){
+        if (usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty()) {
+            Map<String, List<Receipt>> receiptsMap = usersReceipts.get(email);
+            for (Map.Entry<String, List<Receipt>> receiptEntry : receiptsMap.entrySet()) {
+                for (Receipt receipt : receiptEntry.getValue()) {
+                    if (((!startDate.isPresent() && !endDate.isPresent()) || (receipt.getCreationDate().after(startDate.get()) && receipt.getCreationDate().before(endDate.get())))) {
                         companyNames.add(receiptEntry.getKey());
                         break;
                     }
@@ -1123,21 +1136,20 @@ public class ServerHandler {
 
     public List<Float> getCompaniesTotalPrice(String email, Optional<Date> startDate, Optional<Date> endDate) {
         List<Float> companyTotalPriceList = new ArrayList<>();
-        if(usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty())
-            for(Map.Entry<String,List<Receipt>> companyReceiptsMap : usersReceipts.get(email).entrySet()){
+        if (usersReceipts.containsKey(email) && !usersReceipts.get(email).isEmpty())
+            for (Map.Entry<String, List<Receipt>> companyReceiptsMap : usersReceipts.get(email).entrySet()) {
                 Optional<Float> companyTotalPrice = companyReceiptsMap.getValue().stream()
                         .filter(receipt -> !startDate.isPresent() || receipt.getCreationDate().after(startDate.get()))
                         .filter(receipt -> !endDate.isPresent() || receipt.getCreationDate().before(endDate.get()))
-                        .map(Receipt::getTotalPriceInILS).reduce((a, b) -> a+b);
-                if(companyTotalPrice.isPresent()){
+                        .map(Receipt::getTotalPriceInILS).reduce((a, b) -> a + b);
+                if (companyTotalPrice.isPresent()) {
                     companyTotalPriceList.add(companyTotalPrice.get());
                 }
             }
         return companyTotalPriceList;
     }
 
-    private void fetchProfileDetails()
-    {
+    private void fetchProfileDetails() {
         try {
             //URL url = new URL("http://10.0.2.2:8080/ior/profileInfo");
             URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/profileInfo");
@@ -1165,10 +1177,10 @@ public class ServerHandler {
             in.close();
             Gson gson = new Gson();
             Map<String, Double> userMap = gson.fromJson(content.toString(), Map.class);
-            int receiptNum = (int)Math.round(userMap.get("reciepts"));
-            int partnersNum = (int)Math.round(userMap.get("partners"));
-            int followersNum = (int)Math.round(userMap.get("followers"));
-            ServerHandler.getInstance().signInUser.setProfileDetails(receiptNum,partnersNum,followersNum);
+            int receiptNum = (int) Math.round(userMap.get("reciepts"));
+            int partnersNum = (int) Math.round(userMap.get("partners"));
+            int followersNum = (int) Math.round(userMap.get("followers"));
+            ServerHandler.getInstance().signInUser.setProfileDetails(receiptNum, partnersNum, followersNum);
             int x = 5;
 
         } catch (ProtocolException e1) {
@@ -1181,8 +1193,7 @@ public class ServerHandler {
         }
     }
 
-    public void removeFollower(String friendEmail)
-    {
+    public void removeFollower(String friendEmail) {
         arrangeDataAfterRemoveFollower(friendEmail);
         new AsyncTask<Void, Void, Void>() {
 
@@ -1217,5 +1228,5 @@ public class ServerHandler {
         }.execute();
 
     }
-
 }
+

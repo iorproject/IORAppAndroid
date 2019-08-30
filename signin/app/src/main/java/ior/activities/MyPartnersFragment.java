@@ -43,7 +43,7 @@ public class MyPartnersFragment extends Fragment {
 
         //partners = ServerHandler.getInstance().getPartners();
         recyclerView = view.findViewById(R.id.partners_recyclerview);
-        partners = ServerHandler.getInstance().getSignInUser().getPartners();
+        partners = ServerHandler.getInstance().getUserPartners();
         mAddingPartnerFBAdapter = new AddingPartnerFBAdapter(getContext());
         mfloatingActionButton = view.findViewById(R.id.floatingActionButton);
         mfloatingActionButton.setOnClickListener(new View.OnClickListener() {
