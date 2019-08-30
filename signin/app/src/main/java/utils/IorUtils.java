@@ -305,7 +305,7 @@ public class IorUtils {
         Display display = wm.getDefaultDisplay();
         int wid = display.getWidth();
 
-        InsetDrawable inset = new InsetDrawable(back, wid / 3);
+        InsetDrawable inset = new InsetDrawable(back, wid / 3 + (dialog.getWindow().getDecorView().getWidth() / 2) );
         dialog.getWindow().setBackgroundDrawable(inset);
 
         dialog.show();

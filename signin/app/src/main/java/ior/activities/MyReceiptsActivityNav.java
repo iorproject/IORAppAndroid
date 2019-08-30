@@ -122,11 +122,7 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
         });
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        mToggle = IorUtils.setNavigateBar(this);
-        mDraw = findViewById(R.id.drawer);
-        navigationView = findViewById(R.id.nav_view_top);
-        navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
     }
 
@@ -134,6 +130,11 @@ public class MyReceiptsActivityNav extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        mToggle = IorUtils.setNavigateBar(this);
+        mDraw = findViewById(R.id.drawer);
+        navigationView = findViewById(R.id.nav_view_top);
+        navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mDraw.closeDrawer(Gravity.LEFT);
         int x = 5;
     }
