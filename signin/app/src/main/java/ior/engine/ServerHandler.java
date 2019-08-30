@@ -201,7 +201,7 @@ public class ServerHandler {
 
                         if (responseCode == 500) {
 
-
+                            this.cancel(true);
                         }
 
                         BufferedReader in = new BufferedReader(
@@ -227,17 +227,10 @@ public class ServerHandler {
 
 
                     }
-                    catch (SocketTimeoutException e3) {
-                        this.cancel(false);
-                    }
 
-                    catch (ProtocolException e1) {
-                        int fff = 4;
+                    catch (Exception e1) {
 
-                    } catch (IOException e2) {
-                        int ssss = 3;
-                    } catch (Exception e) {
-                        int sadsada = 4;
+                        this.cancel(true);
                     }
 
                     return null;
@@ -247,6 +240,7 @@ public class ServerHandler {
                 @Override
                 protected void onCancelled() {
                     super.onCancelled();
+                    ServerHandler.this.onProgressFetchingData = null;
                     onFailure.accept("Connection to server has failed.");
 
                 }
@@ -434,25 +428,38 @@ public class ServerHandler {
 
     private void fetchBitmaps(String userEmail, Runnable onFinish) {
 
-
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
 
-
+                List<Thread> threads = new ArrayList<>();
                 for (String companyName : usersReceipts.get(userEmail).keySet()) {
                     if (companyMap.containsKey(companyName)) {
 
                         Company company = companyMap.get(companyName);
                         if (company.getBitmap() == null) {
-                            //loadBitmap(company);
+                            Thread t = new Thread(() -> loadBitmap(company));
+                            threads.add(t);
+
                         }
                     }
                 }
+                for (Thread thread : threads)
+                    thread.start();
+
+                for (Thread thread : threads) {
+                    try {
+                        thread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
 
                 return null;
-
             }
+
+
 
             @Override
             protected void onPostExecute(Void aVoid) {
@@ -486,6 +493,7 @@ public class ServerHandler {
         try
         {
             URLConnection conn = new URL(url).openConnection();
+            conn.setConnectTimeout(2000);
             conn.connect();
             is = conn.getInputStream();
             bis = new BufferedInputStream(is, 8192);
