@@ -13,52 +13,53 @@
         android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/app_background"
-        android:orientation="vertical"
-        android:visibility="visible">
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabLayout_receipts"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:background="@drawable/tab2_background"
-            app:tabIndicatorColor="#FDFDFD"
-            app:tabIndicatorFullWidth="false"
-            app:tabIndicatorHeight="5dp"
-            app:tabSelectedTextColor="#FCF7F7F7"
-            android:paddingBottom="5dp"
-            app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium"
-            app:tabTextColor="#46A6F3">
-
-            <android.support.design.widget.TabItem
-                android:id="@+id/tabItem_allReceipts"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#F8DA2222"
-                android:text="All Receipts" />
-
-            <android.support.design.widget.TabItem
-                android:id="@+id/tabItem_advancedSearch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Advanced Search" />
-
-        </android.support.design.widget.TabLayout>
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewPager_myReceipts"
-            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="56dp" />
+            android:background="@drawable/about_background"
+            android:orientation="vertical"
+            android:visibility="visible">
 
-    </LinearLayout>
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabLayout_receipts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:background="@drawable/tab2_background"
+                android:paddingBottom="5dp"
+                app:tabIndicatorColor="#FDFDFD"
+                app:tabIndicatorFullWidth="false"
+                app:tabIndicatorHeight="5dp"
+                app:tabSelectedTextColor="#FCF7F7F7"
+                app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:tabTextColor="#46A6F3">
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/tabItem_allReceipts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#F8DA2222"
+                    android:text="All Receipts" />
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/tabItem_advancedSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Advanced Search" />
+
+            </android.support.design.widget.TabLayout>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPager_myReceipts"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="56dp" />
+
+        </LinearLayout>
 
 
 <android.support.design.widget.BottomNavigationView

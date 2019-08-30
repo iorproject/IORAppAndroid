@@ -6,15 +6,15 @@
     android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F2D0"
     tools:context="ior.activities.ViewStatisticsActivity">
 
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:id="@+id/relative_viewStatistics"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/about_background"
         tools:context="ior.activities.ViewStatisticsActivity">
 
         <TableLayout
@@ -32,6 +32,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:fontFamily="casual"
                     android:paddingRight="15dp"
                     android:text="@string/total_purchases"
                     android:textColor="#090000" />
@@ -40,6 +41,7 @@
                     android:id="@+id/total_purchases_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="casual"
                     android:textColor="#090000" />
             </TableRow>
 
@@ -50,6 +52,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:fontFamily="casual"
                     android:paddingRight="10dp"
                     android:text="@string/average_purchase"
                     android:textColor="#090000" />
@@ -58,6 +61,7 @@
                     android:id="@+id/average_purchase_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="casual"
                     android:textColor="#090000" />
             </TableRow>
 
@@ -68,6 +72,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:fontFamily="casual"
                     android:paddingRight="5dp"
                     android:text="@string/amount_of_purchases"
                     android:textColor="#090000" />
@@ -76,6 +81,7 @@
                     android:id="@+id/amount_of_purchases_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="casual"
                     android:textColor="#090000" />
             </TableRow>
 
@@ -86,6 +92,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:fontFamily="casual"
                     android:paddingRight="5dp"
                     android:text="@string/most_expensive_purchase"
                     android:textColor="#090000" />
@@ -94,6 +101,7 @@
                     android:id="@+id/most_expensive_purchase_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="casual"
                     android:textColor="#090000" />
             </TableRow>
 
@@ -104,6 +112,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:fontFamily="casual"
                     android:paddingRight="5dp"
                     android:text="@string/latest_purchase"
                     android:textColor="#090000" />
@@ -112,6 +121,7 @@
                     android:id="@+id/latest_purchase_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="casual"
                     android:textColor="#090000" />
             </TableRow>
 
@@ -251,8 +261,8 @@
 
 
     <android.support.design.widget.NavigationView
-        android:layout_width="250dp"
         android:id="@+id/nav_view_top"
+        android:layout_width="250dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/whiteHeader"
