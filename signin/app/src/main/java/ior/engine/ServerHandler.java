@@ -174,11 +174,7 @@ public class ServerHandler {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                fetchCompanies(email, () -> {
-
-                    onFinish.run();
-
-                }, null);
+                fetchUserInfo(email, onFinish, null);
             }
         }.execute();
 
@@ -231,7 +227,6 @@ public class ServerHandler {
 
                         ServerHandler.getInstance().signInUser = new User(email, name, registerDate, profileImage);
                         ServerHandler.getInstance().usersInfoMap.put(email, signInUser);
-                        fetchProfileDetails();
 
 
                     } catch (Exception e1) {
@@ -239,6 +234,7 @@ public class ServerHandler {
                         this.cancel(true);
                     }
 
+                    fetchProfileDetails();
                     return null;
                 }
 
@@ -257,14 +253,10 @@ public class ServerHandler {
                     if (onProgressFetchingData != null)
                         onProgressFetchingData.run();
 
-                    fetchCompanies(email, () -> {
-
-                        onFinish.run();
-
-                    }, onFailure);
+                    fetchCompanies(onFinish, onFailure);
                 }
             }.execute();
-        } else {
+        } else if (onFinish != null){
 
             onFinish.run();
         }
@@ -356,7 +348,7 @@ public class ServerHandler {
     }
 
 
-    public void fetchCompanies(String email, Runnable onFinish, Consumer<String> onFailure) {
+    public void fetchCompanies(Runnable onFinish, Consumer<String> onFailure) {
 
         Date date = new Date();
         Date lastFetch = companiesLastFetch;
@@ -372,12 +364,12 @@ public class ServerHandler {
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
 
-                        Map<String, String> parameters = new HashMap<>();
-                        parameters.put("email", email);
+                        //Map<String, String> parameters = new HashMap<>();
+                        //parameters.put("email", email);
 
                         con.setDoOutput(true);
                         DataOutputStream out = new DataOutputStream(con.getOutputStream());
-                        out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+                        //out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
                         out.flush();
                         out.close();
                         int responseCode = con.getResponseCode();
@@ -429,7 +421,7 @@ public class ServerHandler {
                     if (onProgressFetchingData != null)
                         onProgressFetchingData.run();
 
-                    fetchUserAllReceipts(email, onFinish, onFailure);
+                    fetchUserAllReceipts(signInUser.getEmail(), onFinish, onFailure);
                 }
             }.execute();
 
@@ -750,6 +742,9 @@ public class ServerHandler {
                         this.cancel(true);
                     }
 
+                    if (userEmail.equals(signInUser.getEmail()))
+                        fetchProfileDetails();
+
                     return null;
                 }
 
@@ -851,7 +846,7 @@ public class ServerHandler {
                         1);
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
+                // app2-defined int constant. The callback method gets the
                 // result of the request.
             }
         } else {
@@ -895,13 +890,10 @@ public class ServerHandler {
                 } catch (IOException e2) {
 
                 }
-
+                fetchProfileDetails();
                 return null;
             }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-            }
         }.execute();
 
     }
@@ -935,13 +927,10 @@ public class ServerHandler {
                 } catch (IOException e2) {
 
                 }
-
+                fetchProfileDetails();
                 return null;
             }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-            }
         }.execute();
 
     }
@@ -981,6 +970,8 @@ public class ServerHandler {
                 } catch (IOException e2) {
 
                 }
+
+                fetchProfileDetails();
                 return null;
             }
         }.execute();
@@ -1145,7 +1136,7 @@ public class ServerHandler {
         return companyTotalPriceList;
     }
 
-    private void fetchProfileDetails() {
+    public void fetchProfileDetails() {
         try {
             URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/profileInfo");
             //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
@@ -1186,7 +1177,12 @@ public class ServerHandler {
         } catch (Exception e) {
             int sadsada = 4;
         }
+
     }
+
+
+
+
 
     public void removeFollower(String friendEmail) {
         arrangeDataAfterRemoveFollower(friendEmail);

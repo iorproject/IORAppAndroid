@@ -14,7 +14,7 @@
         android:id="@+id/relative_viewStatistics"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F5F2D0"
+        android:background="@drawable/about_background"
         tools:context="ior.activities.ViewStatisticsActivity">
 
         <TableLayout

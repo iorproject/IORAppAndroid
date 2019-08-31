@@ -239,6 +239,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
 
         ServerHandler.getInstance().registerUser(email, name,  access_token, refresh_token, cal.getTime(),
                 () -> startActivity(new Intent(this, MainActivity.class)));
+        ServerHandler.getInstance().fetchUserPartners(email, null, null);
 
     }
 
