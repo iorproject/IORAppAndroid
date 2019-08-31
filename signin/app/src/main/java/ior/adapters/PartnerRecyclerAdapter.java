@@ -189,7 +189,7 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
 
             case REQUEST:
                 buttonMsg = ePartner.REQUEST.toString();
-                removeDialogMsg = "Cancle Request";
+                removeDialogMsg = "Cancel Request";
                 break;
         }
     }

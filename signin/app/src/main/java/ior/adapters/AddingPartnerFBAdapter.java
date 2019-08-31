@@ -65,7 +65,7 @@ public class AddingPartnerFBAdapter {
         List<User> t = ServerHandler.getInstance().getSignInUser().getPartners();
         if (ServerHandler.getInstance().getSignInUser().getPartners_Followers().get("partners").containsKey(email))
         {
-            errorEvent("this mail is already your partner");
+            errorEvent("this email is already your partner");
         }
         else
         {
