@@ -1,13 +1,19 @@
 package ior.activities;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private RoundedHorizontalProgressBar progressBarFetchingData;
     private TextView textViewProgress;
     private TextView textViewMessage;
+    private Dialog dialogError;
 
 
     @Override
@@ -56,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         textViewMessage = findViewById(R.id.textView_loading_main);
 
         initProgressBar();
+        initDialog();
 
 
         if (email.equals("")) {
@@ -71,16 +79,18 @@ public class MainActivity extends AppCompatActivity {
                         finish();
                     },
 
-                    (msg) ->  runOnUiThread(() -> Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show()));
+                    (msg) ->  runOnUiThread(() -> {
 
-            ServerHandler.getInstance().fetchUserPartners(email, null);
+                        TextView tvMsg = dialogError.findViewById(R.id.tv_message_serverErrorDialog);
+                        tvMsg.setText(msg + "Please try again later.");
+                        dialogError.show();
+
+                    }));
+
+            ServerHandler.getInstance().fetchUserPartners(email, null, null);
             IorUtils.setDefultBitmapImage(this);
 
             progressBar.getIndeterminateDrawable().setColorFilter(0xFF303F9F, android.graphics.PorterDuff.Mode.MULTIPLY);
-
-            //countDownTimer.start();
-
-
 
         }
     }
@@ -122,5 +132,21 @@ public class MainActivity extends AppCompatActivity {
         int updateProg = progressBarFetchingData.getProgress() + 20;
         progressBarFetchingData.setProgress(updateProg);
         textViewProgress.setText(updateProg + " %");
+    }
+
+    private void initDialog() {
+
+        dialogError = new Dialog(this);
+        dialogError.setContentView(R.layout.server_error_dialog);
+        dialogError.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogError.setCanceledOnTouchOutside(false);
+
+        Button bt_ok = dialogError.findViewById(R.id.bt_Ok_serverErrorDialog);
+
+        bt_ok.setOnClickListener(v -> {
+
+            finish();
+            System.exit(0);
+        });
     }
 }

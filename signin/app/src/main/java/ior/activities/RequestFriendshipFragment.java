@@ -49,7 +49,7 @@ public class RequestFriendshipFragment extends Fragment {
                 floatingActionButtonWasClicked();
             }
         });
-        requests_partners = ServerHandler.getInstance().getSignInUser().getUsersRequest();
+        requests_partners = ServerHandler.getInstance().getUserRequests();
         partnerRecyclerAdapter = new PartnerRecyclerAdapter(getContext(), requests_partners, ePartner.REQUEST);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(partnerRecyclerAdapter);
@@ -81,7 +81,7 @@ public class RequestFriendshipFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && partnerRecyclerAdapter!=null)
         {
-            partnerRecyclerAdapter.setAdapterDate((ServerHandler.getInstance().getSignInUser().getUsersRequest()));
+            partnerRecyclerAdapter.setAdapterDate((ServerHandler.getInstance().getUserRequests()));
         }
     }
 

@@ -1,7 +1,9 @@
 package ior.engine;
 
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 
@@ -12,6 +14,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import static android.content.Context.DOWNLOAD_SERVICE;
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
+import static android.os.Environment.DIRECTORY_PICTURES;
 
 public class DownloadFileTask extends AsyncTask<String, Integer, String> {
 
@@ -48,90 +54,85 @@ public class DownloadFileTask extends AsyncTask<String, Integer, String> {
 
     protected String doInBackground() throws IOException {
 
-
-        InputStream input = null;
-        OutputStream output = null;
-        HttpURLConnection connection = null;
         try {
-            URL url = new URL(this.url);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.connect();
 
-            // expect HTTP 200 OK, so we don't mistakenly save error report
-            // instead of the file
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                return "Server returned HTTP " + connection.getResponseCode()
-                        + " " + connection.getResponseMessage();
-            }
+        DownloadManager dm = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
+        Uri downloadUri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(downloadUri);
 
-            // this will be useful to display download percentage
-            // might be -1: server did not report the length
-            int fileLength = connection.getContentLength();
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE)
+                .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS + File.separator, fileName)
+                .setTitle(fileName)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-            // download the file
-            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            file = new File(path, fileName);
-            output = new FileOutputStream(file);
-            input = connection.getInputStream();
-            //output = new FileOutputStream("/sdcard/aaaa.pdf");
+        dm.enqueue(request);
 
-            byte data[] = new byte[4096];
-            long total = 0;
-            int count;
-            while ((count = input.read(data)) != -1) {
-                // allow canceling with back button
-                if (isCancelled()) {
-                    input.close();
-                    return null;
-                }
-                total += count;
-                // publishing the progress....
-                if (fileLength > 0) // only if total length is known
-                     publishProgress((int) (total * 100 / fileLength));
-                output.write(data, 0, count);
-            }
-        } catch (Exception e) {
-            return e.toString();
-        } finally {
-            try {
-                if (output != null)
-                    output.close();
-                if (input != null)
-                    input.close();
-            } catch (IOException ignored) {
-            }
 
-            if (connection != null)
-                connection.disconnect();
-        }
+
+    } catch (IllegalStateException ex) {
+
+    } catch (Exception ex) {
+        // just in case, it should never be called anyway
+
+    }
+
+//        InputStream input = null;
+//        OutputStream output = null;
+//        HttpURLConnection connection = null;
+//        try {
+//            URL url = new URL(this.url);
+//            connection = (HttpURLConnection) url.openConnection();
+//            connection.connect();
+//
+//            // expect HTTP 200 OK, so we don't mistakenly save error report
+//            // instead of the file
+//            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+//                return "Server returned HTTP " + connection.getResponseCode()
+//                        + " " + connection.getResponseMessage();
+//            }
+//
+//            // this will be useful to display download percentage
+//            // might be -1: server did not report the length
+//            int fileLength = connection.getContentLength();
+//
+//            // download the file
+//            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+//            file = new File(path, fileName);
+//            output = new FileOutputStream(file);
+//            input = connection.getInputStream();
+//            //output = new FileOutputStream("/sdcard/aaaa.pdf");
+//
+//            byte data[] = new byte[4096];
+//            long total = 0;
+//            int count;
+//            while ((count = input.read(data)) != -1) {
+//                // allow canceling with back button
+//                if (isCancelled()) {
+//                    input.close();
+//                    return null;
+//                }
+//                total += count;
+//                // publishing the progress....
+//                if (fileLength > 0) // only if total length is known
+//                     publishProgress((int) (total * 100 / fileLength));
+//                output.write(data, 0, count);
+//            }
+//        } catch (Exception e) {
+//            return e.toString();
+//        } finally {
+//            try {
+//                if (output != null)
+//                    output.close();
+//                if (input != null)
+//                    input.close();
+//            } catch (IOException ignored) {
+//            }
+//
+//            if (connection != null)
+//                connection.disconnect();
+//        }
         return null;
 
-
-//        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-//        file = new File(path, "DemoPicture.pdf");
-//        try {
-//            // Make sure the Pictures directory exists.
-//            path.mkdirs();
-//
-//            URL url = new URL(this.url);
-//            /* Open a connection to that URL. */
-//            URLConnection ucon = url.openConnection();
-//
-//            /*
-//             * Define InputStreams to read from the URLConnection.
-//             */
-//            is = ucon.getInputStream();
-//
-//            OutputStream os = new FileOutputStream(file);
-//            byte[] data = new byte[is.available()];
-//            is.read(data);
-//            os.write(data);
-//            is.close();
-//            os.close();
-//
-//        } catch (IOException e) {
-//            Log.d("ImageManager", "Error: " + e);
-//        }
     }
 
     @Override
