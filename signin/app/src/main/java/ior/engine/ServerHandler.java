@@ -1003,7 +1003,7 @@ public class ServerHandler {
                     if (responseCode == 500) {
                         msg[0] = "send request failed!";
                     } else if (responseCode == 501) {
-                        msg[0] = "There is no user with this mail!";
+                        msg[0] = "There is no user with this email!";
                     }
 
                 } catch (ProtocolException e1) {
@@ -1109,7 +1109,7 @@ public class ServerHandler {
             Map<String, List<Receipt>> receiptsMap = usersReceipts.get(email);
             for (Map.Entry<String, List<Receipt>> receiptEntry : receiptsMap.entrySet()) {
                 for (Receipt receipt : receiptEntry.getValue()) {
-                    if (((!startDate.isPresent() && !endDate.isPresent()) || (receipt.getCreationDate().after(startDate.get()) && receipt.getCreationDate().before(endDate.get())))) {
+                    if (((!startDate.isPresent() || !endDate.isPresent()) || (receipt.getCreationDate().after(startDate.get()) && receipt.getCreationDate().before(endDate.get())))) {
                         companyNames.add(receiptEntry.getKey());
                         break;
                     }

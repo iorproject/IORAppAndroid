@@ -153,26 +153,23 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         String endDate = textViewEndDate.getText().toString().equals(UNDEFINED_DATE) ?
                 null : textViewEndDate.getText().toString();
 
-        if((startDate == null && endDate != null) || (startDate != null && endDate == null)){
-            Toast.makeText(context, "You have to choose start time and end time", Toast.LENGTH_SHORT).show();
-            return;
-        }
         Date dateEnd = null;
         Date dateStart = null;
-        if (startDate != null && endDate != null) {
+        if (startDate != null || endDate != null) {
 
             DateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             try {
-                dateEnd = format.parse(endDate);
-                dateStart = format.parse(startDate);
-                if (!dateStart.before(dateEnd)) {
-                    Toast.makeText(context, "Start date can't be before end date", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                else {
-
+                if(endDate != null){
+                    dateEnd = format.parse(endDate);
                     dateEnd.setTime(dateEnd.getTime() + (1000 * 60 * 60 * 24));
                     endDate = format.format(dateEnd);
+                }
+                if(startDate != null){
+                    dateStart = format.parse(startDate);
+                }
+                if (dateStart != null && endDate != null && !dateStart.before(dateEnd)) {
+                    Toast.makeText(context, "Start date can't be before end date", Toast.LENGTH_SHORT).show();
+                    return;
                 }
             }
             catch (Exception e) {
