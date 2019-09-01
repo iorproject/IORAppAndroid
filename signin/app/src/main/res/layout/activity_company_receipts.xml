@@ -1,83 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout_companyReceipts"
+    android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/app_background"
+    android:background="#F5F2D0"
     tools:context="ior.activities.CompanyReceiptsActivity">
 
-    <ImageView
-        android:id="@+id/imageView_prev_companyReceipts"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="4dp"
-        android:onClick="scrollReceipt"
-        android:rotation="180"
-        app:srcCompat="@drawable/prev_arrow_unable" />
-
-    <ImageView
-        android:id="@+id/imageView_next_companyReceipts"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center|right|center_vertical"
-        android:layout_marginRight="4dp"
-        android:onClick="scrollReceipt"
-        app:srcCompat="@drawable/next_arrow_unable" />
-
-    <LinearLayout
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/frameLayout_companyReceipts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="25dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginBottom="71dp"
-        android:orientation="vertical"
-        android:paddingLeft="15dp"
-        android:paddingTop="10dp"
-        android:paddingRight="15dp">
+        android:background="@drawable/about_background"
+        tools:context="ior.activities.CompanyReceiptsActivity">
 
-        <TextView
-            android:id="@+id/textViewCounter_companyReceipts"
-            style="@style/Widget.AppCompat.TextView.SpinnerItem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:fontFamily="casual"
-            android:shadowColor="@android:color/black"
-            android:text="0/0"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/imageView_prev_companyReceipts"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="4dp"
+            android:onClick="scrollReceipt"
+            android:rotation="180"
+            app:srcCompat="@drawable/prev_arrow_unable" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView_companyReceipts"
+        <ImageView
+            android:id="@+id/imageView_next_companyReceipts"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center|right|center_vertical"
+            android:layout_marginRight="4dp"
+            android:onClick="scrollReceipt"
+            app:srcCompat="@drawable/next_arrow_unable" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:layoutDirection="inherit"
-            android:orientation="horizontal"
-            android:scrollbarAlwaysDrawHorizontalTrack="false"
-            android:scrollbarAlwaysDrawVerticalTrack="false"
-            android:scrollbarSize="0dp"
-            android:scrollbarStyle="outsideInset"
-            android:scrollbars="none" />
-    </LinearLayout>
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginBottom="71dp"
+            android:orientation="vertical"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp">
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:background="@drawable/navigator_bar_background"
-        app:itemIconTint="@drawable/bottom_navigation_selector"
+            <TextView
+                android:id="@+id/textViewCounter_companyReceipts"
+                style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="casual"
+                android:shadowColor="@android:color/black"
+                android:text="0/0"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView_companyReceipts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layoutDirection="inherit"
+                android:orientation="horizontal"
+                android:scrollbarAlwaysDrawHorizontalTrack="false"
+                android:scrollbarAlwaysDrawVerticalTrack="false"
+                android:scrollbarSize="0dp"
+                android:scrollbarStyle="outsideInset"
+                android:scrollbars="none" />
+        </LinearLayout>
+
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/navigator_bar_background"
+            app:itemIconTint="@drawable/bottom_navigation_selector"
+            app:itemTextColor="@color/bottom_nav_item_text_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:menu="@menu/bottom_nav_menu" />
+
+    </FrameLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view_top"
+        android:layout_width="250dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/whiteHeader"
+        app:headerLayout="@layout/header"
+        app:itemIconTint="@color/blackHeader"
         app:itemTextColor="@color/bottom_nav_item_text_color"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/drawermenu"></android.support.design.widget.NavigationView>
 
-</FrameLayout>
+</android.support.v4.widget.DrawerLayout>

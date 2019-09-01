@@ -227,14 +227,13 @@ public class ServerHandler {
 
                         ServerHandler.getInstance().signInUser = new User(email, name, registerDate, profileImage);
                         ServerHandler.getInstance().usersInfoMap.put(email, signInUser);
-
+                        fetchProfileDetails();
 
                     } catch (Exception e1) {
 
-                        this.cancel(true);
+                        this.cancel(false);
                     }
 
-                    fetchProfileDetails();
                     return null;
                 }
 

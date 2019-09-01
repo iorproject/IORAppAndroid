@@ -36,7 +36,7 @@
                 android:id="@+id/tabItem_myPartners"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="My Partners" />
+                android:text="Partners" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem_requests"

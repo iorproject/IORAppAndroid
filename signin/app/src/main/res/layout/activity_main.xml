@@ -22,8 +22,10 @@
             android:layout_height="250dp"
             android:layout_marginBottom="50dp"
             android:scaleType="fitXY"
-            android:layout_gravity="center_horizontal"
-            app:srcCompat="@drawable/app" />
+            android:layout_marginRight="10dp"
+            android:src="@drawable/app_logo_big"
+
+             />
 
         <FrameLayout
             android:layout_width="match_parent"

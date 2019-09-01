@@ -74,7 +74,9 @@ public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecycler
     public void onBindViewHolder(@NonNull PartnerViewHolder viewHolder, int i) {
 
         viewHolder.partner_card.setBackgroundResource(R.drawable.card_partners_bg_befor_edit);
-        viewHolder.nameTV.setText(mData.get(i).getName());
+        String name = mData.get(i).getName();
+        name = name.length() > 15 ? name.substring(0, 12) + "..." : name;
+        viewHolder.nameTV.setText(name);
         viewHolder.emailTV.setText(mData.get(i).getEmail());
         viewHolder.edit_IMB.setOnClickListener(new View.OnClickListener() {
             @Override
