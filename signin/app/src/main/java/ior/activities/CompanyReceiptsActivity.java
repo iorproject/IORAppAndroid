@@ -3,11 +3,15 @@ package ior.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -44,6 +48,9 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager recycleLayoutManager;
     private FrameLayout container;
     private BottomNavigationView navViewBottom;
+    private NavigationView navigationViewTop;
+    private DrawerLayout mDraw;
+    private ActionBarDrawerToggle mToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +64,18 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
         barTitle = barTitle.substring(0, 1).toUpperCase() + barTitle.substring(1);
         boolean filter = intent.getBooleanExtra("filter", false);
 
+
+        navigationViewTop = findViewById(R.id.nav_view_top);
+        navigationViewTop.setNavigationItemSelectedListener(this::onNavigationItemSelected);
+        mDraw = findViewById(R.id.drawer);
+        mToggle = IorUtils.setNavigateBar(this);
+
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(barTitle);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        actionBar.setBackgroundDrawable(getDrawable(R.drawable.tab2_background));
         if (!filter)
             receipts = ServerHandler.getInstance().getCompanyReceipts(userEmail, companyName);
 
@@ -190,4 +207,27 @@ public class CompanyReceiptsActivity extends AppCompatActivity {
 
         container.setAlpha(1);
     }
+
+
+    public boolean onNavigationItemSelected(MenuItem item) {
+        startActivity(IorUtils.getItemIntent(this, item.getItemId()));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mToggle.onOptionsItemSelected(item))
+        {
+            return  true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mDraw.closeDrawer(Gravity.LEFT);
+    }
+
+
 }

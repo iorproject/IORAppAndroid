@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.graphics.ColorUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -108,7 +109,12 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         relativeLayout = findViewById(R.id.relative_viewStatistics);
         navigationViewTop = findViewById(R.id.nav_view_top);
         navigationViewTop.setNavigationItemSelectedListener(this::onNavigationItemSelected);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setBackgroundDrawable(getDrawable(R.drawable.tab2_background));
+        }
+
         mDraw = findViewById(R.id.drawer);
         mToggle = IorUtils.setNavigateBar(this);
 

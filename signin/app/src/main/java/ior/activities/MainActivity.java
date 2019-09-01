@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         textViewProgress = findViewById(R.id.textViewProgress_main);
         textViewMessage = findViewById(R.id.textView_loading_main);
-
+        getSupportActionBar().hide();
         initProgressBar();
         initDialog();
 
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     (msg) ->  runOnUiThread(() -> {
 
                         TextView tvMsg = dialogError.findViewById(R.id.tv_message_serverErrorDialog);
-                        tvMsg.setText(msg + "Please try again later.");
+                        tvMsg.setText(msg + "\nPlease try again later.");
                         dialogError.show();
 
                     }));

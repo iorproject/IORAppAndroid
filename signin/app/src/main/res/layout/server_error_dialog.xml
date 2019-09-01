@@ -7,7 +7,7 @@
 
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:gravity="center_horizontal"
@@ -25,7 +25,7 @@
             android:layout_marginBottom="10dp"
             android:gravity="center"
             android:text="MSG"
-            android:textColor="@android:color/holo_red_light"
+            android:textColor="#961C1C"
             android:textSize="16sp"
             android:textStyle="italic" />
 

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.text.Layout;
 import android.view.View;
@@ -65,8 +66,10 @@ public class AddingPartnerFBAdapter {
         List<User> t = ServerHandler.getInstance().getSignInUser().getPartners();
         if (ServerHandler.getInstance().getSignInUser().getPartners_Followers().get("partners").containsKey(email))
         {
-            errorEvent("this email is already your partner");
+            errorEvent("This user is already your partner");
         }
+        else if (ServerHandler.getInstance().getSignInUser().getEmail().equals(email))
+            errorEvent("You cant send request to yourself");
         else
         {
             ServerHandler.getInstance().sendRequestFriendship(email,(temp)->afterSendRequest(temp));
@@ -99,12 +102,13 @@ public class AddingPartnerFBAdapter {
 
     public void doneEvent()
     {
-        mErorMessageTV.setText("succeded!");
+        mErorMessageTV.setText("succeed!");
         mErorMessageTV.setTextColor(ContextCompat.getColor(mContext,R.color.done_color));
         mDoneLayout.setVisibility(View.VISIBLE);
         mErrorLayout.setVisibility(View.GONE);
         mCircleProgress.setVisibility(View.GONE);
         mSendReqBT.setClickable(false);
+        new Handler().postDelayed(mDialog::dismiss, 1000);
     }
 
     public void showDialog()

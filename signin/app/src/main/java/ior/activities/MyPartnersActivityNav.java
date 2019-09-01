@@ -6,6 +6,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -72,7 +73,9 @@ public class MyPartnersActivityNav extends AppCompatActivity {
         mDraw = findViewById(R.id.drawer);
         navigationTopView = findViewById(R.id.nav_view_top);
         navigationTopView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setBackgroundDrawable(getDrawable(R.drawable.tab2_background));
     }
 
     public boolean onNavigationItemSelected(MenuItem item) {

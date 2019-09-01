@@ -27,7 +27,7 @@ public class ReceiptsActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-
+        getSupportActionBar().setBackgroundDrawable(getDrawable(R.drawable.tab2_background));
         viewPager = findViewById(R.id.viewPager_receipts);
         initViewPager();
 
