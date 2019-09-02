@@ -42,7 +42,10 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+
 import ior.activities.AboutActivity;
 import ior.activities.HomeScreenActivity;
 import ior.activities.MainActivity;
@@ -349,6 +352,11 @@ public class IorUtils {
 
         return  dialogError;
 
+    }
+
+    public static List<User> filterUserStarWith(List<User> origin, String start)
+    {
+        return origin.stream().filter((user) -> user.getName().toUpperCase().startsWith(start.toUpperCase())).collect(Collectors.toList());
     }
 
 }

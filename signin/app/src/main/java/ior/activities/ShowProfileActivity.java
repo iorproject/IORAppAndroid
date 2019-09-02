@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -43,6 +44,7 @@ public class ShowProfileActivity extends AppCompatActivity  {
     private TextView mParentsAmountTV;
     private TextView mRecieptsAmountTV;
     private TextView mFollowersAmountTV;
+    private TextView mEmailLastTimeScanTV;
 
 
     @Override
@@ -74,6 +76,7 @@ public class ShowProfileActivity extends AppCompatActivity  {
         mParentsAmountTV = findViewById(R.id.numberOfPartnersTV);
         mFollowersAmountTV = findViewById(R.id.numberOffollowersTV);
         mRecieptsAmountTV = findViewById(R.id.numberOfRecieptsTV);
+        mEmailLastTimeScanTV = findViewById(R.id.tv_lastScan_profile);
         mRecieptsAmountTV.setText(getShortNumber(ServerHandler.getInstance().getSignInUser().getRecieptsAmount()));
         mFollowersAmountTV.setText(getShortNumber(ServerHandler.getInstance().getSignInUser().getFollowersAmount()));
         mParentsAmountTV.setText(getShortNumber(ServerHandler.getInstance().getSignInUser().getPartnersAmount()));
@@ -94,6 +97,8 @@ public class ShowProfileActivity extends AppCompatActivity  {
         Date date = ServerHandler.getInstance().getSignInUser().getRegisterDate();
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm a");
         mRegiserDateTV.setText(dateFormat.format(date));
+        Date lastScan = ServerHandler.getInstance().getSignInUser().getLastEmailScan();
+        mEmailLastTimeScanTV.setText(dateFormat.format(lastScan));
         mDialog = new BottomDialog();
 
     }
@@ -145,14 +150,14 @@ public class ShowProfileActivity extends AppCompatActivity  {
                 }
                 catch (Exception e){}
                 finally {
-                    m_ProfileImage.setImageURI(chosenImage);
-                }
+                    m_ProfileImage.setImageBitmap(rotateImage(bitmap,90));                }
             }
             else if (requestCode == PERMISSION_CAMERA)
             {
                 bitmap = (Bitmap)data.getExtras().get("data");
-                m_ProfileImage.setImageBitmap(bitmap);
-            };
+                m_ProfileImage.setImageBitmap(rotateImage(bitmap,90));
+            }
+
             ServerHandler.getInstance().getSignInUser().setProfileImage(bitmap);
             ServerHandler.getInstance().setUserProfileImage(IorUtils.getStringFromBitmap(bitmap),
                     ServerHandler.getInstance().getSignInUser().getEmail());
@@ -184,5 +189,16 @@ public class ShowProfileActivity extends AppCompatActivity  {
         }
 
         return result;
+    }
+
+    private Bitmap rotateImage(Bitmap source, float angle) {
+        if (source != null) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(angle);
+            return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix,
+                    true);
+        }
+
+        return null;
     }
 }

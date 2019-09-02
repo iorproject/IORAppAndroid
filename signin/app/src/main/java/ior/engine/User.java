@@ -17,6 +17,7 @@ public class User {
     private Bitmap profileImageBitmap;
     private Map<String, Map<String,User>> partners_Followers;
     private Map<String, Integer> profileDetails;
+    private Date lastEmailScan = null;
 
     public User(String email, String name, Date registerDate,String profileImage) {
         this.email = email;
@@ -110,5 +111,13 @@ public class User {
         this.profileDetails.put("reciepts",receiptsNum);
         this.profileDetails.put("partners",partnersNum);
         this.profileDetails.put("followers",followersNum);
+    }
+
+    public Date getLastEmailScan() {
+        return lastEmailScan;
+    }
+
+    public void setLastEmailScan(Date lastEmailScan) {
+        this.lastEmailScan = lastEmailScan;
     }
 }

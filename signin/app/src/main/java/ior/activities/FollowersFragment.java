@@ -13,18 +13,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.samples.quickstart.signin.R;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ior.adapters.AddingPartnerFBAdapter;
 import ior.adapters.PartnerRecyclerAdapter;
 import ior.engine.ServerHandler;
 import ior.engine.User;
 import ior.engine.ePartner;
+import utils.IorUtils;
 
 public class FollowersFragment extends Fragment {
 
@@ -61,7 +60,7 @@ public class FollowersFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterPartners(searchPartner);
+                filterFollowers(searchPartner);
             }
 
             @Override
@@ -83,12 +82,11 @@ public class FollowersFragment extends Fragment {
         }
     }
 
-    private void filterPartners(EditText editText)
+    private void filterFollowers(EditText editText)
     {
-        if(followers!=null)
+        if (followers != null)
         {
-            List<User> filterUsers = followers.stream().filter((user) -> user.getName().startsWith(editText.getText().toString())).collect(Collectors.toList());
-            partnerRecyclerAdapter.setAdapterDate(filterUsers);
+            partnerRecyclerAdapter.setAdapterDate(IorUtils.filterUserStarWith(followers,editText.getText().toString()));
         }
     }
 

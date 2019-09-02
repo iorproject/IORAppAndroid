@@ -25,6 +25,7 @@ import ior.adapters.PartnerRecyclerAdapter;
 import ior.engine.ServerHandler;
 import ior.engine.User;
 import ior.engine.ePartner;
+import utils.IorUtils;
 
 public class MyPartnersFragment extends Fragment {
 
@@ -84,12 +85,12 @@ public class MyPartnersFragment extends Fragment {
             partnerRecyclerAdapter.setAdapterDate((ServerHandler.getInstance().getSignInUser().getPartners()));
         }
     }
+
     private void filterPartners(EditText editText)
     {
         if (partners != null)
         {
-            List<User> filterUsers = partners.stream().filter((user) -> user.getName().startsWith(editText.getText().toString())).collect(Collectors.toList());
-            partnerRecyclerAdapter.setAdapterDate(filterUsers);
+            partnerRecyclerAdapter.setAdapterDate(IorUtils.filterUserStarWith(partners,editText.getText().toString()));
         }
 
     }
