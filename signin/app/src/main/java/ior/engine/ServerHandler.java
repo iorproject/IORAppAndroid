@@ -188,7 +188,8 @@ public class ServerHandler {
                 protected Void doInBackground(Void... voids) {
                     try {
                         //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/userInfo");
-                        URL url = new URL( "http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userInfo");
+                        //URL url = new URL( "http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userInfo");
+                        URL url = new URL( "http://10.0.2.2:8080/ior/userInfo");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setConnectTimeout(3000);
                         con.setRequestMethod("GET");
@@ -227,7 +228,6 @@ public class ServerHandler {
 
                         ServerHandler.getInstance().signInUser = new User(email, name, registerDate, profileImage);
                         ServerHandler.getInstance().usersInfoMap.put(email, signInUser);
-                        fetchProfileDetails();
 
                     } catch (Exception e1) {
 
@@ -272,7 +272,8 @@ public class ServerHandler {
                 protected Void doInBackground(Void... voids) {
                     try {
                         //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/userPartners");
-                        URL url = new URL( "http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userPartners");
+                        //URL url = new URL( "http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userPartners");
+                        URL url = new URL( "http://10.0.2.2:8080/ior/userPartners");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
 
@@ -358,7 +359,8 @@ public class ServerHandler {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userCompanies");
+                        //URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userCompanies");
+                        URL url = new URL("http://10.0.2.2:8080/ior/userCompanies");
                         //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/userCompanies");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
@@ -662,9 +664,9 @@ public class ServerHandler {
                 protected Void doInBackground(Void... voids) {
 
                     try {
-                        URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userAllReceipts");
+                        //URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userAllReceipts");
                         //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-                        //URL url = new URL("http://10.0.2.2:8080/ior/userAllReceipts");
+                        URL url = new URL("http://10.0.2.2:8080/ior/userAllReceipts");
 
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
@@ -1137,7 +1139,8 @@ public class ServerHandler {
 
     public void fetchProfileDetails() {
         try {
-            URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/profileInfo");
+            //URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/profileInfo");
+            URL url = new URL("http://10.0.2.2:8080/ior/profileInfo");
             //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
@@ -1161,10 +1164,13 @@ public class ServerHandler {
             }
             in.close();
             Gson gson = new Gson();
-            Map<String, Double> userMap = gson.fromJson(content.toString(), Map.class);
-            int receiptNum = (int) Math.round(userMap.get("reciepts"));
-            int partnersNum = (int) Math.round(userMap.get("partners"));
-            int followersNum = (int) Math.round(userMap.get("followers"));
+            Map<String, Object> userMap = gson.fromJson(content.toString(), Map.class);
+            int receiptNum = (int) Math.round((double)userMap.get("reciepts"));
+            int partnersNum = (int) Math.round((double)userMap.get("partners"));
+            int followersNum = (int) Math.round((double)userMap.get("followers"));
+            String lastScanStr = userMap.get("lastScan").toString();
+            Date lastScan = new SimpleDateFormat("dd-MM-yyyy HH:mm a").parse(lastScanStr);
+            ServerHandler.getInstance().signInUser.setLastEmailScan(lastScan);
             ServerHandler.getInstance().signInUser.setProfileDetails(receiptNum, partnersNum, followersNum);
             int x = 5;
 

@@ -13,18 +13,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.samples.quickstart.signin.R;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ior.adapters.AddingPartnerFBAdapter;
 import ior.adapters.PartnerRecyclerAdapter;
 import ior.engine.ServerHandler;
 import ior.engine.User;
 import ior.engine.ePartner;
+import utils.IorUtils;
 
 public class RequestFriendshipFragment extends Fragment {
 
@@ -62,7 +61,7 @@ public class RequestFriendshipFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterPartners(searchPartner);
+                filterRequests(searchPartner);
             }
 
             @Override
@@ -85,22 +84,12 @@ public class RequestFriendshipFragment extends Fragment {
         }
     }
 
-    //    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        partnerRecyclerAdapter.setAdapterDate(ServerHandler.getInstance().getSignInUser().getUsersRequest());
-//
-//
-//    }
-
-    private void filterPartners(EditText editText)
+    private void filterRequests(EditText editText)
     {
         if (requests_partners != null)
         {
-            List<User> filterUsers = requests_partners.stream().filter((user) -> user.getName().startsWith(editText.getText().toString())).collect(Collectors.toList());
-            partnerRecyclerAdapter.setAdapterDate(filterUsers);
+            partnerRecyclerAdapter.setAdapterDate(IorUtils.filterUserStarWith(requests_partners,editText.getText().toString()));
         }
-
     }
 
     private void floatingActionButtonWasClicked()
