@@ -150,16 +150,16 @@ public class ShowProfileActivity extends AppCompatActivity  {
                 }
                 catch (Exception e){}
                 finally {
-                    m_ProfileImage.setImageBitmap(rotateImage(bitmap,90));                }
+                    m_ProfileImage.setImageBitmap(rotateImage(bitmap,0));                }
             }
             else if (requestCode == PERMISSION_CAMERA)
             {
                 bitmap = (Bitmap)data.getExtras().get("data");
-                m_ProfileImage.setImageBitmap(rotateImage(bitmap,90));
+                m_ProfileImage.setImageBitmap(rotateImage(bitmap,0));
             }
 
-            ServerHandler.getInstance().getSignInUser().setProfileImage(rotateImage(bitmap,90));
-            ServerHandler.getInstance().setUserProfileImage(IorUtils.getStringFromBitmap(rotateImage(bitmap,90)),
+            ServerHandler.getInstance().getSignInUser().setProfileImage(rotateImage(bitmap,0));
+            ServerHandler.getInstance().setUserProfileImage(IorUtils.getStringFromBitmap(rotateImage(bitmap,0)),
                     ServerHandler.getInstance().getSignInUser().getEmail());
         }
 
