@@ -158,8 +158,8 @@ public class ShowProfileActivity extends AppCompatActivity  {
                 m_ProfileImage.setImageBitmap(rotateImage(bitmap,90));
             }
 
-            ServerHandler.getInstance().getSignInUser().setProfileImage(bitmap);
-            ServerHandler.getInstance().setUserProfileImage(IorUtils.getStringFromBitmap(bitmap),
+            ServerHandler.getInstance().getSignInUser().setProfileImage(rotateImage(bitmap,90));
+            ServerHandler.getInstance().setUserProfileImage(IorUtils.getStringFromBitmap(rotateImage(bitmap,90)),
                     ServerHandler.getInstance().getSignInUser().getEmail());
         }
 

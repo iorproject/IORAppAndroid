@@ -238,11 +238,18 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
         }
 
         ServerHandler.getInstance().registerUser(email, name,  access_token, refresh_token, cal.getTime(),
-                () -> startActivity(new Intent(this, MainActivity.class)));
-        ServerHandler.getInstance().fetchUserPartners(email, null, null);
+                this::fetchUserPartnersOnFinish);
+
 
     }
 
+    private void fetchUserPartnersOnFinish(){
+        ServerHandler.getInstance().fetchUserPartners(email, this::startMainActivityOnFinish, null);
+    }
+
+    private void startMainActivityOnFinish(){
+        startActivity(new Intent(this, MainActivity.class));
+    }
     private void updateUI(@Nullable GoogleSignInAccount account) {
 
     }

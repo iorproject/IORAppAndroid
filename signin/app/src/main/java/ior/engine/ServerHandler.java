@@ -285,41 +285,37 @@ public class ServerHandler {
                         out.close();
                         int responseCode = con.getResponseCode();
 
-                        if (responseCode == 500) {
+                        if (responseCode != 500) {
 
-
-                        }
-
-                        BufferedReader in = new BufferedReader(
-                                new InputStreamReader(con.getInputStream()));
-                        String inputLine;
-                        StringBuffer content = new StringBuffer();
-                        while ((inputLine = in.readLine()) != null) {
-                            content.append(inputLine);
-                        }
-                        in.close();
-
-                        Gson gson = new Gson();
-                        Map<String, ArrayList<LinkedTreeMap<String, Object>>> resultMapDB = gson.fromJson(content.toString(), Map.class);
-                        Map<String, Map<String, User>> partners_Followers = new HashMap<>();
-                        partners_Followers.put("partners", new HashMap<>());
-                        partners_Followers.put("followers", new HashMap<>());
-                        partners_Followers.put("requestusers", new HashMap<>());
-                        for (Map.Entry<String, ArrayList<LinkedTreeMap<String, Object>>> entry : resultMapDB.entrySet()) {
-                            Map<String, User> tempUsers = new HashMap<>();
-                            ArrayList<LinkedTreeMap<String, Object>> arrayList = entry.getValue();
-                            for (LinkedTreeMap<String, Object> objectLinkedTreeMap : arrayList) {
-                                String email = objectLinkedTreeMap.get("email").toString();
-                                String name = objectLinkedTreeMap.get("name").toString();
-                                String profileImage = objectLinkedTreeMap.get("profileImage") != null ? objectLinkedTreeMap.get("profileImage").toString() : null;
-                                tempUsers.put(email, new User(email, name, null, profileImage));
+                            BufferedReader in = new BufferedReader(
+                                    new InputStreamReader(con.getInputStream()));
+                            String inputLine;
+                            StringBuffer content = new StringBuffer();
+                            while ((inputLine = in.readLine()) != null) {
+                                content.append(inputLine);
                             }
+                            in.close();
 
-                            partners_Followers.put(entry.getKey(), tempUsers);
+                            Gson gson = new Gson();
+                            Map<String, ArrayList<LinkedTreeMap<String, Object>>> resultMapDB = gson.fromJson(content.toString(), Map.class);
+                            Map<String, Map<String, User>> partners_Followers = new HashMap<>();
+                            partners_Followers.put("partners", new HashMap<>());
+                            partners_Followers.put("followers", new HashMap<>());
+                            partners_Followers.put("requestusers", new HashMap<>());
+                            for (Map.Entry<String, ArrayList<LinkedTreeMap<String, Object>>> entry : resultMapDB.entrySet()) {
+                                Map<String, User> tempUsers = new HashMap<>();
+                                ArrayList<LinkedTreeMap<String, Object>> arrayList = entry.getValue();
+                                for (LinkedTreeMap<String, Object> objectLinkedTreeMap : arrayList) {
+                                    String email = objectLinkedTreeMap.get("email").toString();
+                                    String name = objectLinkedTreeMap.get("name").toString();
+                                    String profileImage = objectLinkedTreeMap.get("profileImage") != null ? objectLinkedTreeMap.get("profileImage").toString() : null;
+                                    tempUsers.put(email, new User(email, name, null, profileImage));
+                                }
 
+                                partners_Followers.put(entry.getKey(), tempUsers);
+                            }
+                            signInUser.setPartners_Followers(partners_Followers);
                         }
-
-                        signInUser.setPartners_Followers(partners_Followers);
 
                     } catch (ProtocolException e1) {
 
