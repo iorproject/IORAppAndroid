@@ -188,8 +188,7 @@ public class ServerHandler {
                 protected Void doInBackground(Void... voids) {
                     try {
                         //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/userInfo");
-                        //URL url = new URL( "http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userInfo");
-                        URL url = new URL( "http://10.0.2.2:8080/ior/userInfo");
+                        URL url = new URL( "http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userInfo");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setConnectTimeout(3000);
                         con.setRequestMethod("GET");
@@ -272,8 +271,7 @@ public class ServerHandler {
                 protected Void doInBackground(Void... voids) {
                     try {
                         //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/userPartners");
-                        //URL url = new URL( "http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userPartners");
-                        URL url = new URL( "http://10.0.2.2:8080/ior/userPartners");
+                        URL url = new URL( "http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userPartners");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
 
@@ -359,8 +357,7 @@ public class ServerHandler {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        //URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userCompanies");
-                        URL url = new URL("http://10.0.2.2:8080/ior/userCompanies");
+                        URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userCompanies");
                         //URL url = new URL("http://ior-env-1.cbapj2vrpq.eu-central-1.elasticbeanstalk.com/userCompanies");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
@@ -664,9 +661,8 @@ public class ServerHandler {
                 protected Void doInBackground(Void... voids) {
 
                     try {
-                        //URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userAllReceipts");
+                        URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/userAllReceipts");
                         //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
-                        URL url = new URL("http://10.0.2.2:8080/ior/userAllReceipts");
 
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
                         con.setRequestMethod("GET");
@@ -1139,8 +1135,7 @@ public class ServerHandler {
 
     public void fetchProfileDetails() {
         try {
-            //URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/profileInfo");
-            URL url = new URL("http://10.0.2.2:8080/ior/profileInfo");
+            URL url = new URL("http://ior-env.ydqikgg3ms.eu-central-1.elasticbeanstalk.com/profileInfo");
             //URL url = new URL( "http://192.168.1.39:8080/ior/registerUser");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
