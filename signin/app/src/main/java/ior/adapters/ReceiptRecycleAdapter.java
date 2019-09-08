@@ -106,7 +106,8 @@ public class ReceiptRecycleAdapter extends RecyclerView.Adapter<ReceiptRecycleAd
         viewHolder.textViewID.setText(receiptId);
         viewHolder.textViewCompany.setText(currentReceipt.getCompany());
         String email = currentReceipt.getEmail();
-        viewHolder.textViewEmail.setText(currentReceipt.getEmail());
+        email= email.length() > 18 ? email.substring(0,14) + "..." : email;
+        viewHolder.textViewEmail.setText(email);
         String ppp = String.valueOf(currentReceipt.getTotalPrice());
         String ttt = currentReceipt.getCurrency().toString();
         String price = ppp +" " + ttt;
