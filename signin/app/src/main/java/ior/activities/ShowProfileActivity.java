@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.samples.quickstart.signin.R;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,7 +46,7 @@ public class ShowProfileActivity extends AppCompatActivity  {
     private TextView mRecieptsAmountTV;
     private TextView mFollowersAmountTV;
     private TextView mEmailLastTimeScanTV;
-
+    private Dialog mProgilePicDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +101,16 @@ public class ShowProfileActivity extends AppCompatActivity  {
         Date lastScan = ServerHandler.getInstance().getSignInUser().getLastEmailScan();
         mEmailLastTimeScanTV.setText(dateFormat.format(lastScan));
         mDialog = new BottomDialog();
+
+        mProgilePicDialog = new Dialog(this);
+        mProgilePicDialog.setContentView(R.layout.big_profile_pic_dialog);
+        mProgilePicDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        m_ProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                profilePicWasClicked();
+            }
+        });
 
     }
 
@@ -200,5 +211,12 @@ public class ShowProfileActivity extends AppCompatActivity  {
         }
 
         return null;
+    }
+
+    private void profilePicWasClicked()
+    {
+        CircularImageView circularImageView = mProgilePicDialog.findViewById(R.id.bigProfilePic);
+        circularImageView.setImageBitmap(ServerHandler.getInstance().getSignInUser().getProfileImage());
+        mProgilePicDialog.show();
     }
 }
