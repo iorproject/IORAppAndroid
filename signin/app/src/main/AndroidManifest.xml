@@ -20,15 +20,13 @@
         </activity>
         <activity
             android:name="ior.activities.CalendarActivity"
-            android:theme="@style/AppTheme.Calendar"
-            android:screenOrientation="portrait">
+            android:theme="@style/AppTheme.Calendar">
         </activity>
         <activity android:name="ior.activities.ShowProfileActivity"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="ior.activities.ReceiptFileActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.File" />
         <activity
             android:name="ior.activities.CompanyReceiptsActivity"
