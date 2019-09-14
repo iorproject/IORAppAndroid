@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/bigProfilePic"
+        android:layout_width="330dp"
+        android:layout_height="330dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/profie"
+        app:civ_border_color="#EEEEEE"
+        app:civ_border_width="1dp"
+        app:civ_shadow="true"
+        app:civ_shadow_radius="4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>
